@@ -1,0 +1,9 @@
+[submodule "core-java"]
+	path = core-java
+	url = https://github.com/SpineEventEngine/core-java
+[submodule "base"]
+	path = base
+	url = https://github.com/SpineEventEngine/base
+[submodule "time"]
+	path = time
+	url = https://github.com/SpineEventEngine/time
