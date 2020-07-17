@@ -33,6 +33,7 @@ dependencies {
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
     // A fluent assertions library.
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.22")
