@@ -41,5 +41,9 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
             return version?.let { VersionAssigningExpression(name, it) }
         }
     }
+
+    override fun toString(): String {
+        return """val ${libraryName.value} = "$version""""
+    }
 }
 

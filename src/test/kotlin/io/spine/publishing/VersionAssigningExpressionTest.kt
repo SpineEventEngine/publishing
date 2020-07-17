@@ -41,4 +41,11 @@ class VersionAssigningExpressionTest {
     fun `not parse semver-compatible versions`(rawExpr: String) {
         assertThat(VersionAssigningExpression.parse(rawExpr)).isNull()
     }
+
+    @Test
+    fun `return a parsable expression with toString()`() {
+        val expression = VersionAssigningExpression(LibraryName("base"), Version(3, 0, 23))
+        val toStringed = expression.toString()
+        assertThat(VersionAssigningExpression.parse(toStringed)).isEqualTo(expression)
+    }
 }
