@@ -56,6 +56,19 @@ class GradleVersionFile(private val projectName: LibraryName, val rootDir: File)
     }
 
     /**
+     * Returns the libraries mentioned in this version file.
+     *
+     * This includes the library that uses this file for resolving versions and the Spine libraries
+     * that the host-library depends on.
+     */
+    fun declaredLibraries(): Set<LibraryName> {
+        return file.readLines()
+                .map { VersionAssigningExpression.parse(it) }
+                .mapNotNull { it?.libraryName }
+                .toSet()
+    }
+
+    /**
      * Overrides the version of the specified library to the specified one.
      *
      * If the specified library is not found in the file, no action is performed.

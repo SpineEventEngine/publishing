@@ -21,6 +21,7 @@
 package io.spine.publishing
 
 import assertk.assertThat
+import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import org.junit.jupiter.api.DisplayName
@@ -45,40 +46,28 @@ class GradleVersionFileTest {
 
     @Test
     fun `read the library version`(@TempDir tempDir: Path) {
-        val projectDir = moveResourceTo(tempDir)
-        val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
-
+        val versionFile = gradleVersionFile(tempDir)
         assertAllMatch(INITIAL_VALUES, versionFile)
     }
 
     @Test
     fun `not do anything if the library to override does not exist in the file`(@TempDir dir: Path) {
-        val projectDir = moveResourceTo(dir)
-        val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
-
+        val versionFile = gradleVersionFile(dir)
         versionFile.overrideVersion(LibraryName("nonExistingLibrary"),
-                                    Version(1, 5, 6))
-
+                Version(1, 5, 6))
         assertAllMatch(INITIAL_VALUES, versionFile)
     }
 
     @Test
     fun `return null when asking for a non-existent library version`(@TempDir tempDir: Path) {
-        val projectDir = moveResourceTo(tempDir)
-        val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
-
+        val versionFile = gradleVersionFile(tempDir)
         assertThat(versionFile.version(LibraryName("nonExistingLibrary")))
                 .isNull()
     }
 
     @Test
     fun `retain the versions that were not overridden`(@TempDir tempDir: Path) {
-        val projectDir = moveResourceTo(tempDir)
-        val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
+        val versionFile = gradleVersionFile(tempDir)
 
         val base = LibraryName("base")
         val newBaseVersion = Version(2, 4, 6)
@@ -102,6 +91,23 @@ class GradleVersionFileTest {
         val newVersion = Version(1, 3, 3)
         versionFile.overrideVersion(projectName, newVersion)
         assertThat(versionFile.version()).isEqualTo(newVersion)
+    }
+
+    @Test
+    fun `identify all the libraries mentioned in the versions file`(@TempDir tempDir: Path) {
+        val versionFile = gradleVersionFile(tempDir)
+
+        assertThat(versionFile.declaredLibraries())
+                .containsAll(LibraryName("library"),
+                             LibraryName("coreJava"),
+                             LibraryName("base"))
+    }
+
+    private fun gradleVersionFile(dir: Path): GradleVersionFile {
+        val projectDir = moveResourceTo(dir)
+        val projectName = LibraryName("library")
+        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
+        return versionFile
     }
 
     private fun moveResourceTo(tempDir: Path): Path {
