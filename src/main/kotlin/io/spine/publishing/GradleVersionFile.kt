@@ -61,13 +61,20 @@ class GradleVersionFile(private val projectName: LibraryName, val rootDir: File)
      * If the specified library is not found in the file, no action is performed.
      */
     fun overrideVersion(library: LibraryName, newVersion: Version) {
-        val exprToWrite = VersionAssigningExpression(library, newVersion).toString()
+        overrideVersions(
+                mapOf(library to newVersion)
+        )
+    }
+
+    fun overrideVersions(namesToVersions: Map<LibraryName, Version>) {
         var atLeastOneChanged = false
         val lines = file.readLines().map {
             val expr = VersionAssigningExpression.parse(it)
-            if (expr != null && assignsVersionToLibrary(expr, library)) {
+            if (expr != null && namesToVersions.containsKey(expr.libraryName)) {
                 atLeastOneChanged = true
-                return@map exprToWrite
+                val version: Version = namesToVersions.getValue(expr.libraryName)
+                val expression = VersionAssigningExpression(expr.libraryName, version)
+                return@map expression.toString()
             } else {
                 return@map it
             }
@@ -83,10 +90,5 @@ class GradleVersionFile(private val projectName: LibraryName, val rootDir: File)
 
     private val file: File by lazy {
         checkNotNull(findFile(rootDir))
-    }
-
-
-    private fun assignsVersionToLibrary(expression: VersionAssigningExpression, library: LibraryName): Boolean {
-        return expression.libraryName == library
     }
 }
