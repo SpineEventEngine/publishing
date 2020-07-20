@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -48,6 +49,14 @@ class VersionAssigningExpressionTest {
 
         val expression = VersionAssigningExpression.parse(invalidExpr)
         assertThat(expression).isNull()
+    }
+
+    @Test
+    @Disabled // https://github.com/SpineEventEngine/publishing/issues/4
+    fun `not parse an expression with an explicit type`() {
+        val expr = """val base: String = "1.3.15""""
+        val actual = VersionAssigningExpression.parse(expr)
+        assertThat(actual).isNull()
     }
 
     @ParameterizedTest

@@ -36,6 +36,8 @@ package io.spine.publishing
 data class VersionAssigningExpression(val libraryName: LibraryName, val version: Version) {
 
     companion object {
+
+        // TODO: 2020-07-20:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/4
         private val regex: Regex = Regex("""val (.+) = "(\d+\.\d+\.\d+)"""")
 
         /**
