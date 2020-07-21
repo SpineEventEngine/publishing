@@ -22,6 +22,8 @@
 
 package io.spine.publishing
 
+import io.spine.publishing.github.BranchName
+import io.spine.publishing.github.VersionBumpPullRequest
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.LibraryGraph
 import java.nio.file.Paths
@@ -37,6 +39,13 @@ object Application {
     fun main(args: Array<String>) {
         val libraries = LibraryGraph(setOf(base, time, coreJava))
         libraries.updateToTheMostRecent()
+
+        val version = libraries.mostRecentVersion()
+        val pullRequests = libraries.ordered
+                .map { it.name }
+                .map { VersionBumpPullRequest(BranchName(), it, version) }
+        pullRequests.forEach { it.create() }
+        pullRequests.forEach { it.merge() }
     }
 
     private val pathToBase = Paths.get("./base")

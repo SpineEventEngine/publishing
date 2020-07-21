@@ -33,9 +33,13 @@ class LibraryGraph(private val libraries: Set<Library>) {
      * @see Library.update
      */
     fun updateToTheMostRecent() {
-        val mostRecent = ordered.maxBy { it.version() }!!.version()
-        updateAll(mostRecent)
+        updateAll(mostRecentVersion())
     }
+
+    /**
+     * Returns the maximum found seen in this library graph.
+     */
+    fun mostRecentVersion() = ordered.maxBy { it.version() }!!.version()
 
     private fun updateAll(newVersion: Version) {
         val projects = ordered

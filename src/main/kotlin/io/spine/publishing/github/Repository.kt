@@ -28,19 +28,17 @@ import java.net.URL
 /**
  * A local git repository connected with a Gradle project to update and publish.
  */
-interface LocalGitRepository {
-
-    val gradleProject: GradleProject
-    val remote: RemoteGitRepository
+class LocalGitRepository(private val gradleProject: GradleProject, val remote: RemoteGitRepository ) {
 
     /**
      * Pushes the changes to the remote repository under a new branch with the specified name.
      */
-    fun pushNewBranch(name: String)
+    fun pushNewBranch(name: BranchName) {
+        // TODO:2020-07-21:serhii.lekariev: implement
+    }
 }
 
 data class RemoteGitRepository(val address: URL, val name: String) {
-
 }
 
-data class BranchName(val value: String)
+data class BranchName(val name: String = "bump-version")
