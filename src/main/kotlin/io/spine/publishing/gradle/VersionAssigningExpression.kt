@@ -55,8 +55,7 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
                 return null
             }
 
-            val rawName = groups[1]
-            val name = LibraryName(rawName)
+            val name = groups[1]
 
             val rawVersion = groups[2]
             val version = rawVersion.let { Version.parseFrom(it) }
@@ -66,6 +65,6 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
     }
 
     override fun toString(): String {
-        return """val ${libraryName.value} = "$version""""
+        return """val $libraryName = "$version""""
     }
 }

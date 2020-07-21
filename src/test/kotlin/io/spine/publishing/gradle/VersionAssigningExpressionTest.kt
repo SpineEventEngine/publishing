@@ -24,9 +24,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import io.spine.publishing.gradle.LibraryName
-import io.spine.publishing.gradle.Version
-import io.spine.publishing.gradle.VersionAssigningExpression
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -42,7 +39,7 @@ class VersionAssigningExpressionTest {
 
         val expression = VersionAssigningExpression.parse(validExpr)
         assertThat(expression).isNotNull()
-        assertThat(expression?.libraryName).isEqualTo(LibraryName("library"))
+        assertThat(expression?.libraryName).isEqualTo("library")
         assertThat(expression?.version).isEqualTo(Version(1, 0, 0))
     }
 
@@ -76,7 +73,7 @@ class VersionAssigningExpressionTest {
 
     @Test
     fun `return a parsable expression with toString()`() {
-        val expression = VersionAssigningExpression(LibraryName("base"), Version(3, 0, 23))
+        val expression = VersionAssigningExpression("base", Version(3, 0, 23))
         val toStringed = expression.toString()
         assertThat(VersionAssigningExpression.parse(toStringed)).isEqualTo(expression)
     }

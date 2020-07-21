@@ -68,4 +68,4 @@ data class Library(val name: LibraryName,
     }
 }
 
-data class LibraryName(val value: String)
+typealias LibraryName = String

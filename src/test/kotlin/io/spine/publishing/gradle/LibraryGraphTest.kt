@@ -81,9 +81,9 @@ class LibraryGraphTest {
         val movedTime = TestEnv.copyProjectDir("time", timeDir)
         val movedCoreJava = TestEnv.copyProjectDir("core-java", coreJavaDir)
 
-        val base = Library(LibraryName("base"), listOf(), movedBase)
-        val time = Library(LibraryName("time"), listOf(base), movedTime)
-        val coreJava = Library(LibraryName("coreJava"), listOf(time, base), movedCoreJava)
+        val base = Library("base", listOf(), movedBase)
+        val time = Library("time", listOf(base), movedTime)
+        val coreJava = Library("coreJava", listOf(time, base), movedCoreJava)
         val graph = LibraryGraph(setOf(base, time, coreJava))
 
         graph.updateToTheMostRecent()
@@ -93,10 +93,10 @@ class LibraryGraphTest {
         assertEquals(coreJava.version(), expectedVersion)
         assertEquals(base.version(), expectedVersion)
 
-        assertEquals(base.version(LibraryName("time")), expectedVersion)
+        assertEquals(base.version("time"), expectedVersion)
 
-        assertEquals(coreJava.version(LibraryName("time")), expectedVersion)
-        assertEquals(coreJava.version(LibraryName("base")), expectedVersion)
+        assertEquals(coreJava.version("time"), expectedVersion)
+        assertEquals(coreJava.version("base"), expectedVersion)
     }
 
     private fun assertEquals(actualVersion: Version, expectedVersion: Version) {
@@ -107,6 +107,6 @@ class LibraryGraphTest {
     private fun mockLibrary(name: String, vararg dependencies: Library): Library {
         val path = Paths.get("") // A mock path doesn't matter as we don't access the files.
         val deps: List<Library> = dependencies.toList()
-        return Library(LibraryName(name), deps, path)
+        return Library(name,deps, path)
     }
 }

@@ -24,20 +24,18 @@ package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.gradle.given.TestEnv.copyProjectDir
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import java.nio.file.Paths
 
 @DisplayName("`Library` should")
 class LibraryTest {
 
     companion object {
-        private val DEPENDENCY = LibraryName("dependency")
-        private val DEPENDANT = LibraryName("dependant")
+        private const val DEPENDENCY = "dependency"
+        private const val DEPENDANT = "dependant"
 
         private fun dependencyLibrary(directory: Path): Library =
                 Library(DEPENDENCY, arrayListOf(), directory)
@@ -50,7 +48,7 @@ class LibraryTest {
 
     @Test
     fun `update own version`(@TempDir tempDir: Path) {
-        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, tempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY, tempDir)
         val project = dependencyLibrary(dependencyRootDir)
         val newVersion = Version(99, 99, 0)
         project.update(newVersion)
@@ -61,8 +59,8 @@ class LibraryTest {
     @Test
     fun `update its dependencies in its own version file`(@TempDir dependencyTempDir: Path,
                                                           @TempDir dependantTempDir: Path) {
-        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, dependencyTempDir)
-        val dependantRootDir: Path = copyProjectDir(DEPENDANT.value, dependantTempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY, dependencyTempDir)
+        val dependantRootDir: Path = copyProjectDir(DEPENDANT, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependencyProject = dependencyLibrary(dependencyRootDir)
@@ -78,8 +76,8 @@ class LibraryTest {
     fun `not update its dependencies version files`(@TempDir dependencyTempDir: Path,
                                                     @TempDir dependantTempDir: Path) {
 
-        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, dependencyTempDir)
-        val dependantRootDir: Path = copyProjectDir(DEPENDANT.value, dependantTempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY, dependencyTempDir)
+        val dependantRootDir: Path = copyProjectDir(DEPENDANT, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependencyProject = dependencyLibrary(dependencyRootDir)

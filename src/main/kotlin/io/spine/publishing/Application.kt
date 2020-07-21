@@ -24,7 +24,6 @@ package io.spine.publishing
 
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.LibraryGraph
-import io.spine.publishing.gradle.LibraryName
 import java.nio.file.Paths
 
 /**
@@ -36,17 +35,15 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val libraries = LibraryGraph(setOf(
-                SpineLibrary.BASE.library,
-                SpineLibrary.TIME.library,
-                SpineLibrary.CORE_JAVA.library))
+        val libraries = LibraryGraph(setOf(base, time, coreJava))
         libraries.updateToTheMostRecent()
-
     }
-}
 
-enum class SpineLibrary(val library: Library) {
-    BASE(Library(LibraryName("base"), listOf(), Paths.get("./base"))),
-    TIME(Library(LibraryName("time"), listOf(BASE.library), Paths.get("./time"))),
-    CORE_JAVA(Library(LibraryName("coreJava"), listOf(BASE.library, TIME.library), Paths.get("core-java")))
+    private val pathToBase = Paths.get("./base")
+    private val pathToCoreJava = Paths.get("./core-java")
+    private val pathToTime = Paths.get("./time")
+
+    private val base = Library("base", listOf(), pathToBase)
+    private val time = Library("time", listOf(base), pathToTime)
+    private val coreJava = Library("coreJava", listOf(base, time), pathToCoreJava)
 }
