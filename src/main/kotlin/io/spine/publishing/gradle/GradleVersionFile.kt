@@ -59,12 +59,11 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     /**
      * Returns the libraries that the project declaring this versions file depends on.
      */
-    fun declaredDependencies(): Set<LibraryName> {
+    fun declaredDependencies(): Map<LibraryName, Version> {
         return file.readLines()
-                .map { VersionAssigningExpression.parse(it) }
-                .mapNotNull { it?.libraryName }
-                .filter { it != projectName }
-                .toSet()
+                .mapNotNull { VersionAssigningExpression.parse(it) }
+                .filter { it.libraryName != projectName }
+                .associateBy ({ it.libraryName}, { it.version})
     }
 
     /**

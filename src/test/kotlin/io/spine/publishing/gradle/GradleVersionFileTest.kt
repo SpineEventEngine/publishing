@@ -97,7 +97,7 @@ class GradleVersionFileTest {
     fun `identify all the libraries mentioned in the versions file`(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
-        assertThat(versionFile.declaredDependencies())
+        assertThat(versionFile.declaredDependencies().map { it.key })
                 .containsOnly(LibraryName("coreJava"), LibraryName("base"))
     }
 

@@ -39,13 +39,13 @@ data class Library(val name: LibraryName,
      *
      * If this library already has the specified version, nothing is done.
      *
-     * All of the dependency declarations are also updated. The library dependencies themselves
-     * are not updated.
+     * All of the dependency declarations are also updated. The version files of the libraries that this library depends
+     * on are left as is.
      */
     fun update(newVersion: Version) {
-        val libraries = dependencies.toMutableList()
-        libraries.add(this)
-        updateVersions(libraries.associateBy({ it.name }, { it.version() }), newVersion)
+        val libraries = versionFile.declaredDependencies().toMutableMap()
+        libraries[this.name] = version()
+        updateVersions(libraries, newVersion)
     }
 
     /**
