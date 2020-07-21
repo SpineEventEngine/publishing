@@ -32,7 +32,7 @@ import java.nio.file.Path
  */
 data class Library(val name: LibraryName,
                    val dependencies: List<Library>,
-                   private val rootDir: Path) {
+                   val rootDir: Path) {
 
     /**
      * Updates the version of this library to the specified one.
@@ -62,6 +62,6 @@ data class Library(val name: LibraryName,
     }
 
     private val versionFile: GradleVersionFile by lazy {
-        GradleVersionFile(name, rootDir.toFile())
+        GradleVersionFile(name, rootDir)
     }
 }

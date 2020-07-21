@@ -25,12 +25,13 @@ package io.spine.publishing
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
+import java.nio.file.Path
 
 /**
  * A file that contains information about the version of the library and the versions of its
  * dependencies.
  */
-class GradleVersionFile(private val projectName: LibraryName, private val rootDir: File) {
+class GradleVersionFile(private val projectName: LibraryName, private val rootDir: Path) {
 
     companion object {
         private fun findFile(dir: File): File? {
@@ -100,6 +101,6 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     }
 
     private val file: File by lazy {
-        checkNotNull(findFile(rootDir))
+        checkNotNull(findFile(rootDir.toFile()))
     }
 }

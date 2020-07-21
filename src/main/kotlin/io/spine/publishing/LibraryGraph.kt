@@ -4,7 +4,7 @@ package io.spine.publishing
  * A collection of libraries that depend on each other. Allows traversal in a dependency-safe
  * manner.
  */
-class LibraryGraph(val libraries: Set<Library>) {
+class LibraryGraph(private val libraries: Set<Library>) {
 
     /**
      * Returns the libraries ordered in a way that allows a dependency-safe build.

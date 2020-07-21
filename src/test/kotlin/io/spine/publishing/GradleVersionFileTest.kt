@@ -86,7 +86,7 @@ class GradleVersionFileTest {
     fun `override a library version`(@TempDir tempDir: Path) {
         val projectDir = moveResourceTo(tempDir)
         val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
+        val versionFile = GradleVersionFile(projectName, projectDir)
 
         val newVersion = Version(1, 3, 3)
         versionFile.overrideVersion(projectName, newVersion)
@@ -104,7 +104,7 @@ class GradleVersionFileTest {
     private fun gradleVersionFile(dir: Path): GradleVersionFile {
         val projectDir = moveResourceTo(dir)
         val projectName = LibraryName("library")
-        val versionFile = GradleVersionFile(projectName, projectDir.toFile())
+        val versionFile = GradleVersionFile(projectName, projectDir)
         return versionFile
     }
 
