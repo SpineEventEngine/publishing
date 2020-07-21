@@ -24,26 +24,30 @@ package io.spine.publishing.gradle
 /**
  * A Kotlin expression that defines a version of a library.
  *
- * Expressions like this are defined in `version.gradle.kts` files, and must look as follows:
+ * Expressions like this are defined in `version.gradle.kts` files, and must
+ * look as follows:
  *
  * ```kotlin
  * val base = "1.6.0"
  * val time = "1.6.0"
  * ```
  *
- * Note that the version must adhere to the Spine versioning policy, more in [Version] documentation.
+ * Note that the version must adhere to the Spine versioning policy, more in
+ * [Version] documentation.
  */
 data class VersionAssigningExpression(val libraryName: LibraryName, val version: Version) {
 
     companion object {
 
         // TODO: 2020-07-20:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/4
-        private val regex: Regex = Regex("""val (.+) = "(\d+\.\d+\.\d+)"""")
+        private val regex: Regex =
+                Regex("""val (.+) = "(\d+\.\d+\.\d+)"""")
 
         /**
          * Tries to parse the specified expression string.
          *
-         * If the expression matches the expected template, returns the name and the version of the library.
+         * If the expression matches the expected template, returns the name
+         * and the version of the library.
          *
          * Otherwise, returns `null`.
          */

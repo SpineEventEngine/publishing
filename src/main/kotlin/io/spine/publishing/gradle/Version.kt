@@ -25,7 +25,9 @@ package io.spine.publishing.gradle
  *
  * @see <a href=https://spine.io/versioning/>Spine versioning policy</a>
  */
-data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Version> {
+data class Version(val major: Int,
+                   val minor: Int,
+                   val patch: Int) : Comparable<Version> {
 
     companion object {
         private val COMPARATOR: Comparator<Version> = Comparator
@@ -54,7 +56,8 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
         }
     }
 
-    override fun compareTo(other: Version): Int = COMPARATOR.compare(this, other)
+    override fun compareTo(other: Version): Int = COMPARATOR.compare(this,
+                                                                     other)
 
     override fun toString(): String {
         return """${major}.${minor}.${patch}"""

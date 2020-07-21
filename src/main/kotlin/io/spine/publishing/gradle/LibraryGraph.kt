@@ -21,14 +21,14 @@
 package io.spine.publishing.gradle
 
 /**
- * A collection of libraries that depend on each other. Allows traversal in a dependency-safe
- * manner.
+ * A collection of libraries that depend on each other. Allows traversal in a
+ * dependency-safe manner.
  */
 class LibraryGraph(private val libraries: Set<Library>) {
 
     /**
-     * Finds the most recent version among the libraries, then updates all of the libraries in
-     * this graph to the most recent one.
+     * Finds the most recent version among the libraries, then updates all of
+     * the libraries in this graph to the most recent one.
      *
      * @see Library.update
      */
@@ -47,7 +47,8 @@ class LibraryGraph(private val libraries: Set<Library>) {
     }
 
     /**
-     * Returns the libraries ordered in a way that allows a dependency-safe build.
+     * Returns the libraries ordered in a way that allows a dependency-safe
+     * build.
      */
     val ordered: List<Library> by lazy {
         val visited = HashSet<Library>()

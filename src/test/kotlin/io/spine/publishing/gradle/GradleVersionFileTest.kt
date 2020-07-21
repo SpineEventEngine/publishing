@@ -45,13 +45,15 @@ class GradleVersionFileTest {
     }
 
     @Test
-    fun `read the library version`(@TempDir tempDir: Path) {
+    @DisplayName("read the library version")
+    fun readVersions(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
         assertAllMatch(INITIAL_VALUES, versionFile)
     }
 
     @Test
-    fun `not do anything if the library to override does not exist in the file`(@TempDir dir: Path) {
+    @DisplayName("not to do anything if the library is missing")
+    fun doNothing(@TempDir dir: Path) {
         val versionFile = gradleVersionFile(dir)
         versionFile.overrideVersion("nonExistingLibrary",
                 Version(1, 5, 6))
@@ -59,14 +61,16 @@ class GradleVersionFileTest {
     }
 
     @Test
-    fun `return null when asking for a non-existent library version`(@TempDir tempDir: Path) {
+    @DisplayName("return null when asking for a non-existent library version")
+    fun returnNull(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
         assertThat(versionFile.version("nonExistingLibrary"))
                 .isNull()
     }
 
     @Test
-    fun `retain the versions that were not overridden`(@TempDir tempDir: Path) {
+    @DisplayName("retain the versions that were not overridden")
+    fun retainIfNotOverridden(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
         val base = "base"
@@ -83,7 +87,8 @@ class GradleVersionFileTest {
     }
 
     @Test
-    fun `override a library version`(@TempDir tempDir: Path) {
+    @DisplayName("override a library version")
+    fun overrideLibraryVersion(@TempDir tempDir: Path) {
         val projectDir = moveResourceTo(tempDir)
         val projectName = "library"
         val versionFile = GradleVersionFile(projectName, projectDir)
@@ -94,7 +99,8 @@ class GradleVersionFileTest {
     }
 
     @Test
-    fun `identify all the libraries mentioned in the versions file`(@TempDir tempDir: Path) {
+    @DisplayName("identify all the libraries mentioned in the versions file")
+    fun identifyLibraries(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
         assertThat(versionFile.declaredDependencies().map { it.key })

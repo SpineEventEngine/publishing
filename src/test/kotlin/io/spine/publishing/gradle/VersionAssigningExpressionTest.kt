@@ -34,7 +34,8 @@ import org.junit.jupiter.params.provider.CsvSource
 class VersionAssigningExpressionTest {
 
     @Test
-    fun `parse a valid expression`() {
+    @DisplayName("parse a valid expression")
+    fun parse() {
         val validExpr = """val library = "1.0.0""""
 
         val expression = VersionAssigningExpression.parse(validExpr)
@@ -44,7 +45,8 @@ class VersionAssigningExpressionTest {
     }
 
     @Test
-    fun `not parse a non-constant version`() {
+    @DisplayName("not parse a non-constant version")
+    fun notParse() {
         val invalidExpr = """var library = "1.5.2""""
 
         val expression = VersionAssigningExpression.parse(invalidExpr)
@@ -52,8 +54,9 @@ class VersionAssigningExpressionTest {
     }
 
     @Test
+    @DisplayName("not parse an expression with an explicit type")
     @Disabled // https://github.com/SpineEventEngine/publishing/issues/4
-    fun `not parse an expression with an explicit type`() {
+    fun notParseExplicitType() {
         val expr = """val base: String = "1.3.15""""
         val actual = VersionAssigningExpression.parse(expr)
         assertThat(actual).isNull()
@@ -67,14 +70,18 @@ class VersionAssigningExpressionTest {
             """val library = "1.0.0-al"""",
             """val library = "1.2.3-alpha.1.2+build.11.e0f985a""""
     )
-    fun `not parse semver-compatible versions`(rawExpr: String) {
+    @DisplayName("not parse semver-compatible versions")
+    fun notParseSemver(rawExpr: String) {
         assertThat(VersionAssigningExpression.parse(rawExpr)).isNull()
     }
 
     @Test
-    fun `return a parsable expression with toString()`() {
-        val expression = VersionAssigningExpression("base", Version(3, 0, 23))
-        val toStringed = expression.toString()
-        assertThat(VersionAssigningExpression.parse(toStringed)).isEqualTo(expression)
+    @DisplayName("return a parsable expression with toString()")
+    fun toStringTest() {
+        val version = Version(3, 0, 23)
+        val expression = VersionAssigningExpression("base", version)
+        val asString = expression.toString()
+        assertThat(VersionAssigningExpression.parse(asString))
+                .isEqualTo(expression)
     }
 }
