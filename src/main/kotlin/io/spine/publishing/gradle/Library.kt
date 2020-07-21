@@ -67,3 +67,5 @@ data class Library(val name: LibraryName,
         GradleVersionFile(name, rootDir)
     }
 }
+
+data class LibraryName(val value: String)
