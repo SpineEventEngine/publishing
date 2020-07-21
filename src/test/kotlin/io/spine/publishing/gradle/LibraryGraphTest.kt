@@ -4,8 +4,11 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
+import io.spine.publishing.gradle.given.TestEnv
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @DisplayName("`LibraryGraph` should")
@@ -17,16 +20,14 @@ class LibraryGraphTest {
         val time = mockLibrary("time", base)
         val coreJava = mockLibrary("coreJava", base, time)
 
-        val result = LibraryGraph(setOf(coreJava, base, time)).ordered()
+        val result = LibraryGraph(setOf(coreJava, base, time)).ordered
         assertThat(result).containsExactly(base, time, coreJava)
     }
 
     /**
-     *           +---------------+
-     *           |               |
-     * coreJava -+----- time ----+--- base
-     *                   |
-     *      pinkFloyd ---+--- clockShop
+     * `time` depends on `base`, `coreJava` depends on both `time` and `base`.
+     *
+     * `pinkFloyd` and `clockShop` depend on `time`.
      *
      * In a setup link this, the order should be:
      *
@@ -43,11 +44,41 @@ class LibraryGraphTest {
         val clockShop = mockLibrary("clockShop", time)
         val pinkFloyd = mockLibrary("pinkFloyd", time)
 
-        val order = LibraryGraph(setOf(clockShop, pinkFloyd, base, time, coreJava)).ordered()
+        val order = LibraryGraph(setOf(clockShop, pinkFloyd, base, time, coreJava)).ordered
         assertThat(order[0]).isEqualTo(base)
         assertThat(order[1]).isEqualTo(time)
 
         assertThat(order.subList(2, order.size)).containsOnly(clockShop, pinkFloyd, coreJava)
+    }
+
+    @Test
+    fun `update the libraries to the most recent version`(@TempDir baseDir: Path,
+                                                          @TempDir timeDir: Path,
+                                                          @TempDir coreJavaDir: Path) {
+        val movedBase = TestEnv.copyProjectDir("base", baseDir)
+        val movedTime = TestEnv.copyProjectDir("time", timeDir)
+        val movedCoreJava = TestEnv.copyProjectDir("core-java", coreJavaDir)
+
+        val base = Library(LibraryName("base"), listOf(), movedBase)
+        val time = Library(LibraryName("time"), listOf(base), movedTime)
+        val coreJava = Library(LibraryName("coreJava"), listOf(time, base), movedCoreJava)
+        val graph = LibraryGraph(setOf(base, time, coreJava))
+
+        graph.updateToTheMostRecent()
+
+        val expectedVersion = Version(1, 9, 9)
+        assertEquals(base.version(), expectedVersion)
+        assertEquals(coreJava.version(), expectedVersion)
+        assertEquals(base.version(), expectedVersion)
+
+        assertEquals(base.version(LibraryName("time")), expectedVersion)
+
+        assertEquals(coreJava.version(LibraryName("time")), expectedVersion)
+        assertEquals(coreJava.version(LibraryName("base")), expectedVersion)
+    }
+
+    private fun assertEquals(actualVersion: Version, expectedVersion: Version) {
+        assertThat(actualVersion).isEqualTo(expectedVersion)
     }
 
 

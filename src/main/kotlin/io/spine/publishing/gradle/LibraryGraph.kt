@@ -7,27 +7,25 @@ package io.spine.publishing.gradle
 class LibraryGraph(private val libraries: Set<Library>) {
 
     /**
-     * Updates all of the libraries in this graph to the specified version.
-     *
-     * The libraries are published to `maven-local` as they are updated.
-     *
-     * Once all of the libraries are updated, they are published to the remote repo as defined
-     * by their `publish` task.
+     * Finds the most recent version among the libraries, then updates all of the libraries in
+     * this graph to the most recent one.
      *
      * @see Library.update
-     * @see GradleProject.build
-     * @see GradleProject.publish
      */
-    fun updateAll(newVersion: Version) {
-        val projects = ordered()
-        forAll(projects, { it.build() }, { "Could not build project `${it.name}` locally." })
-        forAll(projects, { it.publish() }, { "Could publish project `${it.name}` to remote." })
+    fun updateToTheMostRecent() {
+        val mostRecent = ordered.maxBy { it.version() }!!.version()
+        updateAll(mostRecent)
+    }
+
+    private fun updateAll(newVersion: Version) {
+        val projects = ordered
+        projects.forEach { it.update(newVersion) }
     }
 
     /**
      * Returns the libraries ordered in a way that allows a dependency-safe build.
      */
-    fun ordered(): List<Library> {
+    val ordered: List<Library> by lazy {
         val visited = HashSet<Library>()
         val result = ArrayList<Library>()
         val toTraverse = libraries.toMutableList()
@@ -51,17 +49,6 @@ class LibraryGraph(private val libraries: Set<Library>) {
             loop(toTraverse[0])
         }
 
-        return result
-    }
-
-    private fun forAll(projects: List<Library>,
-                       action: (GradleProject) -> Boolean,
-                       errorMessage: (Library) -> String) {
-        for (library in projects) {
-            val successful = action(GradleProject(library.rootDir))
-            if (!successful) {
-                throw IllegalStateException(errorMessage(library))
-            }
-        }
+        result
     }
 }

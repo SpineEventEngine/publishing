@@ -2,6 +2,8 @@ package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import io.spine.publishing.gradle.given.TestEnv
+import io.spine.publishing.gradle.given.TestEnv.copyProjectDir
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -26,7 +28,7 @@ class LibraryTest {
 
     @Test
     fun `update own version`(@TempDir tempDir: Path) {
-        val dependencyRootDir: Path = copyProject(DEPENDENCY.value, tempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, tempDir)
         val project = dependencyLibrary(dependencyRootDir)
         val newVersion = Version(99, 99, 0)
         project.update(newVersion)
@@ -37,8 +39,8 @@ class LibraryTest {
     @Test
     fun `update its dependencies in its own version file`(@TempDir dependencyTempDir: Path,
                                                           @TempDir dependantTempDir: Path) {
-        val dependencyRootDir: Path = copyProject(DEPENDENCY.value, dependencyTempDir)
-        val dependantRootDir: Path = copyProject(DEPENDANT.value, dependantTempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, dependencyTempDir)
+        val dependantRootDir: Path = copyProjectDir(DEPENDANT.value, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependencyProject = dependencyLibrary(dependencyRootDir)
@@ -54,8 +56,8 @@ class LibraryTest {
     fun `not update its dependencies version files`(@TempDir dependencyTempDir: Path,
                                                     @TempDir dependantTempDir: Path) {
 
-        val dependencyRootDir: Path = copyProject(DEPENDENCY.value, dependencyTempDir)
-        val dependantRootDir: Path = copyProject(DEPENDANT.value, dependantTempDir)
+        val dependencyRootDir: Path = copyProjectDir(DEPENDENCY.value, dependencyTempDir)
+        val dependantRootDir: Path = copyProjectDir(DEPENDANT.value, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependencyProject = dependencyLibrary(dependencyRootDir)
@@ -68,15 +70,5 @@ class LibraryTest {
 
         val oldDependencyVersion = dependencyProject.version()
         assertThat(dependencyProject.version()).isEqualTo(oldDependencyVersion)
-    }
-
-    private fun copyProject(projectName: String, tempDir: Path): Path {
-        val resourceDirectory = javaClass.classLoader.getResource(projectName)
-        val resourceDirPath = Paths.get(resourceDirectory!!.toURI())
-
-        val result = tempDir.resolve(projectName)
-
-        resourceDirPath.toFile().copyRecursively(result.toFile(), true)
-        return result
     }
 }
