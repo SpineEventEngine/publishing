@@ -30,9 +30,9 @@ import java.nio.file.Path
  * The project uses Gradle and declares its dependencies using a `version.gradle.kts` with a
  * Spine-specific formatting.
  */
-class Library(private val name: LibraryName,
-              private val dependencies: List<Library>,
-              private val rootDir: Path) {
+data class Library(val name: LibraryName,
+                   val dependencies: List<Library>,
+                   private val rootDir: Path) {
 
     /**
      * Updates the version of this library to the specified one.

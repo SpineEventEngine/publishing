@@ -30,7 +30,7 @@ import java.io.PrintWriter
  * A file that contains information about the version of the library and the versions of its
  * dependencies.
  */
-class GradleVersionFile(private val projectName: LibraryName, val rootDir: File) {
+class GradleVersionFile(private val projectName: LibraryName, private val rootDir: File) {
 
     companion object {
         private fun findFile(dir: File): File? {
@@ -56,15 +56,13 @@ class GradleVersionFile(private val projectName: LibraryName, val rootDir: File)
     }
 
     /**
-     * Returns the libraries mentioned in this version file.
-     *
-     * This includes the library that uses this file for resolving versions and the Spine libraries
-     * that the host-library depends on.
+     * Returns the libraries that the project declaring this versions file depends on.
      */
-    fun declaredLibraries(): Set<LibraryName> {
+    fun declaredDependencies(): Set<LibraryName> {
         return file.readLines()
                 .map { VersionAssigningExpression.parse(it) }
                 .mapNotNull { it?.libraryName }
+                .filter { it != projectName }
                 .toSet()
     }
 

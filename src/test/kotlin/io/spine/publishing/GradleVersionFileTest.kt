@@ -21,7 +21,7 @@
 package io.spine.publishing
 
 import assertk.assertThat
-import assertk.assertions.containsAll
+import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import org.junit.jupiter.api.DisplayName
@@ -97,10 +97,8 @@ class GradleVersionFileTest {
     fun `identify all the libraries mentioned in the versions file`(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
-        assertThat(versionFile.declaredLibraries())
-                .containsAll(LibraryName("library"),
-                             LibraryName("coreJava"),
-                             LibraryName("base"))
+        assertThat(versionFile.declaredDependencies())
+                .containsOnly(LibraryName("coreJava"), LibraryName("base"))
     }
 
     private fun gradleVersionFile(dir: Path): GradleVersionFile {

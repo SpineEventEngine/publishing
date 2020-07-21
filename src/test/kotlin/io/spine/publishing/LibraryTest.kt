@@ -15,9 +15,9 @@ class LibraryTest {
         private val DEPENDENCY = LibraryName("dependency")
         private val DEPENDANT = LibraryName("dependant")
 
-        private fun dependencyLibrary(directory: Path): Library {
-            return Library(DEPENDENCY, arrayListOf(), directory)
-        }
+        private fun dependencyLibrary(directory: Path): Library  =
+            Library(DEPENDENCY, arrayListOf(), directory)
+
 
         private fun dependantLibrary(directory: Path, dependency: Library): Library {
             return Library(DEPENDANT, arrayListOf(dependency), directory)
