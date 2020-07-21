@@ -19,7 +19,7 @@
  *
  */
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 /**
  * A Kotlin expression that defines a version of a library.

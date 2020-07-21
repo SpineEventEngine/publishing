@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.containsOnly

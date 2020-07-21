@@ -20,7 +20,7 @@
  *
  */
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 import java.io.File
 import java.io.FileWriter

@@ -20,7 +20,7 @@
  *
  */
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 import java.nio.file.Path
 
@@ -36,6 +36,8 @@ data class Library(val name: LibraryName,
 
     /**
      * Updates the version of this library to the specified one.
+     *
+     * If this library already has the specified version, nothing is done.
      *
      * All of the dependency declarations are also updated. The library dependencies themselves
      * are not updated.

@@ -20,14 +20,14 @@
 
 @file:Suppress("ClassName" /* test classes names favor readability over being callable by people */)
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import io.spine.publishing.`Version should when`.ComparisonResult.EQUAL
-import io.spine.publishing.`Version should when`.ComparisonResult.LARGER
+import io.spine.publishing.gradle.`Version should when`.ComparisonResult.EQUAL
+import io.spine.publishing.gradle.`Version should when`.ComparisonResult.LARGER
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

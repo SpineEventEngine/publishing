@@ -20,7 +20,7 @@
  *
  */
 
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 data class LibraryName(val value: String)
 

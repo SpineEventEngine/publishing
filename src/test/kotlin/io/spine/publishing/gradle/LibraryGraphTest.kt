@@ -1,4 +1,4 @@
-package io.spine.publishing
+package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.containsExactly
