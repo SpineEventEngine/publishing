@@ -69,4 +69,3 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
         return """val ${libraryName.value} = "$version""""
     }
 }
-

@@ -19,7 +19,7 @@
  */
 
 /*
- * Version specification for a dummy project. This project depends on a `dependency` project.
+ * Version specification that emulates Spine time library.
  */
 
 val time = "1.9.9"

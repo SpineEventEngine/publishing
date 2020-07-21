@@ -20,33 +20,27 @@
  *
  */
 
-package io.spine.publishing
+package io.spine.publishing.github
 
-import io.spine.publishing.gradle.Library
-import io.spine.publishing.gradle.LibraryGraph
-import io.spine.publishing.gradle.LibraryName
-import java.nio.file.Paths
+import io.spine.publishing.gradle.GradleProject
+import java.net.URL
 
 /**
- * The publishing application.
- *
- * Make sure that the local Spine libraries to update have the most recent master version.
+ * A local git repository connected with a Gradle project to update and publish.
  */
-object Application {
+interface LocalGitRepository {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val libraries = LibraryGraph(setOf(
-                SpineLibrary.BASE.library,
-                SpineLibrary.TIME.library,
-                SpineLibrary.CORE_JAVA.library))
-        libraries.updateToTheMostRecent()
+    val gradleProject: GradleProject
+    val remote: RemoteGitRepository
 
-    }
+    /**
+     * Pushes the changes to the remote repository under a new branch with the specified name.
+     */
+    fun pushNewBranch(name: String)
 }
 
-enum class SpineLibrary(val library: Library) {
-    BASE(Library(LibraryName("base"), listOf(), Paths.get("./base"))),
-    TIME(Library(LibraryName("time"), listOf(BASE.library), Paths.get("./time"))),
-    CORE_JAVA(Library(LibraryName("coreJava"), listOf(BASE.library, TIME.library), Paths.get("core-java")))
+data class RemoteGitRepository(val address: URL, val name: String) {
+
 }
+
+data class BranchName(val value: String)
