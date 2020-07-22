@@ -19,7 +19,7 @@
  */
 
 /*
- * Version specification for a dummy project. This project depends on a `dependency` project.
+ * Version specification that emulates Spine core-java library.
  */
 
 val coreJava = "1.1.0"

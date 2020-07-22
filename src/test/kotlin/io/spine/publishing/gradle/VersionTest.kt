@@ -18,28 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@file:Suppress("ClassName" /* test classes names favor readability over being callable by people */)
-
 package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import io.spine.publishing.gradle.`Version should when`.ComparisonResult.EQUAL
-import io.spine.publishing.gradle.`Version should when`.ComparisonResult.LARGER
+import io.spine.publishing.gradle.VersionTest.ComparisonResult.EQUAL
+import io.spine.publishing.gradle.VersionTest.ComparisonResult.LARGER
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class `Version should when` {
+@DisplayName("`Version` shuld when")
+class VersionTest {
 
     @Nested
-    inner class parsing {
+    @DisplayName("parsing")
+    inner class Parsing {
 
         @Test
-        fun `parse a valid version`() {
+        @DisplayName("parse a valid version")
+        fun parseValid() {
             val result = Version.parseFrom("1.2.3")
             assertThat(result).isNotNull()
             assertThat(result).isEqualTo(Version(1, 2, 3))
@@ -48,54 +50,60 @@ class `Version should when` {
         /**
          * Spine versions don't obey semver entirely.
          *
-         * They instead follow a simpler `MAJOR.MINOR.PATCH` format, where all versions are numbers, and no additional
-         * labels such as `rc` or `SNAPSHOT` are allowed.
+         * They instead follow a simpler `MAJOR.MINOR.PATCH` format, where all
+         * versions are numbers, and no additional labels such as `rc` or
+         * `SNAPSHOT` are allowed.
          *
          * See more in [Version] documentation.
          */
         @ParameterizedTest
+        @DisplayName("not parse a semver-compatible version")
         @CsvSource("1.0.0-alpha", "1.0.0-alpha+1.2", "1.8.2-beta.1.13")
-        fun `not parse a semver-compatible version`(version: String) {
+        fun notParseSemver(version: String) {
             assertThat(Version.parseFrom(version)).isNull()
         }
     }
 
     @Nested
-    inner class comparing {
+    @DisplayName("comparing")
+    inner class Comparing {
 
         @Test
-        fun `use major version`() {
+        @DisplayName("use major version")
+        fun useMajor() {
             compare(Version(1, 0, 0),
                     Version(0, 10, 10),
                     LARGER)
         }
 
         @Test
-        fun `use minor version`() {
+        @DisplayName("use minor version")
+        fun useMinor() {
             compare(Version(1, 10, 5),
                     Version(1, 9, 15),
                     LARGER)
         }
 
         @Test
-        fun `use patch version`() {
+        @DisplayName("use patch version")
+        fun usePatch() {
             compare(Version(1, 10, 15),
                     Version(1, 10, 5),
                     LARGER)
         }
 
         @Test
-        fun `detect equal versions`() {
+        @DisplayName("detect equal versions")
+        fun detectEqual() {
             compare(Version(1, 1, 1),
                     Version(1, 1, 1),
                     EQUAL)
         }
 
-        private fun compare(v1: Version, v2: Version, result: ComparisonResult) {
+        private fun compare(v1: Version, v2: Version, res: ComparisonResult) {
             val actualResult = v1.compareTo(v2)
-            assertThat(actualResult).isEqualTo(result.number)
+            assertThat(actualResult).isEqualTo(res.number)
         }
-
     }
 
     private enum class ComparisonResult(val number: Int) {

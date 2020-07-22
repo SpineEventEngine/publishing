@@ -18,8 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Version specification that emulates Spine time library.
- */
+package io.spine.publishing.github
 
-val time = "1.9.9"
+import io.spine.publishing.gradle.GradleProject
+import java.net.URL
+
+/**
+ * A local git repository connected with a Gradle project to update and publish.
+ */
+class LocalGitRepository(private val gradleProject: GradleProject,
+                         val remote: RemoteGitRepository) {
+
+    /**
+     * Pushes the changes to the remote repository under a new branch with the
+     * specified name.
+     */
+    fun pushNewBranch(name: BranchName) {
+        // TODO:2020-07-21:serhii.lekariev: implement
+    }
+}
+
+data class RemoteGitRepository(val address: URL, val name: String)
+
+data class BranchName(val name: String = "bump-version")

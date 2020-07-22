@@ -38,54 +38,59 @@ class GradleVersionFileTest {
 
     companion object {
         val INITIAL_VALUES = mapOf(
-                LibraryName("library") to Version(1, 0, 0),
-                LibraryName("base") to Version(1, 5, 23),
-                LibraryName("coreJava") to Version(1, 5, 23)
+                "library" to Version(1, 0, 0),
+                "base" to Version(1, 5, 23),
+                "coreJava" to Version(1, 5, 23)
         )
     }
 
     @Test
-    fun `read the library version`(@TempDir tempDir: Path) {
+    @DisplayName("read the library version")
+    fun readVersions(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
         assertAllMatch(INITIAL_VALUES, versionFile)
     }
 
     @Test
-    fun `not do anything if the library to override does not exist in the file`(@TempDir dir: Path) {
+    @DisplayName("not to do anything if the library is missing")
+    fun doNothing(@TempDir dir: Path) {
         val versionFile = gradleVersionFile(dir)
-        versionFile.overrideVersion(LibraryName("nonExistingLibrary"),
+        versionFile.overrideVersion("nonExistingLibrary",
                 Version(1, 5, 6))
         assertAllMatch(INITIAL_VALUES, versionFile)
     }
 
     @Test
-    fun `return null when asking for a non-existent library version`(@TempDir tempDir: Path) {
+    @DisplayName("return null when asking for a non-existent library version")
+    fun returnNull(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
-        assertThat(versionFile.version(LibraryName("nonExistingLibrary")))
+        assertThat(versionFile.version("nonExistingLibrary"))
                 .isNull()
     }
 
     @Test
-    fun `retain the versions that were not overridden`(@TempDir tempDir: Path) {
+    @DisplayName("retain the versions that were not overridden")
+    fun retainIfNotOverridden(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
-        val base = LibraryName("base")
+        val base = "base"
         val newBaseVersion = Version(2, 4, 6)
         versionFile.overrideVersion(base, newBaseVersion)
 
         val expectedValues = mapOf(
                 base to newBaseVersion,
-                LibraryName("library") to Version(1, 0, 0),
-                LibraryName("coreJava") to Version(1, 5, 23)
+                "library" to Version(1, 0, 0),
+                "coreJava" to Version(1, 5, 23)
         )
 
         assertAllMatch(expectedValues, versionFile)
     }
 
     @Test
-    fun `override a library version`(@TempDir tempDir: Path) {
+    @DisplayName("override a library version")
+    fun overrideLibraryVersion(@TempDir tempDir: Path) {
         val projectDir = moveResourceTo(tempDir)
-        val projectName = LibraryName("library")
+        val projectName = "library"
         val versionFile = GradleVersionFile(projectName, projectDir)
 
         val newVersion = Version(1, 3, 3)
@@ -94,16 +99,17 @@ class GradleVersionFileTest {
     }
 
     @Test
-    fun `identify all the libraries mentioned in the versions file`(@TempDir tempDir: Path) {
+    @DisplayName("identify all the libraries mentioned in the versions file")
+    fun identifyLibraries(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
-        assertThat(versionFile.declaredDependencies())
-                .containsOnly(LibraryName("coreJava"), LibraryName("base"))
+        assertThat(versionFile.declaredDependencies().map { it.key })
+                .containsOnly("coreJava", "base")
     }
 
     private fun gradleVersionFile(dir: Path): GradleVersionFile {
         val projectDir = moveResourceTo(dir)
-        val projectName = LibraryName("library")
+        val projectName = "library"
         val versionFile = GradleVersionFile(projectName, projectDir)
         return versionFile
     }

@@ -18,48 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.gradle
+package io.spine.publishing.github
 
-import java.nio.file.Path
+import io.spine.publishing.gradle.LibraryName
+import io.spine.publishing.gradle.Version
 
 /**
- * A project that uses Gradle.
- *
- * Allows to execute arbitrary Gradle tasks
+ * A pull request that updates the version of the library and the version of
+ * Spine libraries that the project depends on.
  */
-class GradleProject(private val rootDir: Path) {
+class VersionBumpPullRequest(private val branchName: BranchName,
+                             private val libraryName: LibraryName,
+                             private val newVersion: Version) {
 
-    companion object {
-        private const val GRADLEW = "./gradlew"
+    override fun toString(): String {
+        return """Bump version to `$newVersion`"""
     }
 
     /**
-     * Runs the `build` task on this project.
-     *
-     * Returns `false` if the task has failed.
+     * Creates this pull request. The branch must already be present in the
+     * remote repository.
      */
-    fun build(): Boolean = runCommand("build")
+    fun create() {
+        // TODO:2020-07-21:serhii.lekariev: implement
+    }
 
     /**
-     * Runs the `build` task on this project.
-     *
-     * Returns `false` if the task has failed.
+     * Merges this pull request to the `master` remote branch.
      */
-    fun publish(): Boolean = runCommand("publish")
-
-    private fun runCommand(vararg commands: String): Boolean {
-        return try {
-            val actualCommands = commands.toMutableList()
-            actualCommands.add(0, GRADLEW)
-            val process = ProcessBuilder()
-                    .command(actualCommands)
-                    .directory(rootDir.toFile())
-                    .inheritIO()
-                    .start()
-
-            process.waitFor() == 0
-        } catch (e: Exception) {
-            false
-        }
+    fun merge() {
+        // TODO:2020-07-21:serhii.lekariev: implement
     }
 }
