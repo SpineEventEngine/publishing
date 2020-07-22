@@ -11,8 +11,8 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@DisplayName("`LibraryGraph` should")
-class LibraryGraphTest {
+@DisplayName("`DependencyBasedOrder` should")
+class DependencyBasedOrderTest {
 
     @Test
     fun `find a dependency-safe order`() {
@@ -20,7 +20,7 @@ class LibraryGraphTest {
         val time = mockLibrary("time", base)
         val coreJava = mockLibrary("coreJava", base, time)
 
-        val result = LibraryGraph(setOf(coreJava, base, time)).ordered
+        val result = DependencyBasedOrder(setOf(coreJava, base, time)).ordered
         assertThat(result).containsExactly(base, time, coreJava)
     }
 
@@ -44,7 +44,7 @@ class LibraryGraphTest {
         val clockShop = mockLibrary("clockShop", time)
         val pinkFloyd = mockLibrary("pinkFloyd", time)
 
-        val order = LibraryGraph(setOf(clockShop, pinkFloyd, base, time, coreJava)).ordered
+        val order = DependencyBasedOrder(setOf(clockShop, pinkFloyd, base, time, coreJava)).ordered
         assertThat(order[0]).isEqualTo(base)
         assertThat(order[1]).isEqualTo(time)
 
@@ -62,7 +62,7 @@ class LibraryGraphTest {
         val base = Library(LibraryName("base"), listOf(), movedBase)
         val time = Library(LibraryName("time"), listOf(base), movedTime)
         val coreJava = Library(LibraryName("coreJava"), listOf(time, base), movedCoreJava)
-        val graph = LibraryGraph(setOf(base, time, coreJava))
+        val graph = DependencyBasedOrder(setOf(base, time, coreJava))
 
         graph.updateToTheMostRecent()
 
