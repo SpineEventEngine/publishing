@@ -15,7 +15,8 @@ import java.nio.file.Paths
 class DependencyBasedOrderTest {
 
     @Test
-    fun `find a dependency-safe order`() {
+    @DisplayName("find a dependency-safe order")
+    fun safeOrder() {
         val base = mockLibrary("base")
         val time = mockLibrary("time", base)
         val coreJava = mockLibrary("coreJava", base, time)
@@ -37,7 +38,8 @@ class DependencyBasedOrderTest {
      * The order of the rest of the libraries is irrelevant.
      */
     @Test
-    fun `find one of safe orders in an ambiguous setup`() {
+    @DisplayName("find one of safe orders in an ambiguous setup")
+    fun safeAmbiguousOrder() {
         val base = mockLibrary("base")
         val time = mockLibrary("time", base)
         val coreJava = mockLibrary("coreJava", base, time)
@@ -52,9 +54,10 @@ class DependencyBasedOrderTest {
     }
 
     @Test
-    fun `update the libraries to the most recent version`(@TempDir baseDir: Path,
-                                                          @TempDir timeDir: Path,
-                                                          @TempDir coreJavaDir: Path) {
+    @DisplayName("update the libraries to the most recent version")
+    fun updateToMostRecent(@TempDir baseDir: Path,
+                           @TempDir timeDir: Path,
+                           @TempDir coreJavaDir: Path) {
         val movedBase = TestEnv.copyDirectory("base", baseDir)
         val movedTime = TestEnv.copyDirectory("time", timeDir)
         val movedCoreJava = TestEnv.copyDirectory("core-java", coreJavaDir)

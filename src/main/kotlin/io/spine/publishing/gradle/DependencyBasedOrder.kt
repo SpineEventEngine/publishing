@@ -1,10 +1,11 @@
 package io.spine.publishing.gradle
 
 /**
- * A collection of libraries that can be traversed in a dependency-safe order.
+ * A collection of libraries that can be traversed in the order based on dependencies between
+ * the libraries.
  *
- * Dependency-safe order is the order in which the library is reached only when all of its
- * dependencies have been previously reached.
+ * Such an order is the order in which the library is reached only when all of its dependencies
+ * have been previously reached.
  */
 class DependencyBasedOrder(private val libraries: Set<Library>) {
 
