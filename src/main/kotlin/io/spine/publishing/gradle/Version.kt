@@ -56,8 +56,7 @@ data class Version(val major: Int,
         }
     }
 
-    override fun compareTo(other: Version): Int = COMPARATOR.compare(this,
-                                                                     other)
+    override fun compareTo(other: Version): Int = COMPARATOR.compare(this, other)
 
     override fun toString(): String {
         return """${major}.${minor}.${patch}"""

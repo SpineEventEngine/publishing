@@ -30,8 +30,7 @@ class LocalGitRepository(private val gradleProject: GradleProject,
                          val remote: RemoteGitRepository) {
 
     /**
-     * Pushes the changes to the remote repository under a new branch with the
-     * specified name.
+     * Pushes the changes to the remote repository under a new branch with the specified name.
      */
     fun pushNewBranch(name: BranchName) {
         // TODO:2020-07-21:serhii.lekariev: implement

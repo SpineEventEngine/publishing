@@ -25,8 +25,8 @@ import java.nio.file.Path
 /**
  * A local project that contains the source files of a library.
  *
- * The project uses Gradle and declares its dependencies using a
- * `version.gradle.kts` with a Spine-specific formatting.
+ * The project uses Gradle and declares its dependencies using a `version.gradle.kts` with a
+ * Spine-specific formatting.
  */
 data class Library(val name: LibraryName,
                    val dependencies: List<Library>,
@@ -37,8 +37,8 @@ data class Library(val name: LibraryName,
      *
      * If this library already has the specified version, nothing is done.
      *
-     * All of the dependency declarations are also updated. The version files
-     * of the libraries that this library depends on are left as is.
+     * All of the dependency declarations are also updated. The version files of the libraries that
+     * this library depends on are left as is.
      */
     fun update(newVersion: Version) {
         val libraries = versionFile.declaredDependencies().toMutableMap()
@@ -47,8 +47,7 @@ data class Library(val name: LibraryName,
     }
 
     /**
-     * Returns the version of the specified library as declared in the
-     * libraries version file.
+     * Returns the version of the specified library as declared in the libraries version file.
      */
     fun version(libraryName: LibraryName = name): Version {
         return versionFile.version(libraryName)!!

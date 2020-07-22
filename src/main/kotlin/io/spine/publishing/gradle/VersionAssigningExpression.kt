@@ -24,8 +24,7 @@ package io.spine.publishing.gradle
 /**
  * A Kotlin expression that defines a version of a library.
  *
- * Expressions like this are defined in `version.gradle.kts` files, and must
- * look as follows:
+ * Expressions like this are defined in `version.gradle.kts` files, and must look as follows:
  *
  * ```kotlin
  * val base = "1.6.0"
@@ -46,8 +45,8 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
         /**
          * Tries to parse the specified expression string.
          *
-         * If the expression matches the expected template, returns the name
-         * and the version of the library.
+         * If the expression matches the expected template, returns the name and the version of
+         * the library.
          *
          * Otherwise, returns `null`.
          */

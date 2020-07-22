@@ -44,8 +44,8 @@ class GradleVersionFile(private val projectName: LibraryName,
      *
      * Returns `null` otherwise.
      *
-     * By default, tries to read the version of the [projectName][project that
-     * contains this Gradle file].
+     * By default, tries to read the version of the [projectName][project that contains this
+     * Gradle file].
      *
      * Parameter may be specified  to read the version of a dependency.
      */
@@ -58,11 +58,11 @@ class GradleVersionFile(private val projectName: LibraryName,
     }
 
     /**
-     * Returns the libraries that the project declaring this versions file
-     * depends on.
+     * Returns the libraries that the project declaring this versions file depends on.
      */
     fun declaredDependencies(): Map<LibraryName, Version> {
-        return file.readLines()
+        return file
+                .readLines()
                 .mapNotNull { VersionAssigningExpression.parse(it) }
                 .filter { it.libraryName != projectName }
                 .associateBy({ it.libraryName }, { it.version })
@@ -71,13 +71,10 @@ class GradleVersionFile(private val projectName: LibraryName,
     /**
      * Overrides the version of the specified library to the specified one.
      *
-     * If the specified library is not found in the file, no action is
-     * performed.
+     * If the specified library is not found in the file, no action is performed.
      */
     fun overrideVersion(library: LibraryName, newVersion: Version) {
-        overrideVersions(
-                mapOf(library to newVersion)
-        )
+        overrideVersions(mapOf(library to newVersion))
     }
 
     fun overrideVersions(versions: Map<LibraryName, Version>) {
@@ -89,9 +86,9 @@ class GradleVersionFile(private val projectName: LibraryName,
                 val version: Version = versions.getValue(expr.libraryName)
                 val expression =
                         VersionAssigningExpression(expr.libraryName, version)
-                return@map expression.toString()
+                expression.toString()
             } else {
-                return@map it
+                it
             }
         }
 

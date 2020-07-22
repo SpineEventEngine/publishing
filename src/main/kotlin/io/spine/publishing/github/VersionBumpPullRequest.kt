@@ -24,8 +24,8 @@ import io.spine.publishing.gradle.LibraryName
 import io.spine.publishing.gradle.Version
 
 /**
- * A pull request that updates the version of the library and the version of
- * Spine libraries that the project depends on.
+ * A pull request that updates the version of the library and the version of Spine libraries
+ * that the project depends on.
  */
 class VersionBumpPullRequest(private val branchName: BranchName,
                              private val libraryName: LibraryName,
