@@ -12,6 +12,7 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application.
     application
+    jacoco
 }
 
 tasks.withType<KotlinCompile> {
@@ -42,4 +43,11 @@ dependencies {
 application {
     // Define the main class for the application
     mainClassName = "publishing.AppKt"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
