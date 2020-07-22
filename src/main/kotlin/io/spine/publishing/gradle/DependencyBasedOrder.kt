@@ -15,8 +15,7 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
      * @see Library.update
      */
     fun updateToTheMostRecent() {
-        val mostRecent = ordered.maxBy { it.version() }!!.version()
-        updateAll(mostRecent)
+        updateAll(mostRecentVersion())
     }
 
     /**
