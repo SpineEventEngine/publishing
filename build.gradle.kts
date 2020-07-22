@@ -22,7 +22,6 @@ tasks.withType<KotlinCompile> {
 }
 
 repositories {
-
     mavenCentral()
     jcenter()
 }

@@ -33,6 +33,10 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
                 .thenComparingInt { it.minor }
                 .thenComparingInt { it.patch }
 
+        /**
+         * Returns the version represented by this string, or `null` if it doesn't represent
+         * a valid Spine version.
+         */
         fun parseFrom(stringValue: String): Version? {
             checkNotNull(stringValue)
 

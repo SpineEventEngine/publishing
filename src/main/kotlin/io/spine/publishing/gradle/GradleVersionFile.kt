@@ -76,12 +76,25 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
         overrideVersions(mapOf(library to newVersion))
     }
 
+    /**
+     * Sets the versions of the specified libraries to new versions.
+     *
+     * If the specified library is not found in the file, no action is performed.
+     *
+     * E.g. for a file
+     *
+     * ```kotlin
+     * val base = "1.5.0"
+     * ```
+     *
+     * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` does not change the file.
+     */
     fun overrideVersions(versions: Map<LibraryName, Version>) {
-        var atLeastOneChanged = false
+        var atLeastOnceOverridden = false
         val lines = file.readLines().map {
             val expr = VersionAssigningExpression.parse(it)
             if (expr != null && versions.containsKey(expr.libraryName)) {
-                atLeastOneChanged = true
+                atLeastOnceOverridden = true
                 val version: Version = versions.getValue(expr.libraryName)
                 val expression =
                         VersionAssigningExpression(expr.libraryName, version)
@@ -91,7 +104,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             }
         }
 
-        if (atLeastOneChanged) {
+        if (atLeastOnceOverridden) {
             PrintWriter(FileWriter(file)).use { writer ->
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
