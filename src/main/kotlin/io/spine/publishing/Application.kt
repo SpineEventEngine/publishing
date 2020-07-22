@@ -23,7 +23,7 @@ package io.spine.publishing
 import io.spine.publishing.github.BranchName
 import io.spine.publishing.github.VersionBumpPullRequest
 import io.spine.publishing.gradle.Library
-import io.spine.publishing.gradle.LibraryGraph
+import io.spine.publishing.gradle.DependencyBasedOrder
 import java.nio.file.Paths
 
 /**
@@ -35,7 +35,7 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val libraries = LibraryGraph(setOf(base, time, coreJava))
+        val libraries = DependencyBasedOrder(setOf(base, time, coreJava))
         libraries.updateToTheMostRecent()
 
         val version = libraries.mostRecentVersion()

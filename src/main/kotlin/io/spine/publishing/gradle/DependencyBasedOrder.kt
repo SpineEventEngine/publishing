@@ -19,6 +19,11 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
         updateAll(mostRecent)
     }
 
+    /**
+     * Returns the maximum found seen in this library graph.
+     */
+    fun mostRecentVersion() = ordered.maxBy { it.version() }!!.version()
+
     private fun updateAll(newVersion: Version) {
         val projects = ordered
         projects.forEach { it.update(newVersion) }
