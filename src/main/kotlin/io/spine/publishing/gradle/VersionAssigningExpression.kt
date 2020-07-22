@@ -39,8 +39,7 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
     companion object {
 
         // TODO: 2020-07-20:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/4
-        private val regex: Regex =
-                Regex("""val (.+) = "(\d+\.\d+\.\d+)"""")
+        private val regex: Regex = Regex("""val (.+) = "(\d+\.\d+\.\d+)"""")
 
         /**
          * Tries to parse the specified expression string.
