@@ -28,11 +28,17 @@ import java.nio.file.Paths
  */
 object TestEnv {
 
-    fun copyProjectDir(projectName: String, tempDir: Path): Path {
-        val resourceDirectory = javaClass.classLoader.getResource(projectName)
-        val resourceDirPath = Paths.get(resourceDirectory!!.toURI())
+    /**
+     * Copies the specified resource directory to the specified destination, such that
+     * a `/destination/resourceDirectory/<rest of the files>` structure is created.
+     *
+     * The contents are copied recursively.
+     */
+    fun copyDirectory(resourceDirectory: String, destination: Path): Path {
+        val dir = javaClass.classLoader.getResource(resourceDirectory)
+        val resourceDirPath = Paths.get(dir!!.toURI())
 
-        val result = tempDir.resolve(projectName)
+        val result = destination.resolve(resourceDirectory)
 
         resourceDirPath.toFile().copyRecursively(result.toFile(), true)
         return result

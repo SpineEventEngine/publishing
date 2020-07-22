@@ -22,7 +22,7 @@ package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.gradle.given.TestEnv.copyProjectDir
+import io.spine.publishing.gradle.given.TestEnv.copyDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -48,7 +48,7 @@ class LibraryTest {
     @Test
     @DisplayName("update own version")
     fun updateOwn(@TempDir tempDir: Path) {
-        val dependencyRootDir = copyProjectDir(DEPENDENCY, tempDir)
+        val dependencyRootDir = copyDirectory(DEPENDENCY, tempDir)
         val project = dependencyLibrary(dependencyRootDir)
         val newVersion = Version(99, 99, 0)
         project.update(newVersion)
@@ -60,8 +60,8 @@ class LibraryTest {
     @DisplayName("update its dependencies in its own version file")
     fun updateOwnVersionFile(@TempDir dependencyTempDir: Path,
                              @TempDir dependantTempDir: Path) {
-        val dependencyRootDir = copyProjectDir(DEPENDENCY, dependencyTempDir)
-        val dependantRootDir = copyProjectDir(DEPENDANT, dependantTempDir)
+        val dependencyRootDir = copyDirectory(DEPENDENCY, dependencyTempDir)
+        val dependantRootDir = copyDirectory(DEPENDANT, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependency = dependencyLibrary(dependencyRootDir)
@@ -78,8 +78,8 @@ class LibraryTest {
     fun notUpdateOtherVersionFiles(@TempDir dependencyTempDir: Path,
                                    @TempDir dependantTempDir: Path) {
 
-        val dependencyRootDir = copyProjectDir(DEPENDENCY, dependencyTempDir)
-        val dependantRootDir = copyProjectDir(DEPENDANT, dependantTempDir)
+        val dependencyRootDir = copyDirectory(DEPENDENCY, dependencyTempDir)
+        val dependantRootDir = copyDirectory(DEPENDANT, dependantTempDir)
 
         val newVersion = Version(99, 99, 0)
         val dependency = dependencyLibrary(dependencyRootDir)

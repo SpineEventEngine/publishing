@@ -55,9 +55,9 @@ class DependencyBasedOrderTest {
     fun `update the libraries to the most recent version`(@TempDir baseDir: Path,
                                                           @TempDir timeDir: Path,
                                                           @TempDir coreJavaDir: Path) {
-        val movedBase = TestEnv.copyProjectDir("base", baseDir)
-        val movedTime = TestEnv.copyProjectDir("time", timeDir)
-        val movedCoreJava = TestEnv.copyProjectDir("core-java", coreJavaDir)
+        val movedBase = TestEnv.copyDirectory("base", baseDir)
+        val movedTime = TestEnv.copyDirectory("time", timeDir)
+        val movedCoreJava = TestEnv.copyDirectory("core-java", coreJavaDir)
 
         val base = Library("base", listOf(), movedBase)
         val time = Library("time", listOf(base), movedTime)
