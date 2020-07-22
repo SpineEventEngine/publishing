@@ -52,7 +52,5 @@ object Application {
 
     private val base = Library("base", listOf(), pathToBase)
     private val time = Library("time", listOf(base), pathToTime)
-    private val coreJava = Library("coreJava",
-                                         listOf(base, time),
-                                         pathToCoreJava)
+    private val coreJava = Library("coreJava", listOf(base, time), pathToCoreJava)
 }

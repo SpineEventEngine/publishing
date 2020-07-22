@@ -25,9 +25,7 @@ package io.spine.publishing.gradle
  *
  * @see <a href=https://spine.io/versioning/>Spine versioning policy</a>
  */
-data class Version(val major: Int,
-                   val minor: Int,
-                   val patch: Int) : Comparable<Version> {
+data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Version> {
 
     companion object {
         private val COMPARATOR: Comparator<Version> = Comparator

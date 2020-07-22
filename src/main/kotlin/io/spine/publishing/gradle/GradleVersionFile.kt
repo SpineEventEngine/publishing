@@ -29,8 +29,7 @@ import java.nio.file.Path
  * A file that contains information about the version of the library and the
  * versions of its dependencies.
  */
-class GradleVersionFile(private val projectName: LibraryName,
-                        private val rootDir: Path) {
+class GradleVersionFile(private val projectName: LibraryName, private val rootDir: Path) {
 
     companion object {
         private fun findFile(dir: File): File? {
