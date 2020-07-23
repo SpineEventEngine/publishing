@@ -20,23 +20,14 @@
 
 package io.spine.publishing.github
 
-import io.spine.publishing.gradle.GradleProject
-import java.net.URL
+import io.spine.publishing.gradle.Library
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.transport.CredentialsProvider
 
-/**
- * A local git repository connected with a Gradle project to update and publish.
- */
-class LocalGitRepository(private val gradleProject: GradleProject,
-                         val remote: RemoteGitHubRepository) {
+// TODO: 2020-07-23:serhii.lekariev: remote is not a string
+class PushMetadata(val library: Library,
+                   val remote: String,
+                   val credentials: CredentialsProvider) : GitCommandPayload {
 
-    /**
-     * Pushes the changes to the remote repository under a new branch with the specified name.
-     */
-    fun pushNewBranch(name: BranchName) {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    override fun repository(): Repository = library.repository()
 }
-
-data class RemoteGitHubRepository(val address: URL, val name: String)
-
-data class BranchName(val name: String = "bump-version")

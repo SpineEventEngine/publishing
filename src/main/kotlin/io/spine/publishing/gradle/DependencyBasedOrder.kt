@@ -33,10 +33,13 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
      * Finds the most recent version among the libraries, then updates all of the libraries in
      * this graph to the most recent one.
      *
+     * Returns the list of the libraries that were updated. This means that the libraries that
+     * already has the most recent version are not included.
+     *
      * @see Library.update
      */
-    fun updateToTheMostRecent() {
-        updateAll(mostRecentVersion())
+    fun updateToTheMostRecent(): List<Library> {
+        return updateAll(mostRecentVersion())
     }
 
     /**
@@ -44,9 +47,11 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
      */
     fun mostRecentVersion() = ordered.maxBy { it.version() }!!.version()
 
-    private fun updateAll(newVersion: Version) {
+    private fun updateAll(newVersion: Version): List<Library> {
         val projects = ordered
-        projects.forEach { it.update(newVersion) }
+        val projectsToUpdate = projects.filter { it.version() < newVersion }
+        projectsToUpdate.forEach { it.update(newVersion) }
+        return projectsToUpdate.toList()
     }
 
     /**

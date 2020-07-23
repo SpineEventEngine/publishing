@@ -18,36 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.github
 
-import io.spine.publishing.github.VersionBumpPullRequest
-import io.spine.publishing.gradle.DependencyBasedOrder
 import io.spine.publishing.gradle.Library
-import java.nio.file.Paths
+import org.eclipse.jgit.lib.Repository
+import java.nio.file.Path
 
 /**
- * The publishing application.
+ * Information about a version bump commit.
  *
- * Make sure that the local Spine libraries are up to date before running.
+ * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
+ * changed file. This commits includes all of the changes in the version file.
  */
-object Application {
+class VersionBumpCommit(val library: Library) : GitCommandPayload {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val libraries = DependencyBasedOrder(setOf(base, time, coreJava))
-        val updatedLibraries = libraries.updateToTheMostRecent()
-
-        val pullRequests = updatedLibraries
-                .map { VersionBumpPullRequest(it, it.version()) }
-        pullRequests.forEach { it.create() }
-        pullRequests.forEach { it.merge() }
+    fun file(): Path {
+        val versionFile = library.versionFile.file.toPath()
+        return library.rootDir.relativize(versionFile)
     }
 
-    private val pathToBase = Paths.get("./base")
-    private val pathToCoreJava = Paths.get("./core-java")
-    private val pathToTime = Paths.get("./time")
+    fun message(): CommitMessage {
+        return "Bump version to `${library.version()}`"
+    }
 
-    private val base = Library("base", listOf(), pathToBase)
-    private val time = Library("time", listOf(base), pathToTime)
-    private val coreJava = Library("coreJava", listOf(base, time), pathToCoreJava)
+    override fun repository(): Repository = library.repository()
 }
+
+typealias CommitMessage = String

@@ -32,9 +32,12 @@ import java.nio.file.Path
 class GradleVersionFile(private val projectName: LibraryName, private val rootDir: Path) {
 
     companion object {
+
+        private const val NAME = "version.gradle.kts"
+
         private fun findFile(dir: File): File? {
             val children = dir.listFiles()
-            return children?.find { it.name == "version.gradle.kts" }
+            return children?.find { it.name == NAME }
         }
     }
 
@@ -112,7 +115,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
         }
     }
 
-    private val file: File by lazy {
+    internal val file: File by lazy {
         checkNotNull(findFile(rootDir.toFile()))
     }
 }

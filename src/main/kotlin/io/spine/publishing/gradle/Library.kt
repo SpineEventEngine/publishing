@@ -60,7 +60,7 @@ data class Library(val name: LibraryName, val dependencies: List<Library>, val r
         versionFile.overrideVersions(toUpdate)
     }
 
-    private val versionFile: GradleVersionFile by lazy {
+    internal val versionFile: GradleVersionFile by lazy {
         GradleVersionFile(name, rootDir)
     }
 }

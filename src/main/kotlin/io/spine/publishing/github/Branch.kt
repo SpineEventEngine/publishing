@@ -18,48 +18,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.gradle
+package io.spine.publishing.github
 
+import org.eclipse.jgit.api.CommitCommand
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.RepositoryBuilder
 import java.nio.file.Path
 
-/**
- * A project that uses Gradle.
- *
- * Allows to execute arbitrary Gradle tasks
- */
-class GradleProject(val rootDir: Path) {
+class Branch(workingDir: Path, private val name: BranchName) {
 
-    companion object {
-        private const val GRADLEW = "./gradlew"
+    private val repository = RepositoryBuilder()
+            .readEnvironment()
+            .setWorkTree(workingDir.toAbsolutePath().toFile())
+            .build()
+
+    private val git = Git(repository)
+
+    init {
+        git.checkout()
+           .setCreateBranch(true)
+           .setName(name.value)
+           .call()
     }
 
-    /**
-     * Runs the `build` task on this project.
-     *
-     * Returns `false` if the task has failed.
-     */
-    fun build(): Boolean = runCommand("build")
+    fun addCommit(commit: Commit) {
+        val commitBuilder = git.commit()
+                .setMessage(commit.commitMessage)
+        addAllPaths(commit.trackedFiles, commitBuilder)
 
-    /**
-     * Runs the `build` task on this project.
-     *
-     * Returns `false` if the task has failed.
-     */
-    fun publish(): Boolean = runCommand("publish")
-
-    private fun runCommand(vararg commands: String): Boolean {
-        return try {
-            val actualCommands = commands.toMutableList()
-            actualCommands.add(0, GRADLEW)
-            val process = ProcessBuilder()
-                    .command(actualCommands)
-                    .directory(rootDir.toFile())
-                    .inheritIO()
-                    .start()
-
-            process.waitFor() == 0
-        } catch (e: Exception) {
-            false
-        }
+        commitBuilder.call()
     }
+
+    fun push() {
+        git.push()
+                .set
+    }
+
+    private fun addAllPaths(paths: Iterable<Path>, commit: CommitCommand) {
+        paths.map { it.toAbsolutePath() }
+                .map { it.toString() }
+                .forEach { commit.setOnly(it) }
+    }
+
+
 }
