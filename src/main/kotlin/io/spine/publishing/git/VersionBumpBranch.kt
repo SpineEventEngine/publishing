@@ -18,22 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import org.eclipse.jgit.transport.CredentialsProvider
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import io.spine.publishing.gradle.Library
+import org.eclipse.jgit.lib.Repository
 
 /**
- * Credentials to authorize an operation with a remote repository.
+ * A branch created to bump the library version.
  */
-sealed class Credentials {
+class VersionBumpBranch(private val library: Library,
+                        val name: BranchName) : GitCommandPayload {
 
-    abstract fun credentialsProvider(): CredentialsProvider
-}
-
-
-// TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
-class Token(private val token: String) : Credentials() {
-
-    override fun credentialsProvider() = UsernamePasswordCredentialsProvider(token, "")
+    override fun repository(): Repository = library.repository()
 }

@@ -18,16 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.transport.CredentialsProvider
+import java.nio.file.Path
 
-// TODO: 2020-07-23:serhii.lekariev: remote is not a string
-class PushMetadata(val library: Library,
-                   val remote: String,
-                   val credentials: CredentialsProvider) : GitCommandPayload {
+/**
+ * Information about a version bump commit.
+ *
+ * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
+ * changed file. This commits includes all of the changes in the version file.
+ */
+class VersionBumpCommit(val library: Library) : GitCommandPayload {
+
+    fun file(): Path {
+        val versionFile = library.versionFile.file.toPath()
+        return library.rootDir.relativize(versionFile)
+    }
+
+    fun message(): CommitMessage {
+        return "Bump version to `${library.version()}`"
+    }
 
     override fun repository(): Repository = library.repository()
 }
+
+typealias CommitMessage = String

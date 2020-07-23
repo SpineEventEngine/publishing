@@ -18,30 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
+import io.spine.publishing.git.GitCommandPayload
+import io.spine.publishing.git.repository
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.lib.RepositoryBuilder
+import org.eclipse.jgit.transport.CredentialsProvider
 
-/**
- * Information associated with a [GitCommand].
- */
-interface GitCommandPayload {
+// TODO: 2020-07-23:serhii.lekariev: remote is not a string
+class PushMetadata(val library: Library,
+                   val remote: String,
+                   val credentials: CredentialsProvider) : GitCommandPayload {
 
-    /**
-     * Returns a local repository that the respective command is associated with.
-     */
-    fun repository(): Repository
-}
-
-/**
- * Given a library, returns a Git repository in its root working directory.
- */
-fun Library.repository(): Repository {
-    val repoPath = this.rootDir.toAbsolutePath().toFile()
-    return RepositoryBuilder()
-            .readEnvironment()
-            .setWorkTree(repoPath)
-            .build()
+    override fun repository(): Repository = library.repository()
 }

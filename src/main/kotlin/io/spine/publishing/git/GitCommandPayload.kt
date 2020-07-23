@@ -18,41 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.RepositoryBuilder
 
 /**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
+ * Information associated with a [GitCommand].
  */
-class VersionBumpPullRequest(private val library: Library,
-                             private val credentials: CredentialsProvider,
-                             private val remote: String) {
-
-    private val branchName = BranchName()
+interface GitCommandPayload {
 
     /**
-     * Returns the list of commands to execute in order to push a version bump branch to the remote
-     * repo.
+     * Returns a local repository that the respective command is associated with.
      */
-    fun pushBranch(): List<GitCommand> = listOf(
-            CreateBranch(VersionBumpBranch(library, branchName)),
-            CommitChanges(VersionBumpCommit(library)),
-            PushToRemote(PushMetadata(library, remote, credentials))
-    )
-
-    fun createPr() {
-
-    }
-
-    /**
-     * Merges this pull request to the `master` remote branch.
-     */
-    fun merge() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    fun repository(): Repository
 }
 
-data class BranchName(val value: String = "bump-version")
+/**
+ * Given a library, returns a Git repository in its root working directory.
+ */
+fun Library.repository(): Repository {
+    val repoPath = this.rootDir.toAbsolutePath().toFile()
+    return RepositoryBuilder()
+            .readEnvironment()
+            .setWorkTree(repoPath)
+            .build()
+}

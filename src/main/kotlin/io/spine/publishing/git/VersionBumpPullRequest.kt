@@ -18,30 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.lib.Repository
-import java.nio.file.Path
+import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * Information about a version bump commit.
- *
- * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
- * changed file. This commits includes all of the changes in the version file.
+ * A pull request that updates the version of the library and the version of Spine libraries
+ * that the project depends on.
  */
-class VersionBumpCommit(val library: Library) : GitCommandPayload {
+class VersionBumpPullRequest(private val library: Library,
+                             private val credentials: CredentialsProvider,
+                             private val remote: String) {
 
-    fun file(): Path {
-        val versionFile = library.versionFile.file.toPath()
-        return library.rootDir.relativize(versionFile)
+    private val branchName = BranchName()
+
+    /**
+     * Returns the list of commands to execute in order to push a version bump branch to the remote
+     * repo.
+     */
+    fun pushBranch(): List<GitCommand> = listOf(
+            CreateBranch(VersionBumpBranch(library, branchName)),
+            CommitChanges(VersionBumpCommit(library)),
+            PushToRemote(PushMetadata(library, remote, credentials))
+    )
+
+    fun createPr() {
+
     }
 
-    fun message(): CommitMessage {
-        return "Bump version to `${library.version()}`"
+    /**
+     * Merges this pull request to the `master` remote branch.
+     */
+    fun merge() {
+        // TODO:2020-07-21:serhii.lekariev: implement
     }
-
-    override fun repository(): Repository = library.repository()
 }
 
-typealias CommitMessage = String
+data class BranchName(val value: String = "bump-version")
