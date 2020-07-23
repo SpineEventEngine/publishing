@@ -21,55 +21,30 @@
 package io.spine.publishing.github
 
 import io.spine.publishing.gradle.Library
-import io.spine.publishing.gradle.LibraryName
-import io.spine.publishing.gradle.Version
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
  * A pull request that updates the version of the library and the version of Spine libraries
  * that the project depends on.
  */
-class VersionBumpPullRequest(private val library: Library) {
+class VersionBumpPullRequest(private val library: Library,
+                             private val credentials: CredentialsProvider,
+                             private val remote: String) {
 
-    override fun toString(): String {
-        return """Bump version to `${library.version()}`"""
-    }
+    private val branchName = BranchName()
 
     /**
-     * Creates this pull request. The branch must already be present in the
-     * remote repository.
+     * Returns the list of commands to execute in order to push a version bump branch to the remote
+     * repo.
      */
-    fun create() {
-        // Checks out the new branch, commits the version file <- knows about it, since its a version bump
-        // Pushes the branch
-        // -- local part is done --
-        // Creates a PR
-    }
+    fun pushBranch(): List<GitCommand> = listOf(
+            CreateBranch(VersionBumpBranch(library, branchName)),
+            CommitChanges(VersionBumpCommit(library)),
+            PushToRemote(PushMetadata(library, remote, credentials))
+    )
 
-    private fun newBranch(name: BranchName) {
-        val repo = FileRepositoryBuilder()
-                .setWorkTree(gradleProject.rootDir.toFile())
-                .readEnvironment()
-                .findGitDir()
-                .build()
+    fun createPr() {
 
-        val git = Git(repo)
-        val branch = git
-                .checkout()
-                .setCreateBranch(true)
-                .setName(name.value)
-                .call()
-
-        val revCommit = git.commit()
-
-                .setMessage("bump")
-                .call()
-        // 80f789dcd6f7ce863ee4dea4edd8b83b7803c032
-        git.push().setCredentialsProvider(UsernamePasswordCredentialsProvider("80f789dcd6f7ce863ee4dea4edd8b83b7803c032", "")).setRemote("https://github.com/SpineEventEngine/publishing.git").call()
-        git.checkout().setName("github").call()
-        git.branchDelete().setBranchNames(name.value)
     }
 
     /**
@@ -79,3 +54,5 @@ class VersionBumpPullRequest(private val library: Library) {
         // TODO:2020-07-21:serhii.lekariev: implement
     }
 }
+
+data class BranchName(val value: String = "bump-version")

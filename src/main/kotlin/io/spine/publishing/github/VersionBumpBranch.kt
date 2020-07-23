@@ -21,30 +21,13 @@
 package io.spine.publishing.github
 
 import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.lib.RepositoryBuilder
-import java.nio.file.Path
 
-class VersionBumpBranch(private val library: Library) {
+/**
+ * A branch created to bump the library version.
+ */
+class VersionBumpBranch(private val library: Library,
+                        val name: BranchName) : GitCommandPayload {
 
-    fun create() {
-        git.checkout()
-                .setCreateBranch(true)
-                .setName(branchName.value)
-                .setAllPaths(false)
-                .call()
-    }
-
-    fun push(remote: RemoteGitHubRepository) {
-        git.push()
-                .
-    }
-
-    private val versionFile: Path = library.versionFile.file.toPath()
-    private val rootDir: Path = library.rootDir
-    private val commitMessage: String = "Bump Spine versions to `${library.version()}`."
-    private val repo = RepositoryBuilder().setWorkTree(rootDir.toFile()).build()
-    private val git = Git(repo)
-    private val branchName = BranchName()
+    override fun repository(): Repository = library.repository()
 }

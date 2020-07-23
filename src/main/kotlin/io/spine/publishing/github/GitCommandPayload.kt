@@ -20,27 +20,28 @@
 
 package io.spine.publishing.github
 
-import io.spine.publishing.gradle.GradleProject
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
-import java.net.URL
-import java.nio.file.Paths
+import io.spine.publishing.gradle.Library
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.RepositoryBuilder
 
 /**
- * A local git repository connected with a Gradle project to update and publish.
+ * Information associated with a [GitCommand].
  */
-class LocalGitRepository(private val gradleProject: GradleProject,
-                         val remote: RemoteGitHubRepository) {
+interface GitCommandPayload {
 
     /**
-     * Pushes the changes to the remote repository under a new branch with the specified name.
+     * Returns a local repository that the respective command is associated with.
      */
-    fun pushNewBranch(name: BranchName) {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    fun repository(): Repository
 }
 
-data class RemoteGitHubRepository(val address: URL, val name: String)
-
-data class BranchName(val value: String = "bump-version")
+/**
+ * Given a library, returns a Git repository in its root working directory.
+ */
+fun Library.repository(): Repository {
+    val repoPath = this.rootDir.toAbsolutePath().toFile()
+    return RepositoryBuilder()
+            .readEnvironment()
+            .setWorkTree(repoPath)
+            .build()
+}

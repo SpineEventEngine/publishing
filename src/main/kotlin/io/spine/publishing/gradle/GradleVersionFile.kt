@@ -33,7 +33,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
 
     companion object {
 
-        private const val NAME = "version.gradle.kts"
+        internal const val NAME = "version.gradle.kts"
 
         private fun findFile(dir: File): File? {
             val children = dir.listFiles()

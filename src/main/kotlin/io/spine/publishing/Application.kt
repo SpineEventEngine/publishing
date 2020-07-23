@@ -20,7 +20,6 @@
 
 package io.spine.publishing
 
-import io.spine.publishing.github.VersionBumpPullRequest
 import io.spine.publishing.gradle.DependencyBasedOrder
 import io.spine.publishing.gradle.Library
 import java.nio.file.Paths
@@ -35,12 +34,7 @@ object Application {
     @JvmStatic
     fun main(args: Array<String>) {
         val libraries = DependencyBasedOrder(setOf(base, time, coreJava))
-        val updatedLibraries = libraries.updateToTheMostRecent()
-
-        val pullRequests = updatedLibraries
-                .map { VersionBumpPullRequest(it, it.version()) }
-        pullRequests.forEach { it.create() }
-        pullRequests.forEach { it.merge() }
+        libraries.updateToTheMostRecent()
     }
 
     private val pathToBase = Paths.get("./base")
