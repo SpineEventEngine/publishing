@@ -18,13 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
+package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import io.spine.publishing.git.*
+import io.spine.publishing.git.CommitChanges
+import io.spine.publishing.git.CreateBranch
+import io.spine.publishing.git.PushToRemote
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.given.TestEnv
@@ -44,8 +46,9 @@ class VersionBumpPullRequestTest {
     fun correctCommands(@TempDir tempdir: Path) {
         val baseDirectory = TestEnv.copyDirectory("base", tempdir)
         val library = Library("base", listOf(), baseDirectory)
+        val remote = RemoteRepository(library, GitHubRepository("", ""))
 
-        val pullRequest = VersionBumpPullRequest(library, mockCredentials, "")
+        val pullRequest = VersionBumpPullRequest(remote, mockCredentials)
         val commands = pullRequest.pushBranch()
 
         assertThat(commands).hasSize(3)

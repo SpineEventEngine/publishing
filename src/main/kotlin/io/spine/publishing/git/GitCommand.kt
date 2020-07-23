@@ -76,7 +76,7 @@ object Git {
 
             is PushToRemote -> git
                     .push()
-                    .setRemote(command.pushMetadata.remote)
+                    .setRemote(command.pushMetadata.remote.gitHubRepository.asUrl())
                     .setCredentialsProvider(command.pushMetadata.credentials)
                     .call()
         }

@@ -18,41 +18,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
+package io.spine.publishing.github
 
-import io.spine.publishing.gradle.Library
+import io.spine.publishing.git.*
 import org.eclipse.jgit.transport.CredentialsProvider
+import org.kohsuke.github.GitHub
 
 /**
  * A pull request that updates the version of the library and the version of Spine libraries
  * that the project depends on.
  */
-class VersionBumpPullRequest(private val library: Library,
-                             private val credentials: CredentialsProvider,
-                             private val remote: String) {
+class VersionBumpPullRequest(private val remote: RemoteRepository,
+                             private val credentials: CredentialsProvider) {
 
-    private val branchName = BranchName()
+    companion object {
+        private val branchName = BranchName()
+        private const val MASTER = "master"
+    }
+
 
     /**
      * Returns the list of commands to execute in order to push a version bump branch to the remote
      * repo.
      */
     fun pushBranch(): List<GitCommand> = listOf(
-            CreateBranch(VersionBumpBranch(library, branchName)),
-            CommitChanges(VersionBumpCommit(library)),
-            PushToRemote(PushMetadata(library, remote, credentials))
+            CreateBranch(VersionBumpBranch(remote.library, branchName)),
+            CommitChanges(VersionBumpCommit(remote.library)),
+            PushToRemote(PushMetadata(remote, credentials))
     )
 
     fun createPr() {
-
+        GitHub.connect()
+                .getRepository(remote.gitHubRepository.repoIdentifier())
+                .createPullRequest(PrTitle().value,
+                        branchName.value,
+                        MASTER,
+                        PrDescription().value)
+                // `null` is fine, see `merge` javadoc.
+                .merge(null)
     }
 
-    /**
-     * Merges this pull request to the `master` remote branch.
-     */
-    fun merge() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    inner class PrTitle(val value: String = "Update Spine libraries")
+
+    inner class PrDescription(val value: String = "This automatically generated PR brings the " +
+            "version of all Spine libraries up to `${this@VersionBumpPullRequest.remote.library
+                    .version()}`")
 }
 
 data class BranchName(val value: String = "bump-version")

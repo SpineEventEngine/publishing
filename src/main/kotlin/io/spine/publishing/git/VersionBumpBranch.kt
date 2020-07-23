@@ -20,6 +20,7 @@
 
 package io.spine.publishing.git
 
+import io.spine.publishing.github.BranchName
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
 

@@ -18,15 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
+package io.spine.publishing.github
 
-import io.spine.publishing.github.RemoteRepository
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.transport.CredentialsProvider
+import io.spine.publishing.gradle.Library
 
-// TODO: 2020-07-23:serhii.lekariev: remote is not a string
-class PushMetadata(val remote: RemoteRepository,
-                   val credentials: CredentialsProvider) : GitCommandPayload {
+data class RemoteRepository(val library: Library, val gitHubRepository: GitHubRepository) {
 
-    override fun repository(): Repository = remote.library.repository()
+
 }
+
+data class GitHubRepository(val organization: Organization, val name: RepositoryName) {
+
+    fun repoIdentifier(): String = "$organization/$name"
+
+    fun asUrl(): String = "https://github.com/$organization/$name.git"
+}
+
+typealias Organization = String
+typealias RepositoryName = String
