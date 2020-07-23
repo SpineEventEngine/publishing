@@ -47,7 +47,13 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
             PushToRemote(PushMetadata(remote, credentials))
     )
 
-    fun createPr() {
+    /**
+     * Creates a version pumping pull request and merges it.
+     *
+     * This method requires a necessary branch to already be
+     * [pushed][VersionBumpPullRequest.pushBranch] to GitHub.
+     */
+    fun mergeVersionBump() {
         GitHub.connect()
                 .getRepository(remote.gitHubRepository.repoIdentifier())
                 .createPullRequest(PrTitle().value,

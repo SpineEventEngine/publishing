@@ -22,11 +22,14 @@ package io.spine.publishing.github
 
 import io.spine.publishing.gradle.Library
 
-data class RemoteRepository(val library: Library, val gitHubRepository: GitHubRepository) {
+/**
+ * A GitHub repository that hosts a library.
+ */
+data class RemoteRepository(val library: Library, val gitHubRepository: GitHubRepository)
 
-
-}
-
+/**
+ * A public repository in GitHub.
+ */
 data class GitHubRepository(val organization: Organization, val name: RepositoryName) {
 
     fun repoIdentifier(): String = "$organization/$name"
