@@ -36,7 +36,6 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
         private const val MASTER = "master"
     }
 
-
     /**
      * Returns the list of commands to execute in order to push a version bump branch to the remote
      * repo.
