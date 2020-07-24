@@ -39,7 +39,6 @@ class CheckoutMaster(val library: Library) : CheckoutBranch {
     override fun repository(): Repository = library.repository()
 
     override fun name(): BranchName = "master"
-
 }
 
 typealias BranchName = String

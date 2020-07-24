@@ -24,7 +24,7 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Git commands necessary for the publishing applications.
+ * Git commands necessary for the `Publishing` application.
  */
 sealed class GitCommand(payload: GitCommandPayload) {
 
@@ -36,7 +36,7 @@ class Checkout(val checkout: CheckoutBranch) : GitCommand(checkout)
 /**
  * Commits changed files to the current branch.
  *
- * Note that this command cannot commit a file partially. The [entire file][VersionBumpCommit.file]
+ * Note that this command cannot commit a file partially. The [entire file][Commit.file]
  * is committed.
  */
 class CommitChanges(val commit: Commit) : GitCommand(commit)
@@ -51,6 +51,9 @@ class PushToRemote(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
  */
 object Git {
 
+    /**
+     * Executes the specified Git commands 1 by 1.
+     */
     fun executeAll(commands: List<GitCommand>) {
         commands.forEach { execute(it) }
     }

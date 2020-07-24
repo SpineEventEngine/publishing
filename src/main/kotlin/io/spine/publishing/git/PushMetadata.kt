@@ -24,7 +24,9 @@ import io.spine.publishing.github.RemoteRepository
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.transport.CredentialsProvider
 
-// TODO: 2020-07-23:serhii.lekariev: remote is not a string
+/**
+ * A payload that specifies how to execute a push operation.
+ */
 class PushMetadata(val remote: RemoteRepository,
                    val credentials: CredentialsProvider) : GitCommandPayload {
 
