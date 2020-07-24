@@ -55,7 +55,7 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
         GitHub.connect()
                 .getRepository(remote.gitHubRepository.repoIdentifier())
                 .createPullRequest(PrTitle().value,
-                        branchName,
+                        VersionBumpBranch.NAME,
                         MASTER,
                         PrDescription().value)
                 // `null` is fine, see `merge` javadoc.

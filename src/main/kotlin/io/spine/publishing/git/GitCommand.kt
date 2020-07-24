@@ -42,7 +42,7 @@ class CreateBranch(val branch: Branch) : GitCommand(branch)
  * Note that this command cannot commit a file partially. The [entire file][VersionBumpCommit.file]
  * is committed.
  */
-class CommitChanges(val commit: VersionBumpCommit) : GitCommand(commit)
+class CommitChanges(val commit: Commit) : GitCommand(commit)
 
 /**
  * Pushes a current local branch to the remote repository.

@@ -27,7 +27,11 @@ import org.eclipse.jgit.lib.Repository
  * A branch created to bump the library version.
  */
 class VersionBumpBranch(private val library: Library,
-                        private val name: BranchName = "bump-version") : Branch {
+                        private val name: BranchName = NAME) : Branch {
+
+    companion object {
+        const val NAME: BranchName = "bump-version"
+    }
 
     override fun name(): BranchName = name
 
