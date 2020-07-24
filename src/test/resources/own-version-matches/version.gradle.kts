@@ -18,21 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
-
-/**
- * A branch to create.
- *
- * Must have a non-empty name.
+/*
+ * Version specification for a dummy project.
  */
-interface Branch: GitCommandPayload {
 
-    /**
-     * The name of the branch.
-     *
-     * Make sure to not use an existing one.
-     */
-    fun name(): BranchName
-}
-
-typealias BranchName = String
+val library = "1.3.0"
+val subLibrary = "1.2.0"

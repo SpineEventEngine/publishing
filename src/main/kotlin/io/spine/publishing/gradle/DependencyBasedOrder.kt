@@ -20,6 +20,8 @@
 
 package io.spine.publishing.gradle
 
+import java.util.function.Predicate
+
 /**
  * A collection of libraries that can be traversed in the order based on dependencies between
  * the libraries.
@@ -33,7 +35,7 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
      * Finds the most recent version among the libraries, then updates all of the libraries in
      * this graph to the most recent one.
      *
-     * Returns the list of the libraries that were updated. This means that the libraries that
+     * Returns the set of the libraries that were updated. This means that the libraries that
      * already has the most recent version are not included.
      *
      * @see Library.update
@@ -49,7 +51,13 @@ class DependencyBasedOrder(private val libraries: Set<Library>) {
 
     private fun updateAll(newVersion: Version): List<Library> {
         val projects = ordered
-        val projectsToUpdate = projects.filter { it.version() < newVersion }
+        val ownVersionBelow: Predicate<Library> = Predicate { it.version() < newVersion }
+        val atLeastOneDependencyBelow: Predicate<Library> = Predicate {
+            it.versionFile.declaredDependencies()
+                    .any { v -> v.value < newVersion }
+        }
+        val projectsToUpdate = projects
+                .filter { ownVersionBelow.or(atLeastOneDependencyBelow).test(it) }
         projectsToUpdate.forEach { it.update(newVersion) }
         return projectsToUpdate.toList()
     }

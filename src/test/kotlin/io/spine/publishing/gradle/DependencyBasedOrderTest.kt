@@ -24,7 +24,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
-import io.spine.publishing.gradle.given.TestEnv
+import io.spine.publishing.gradle.given.TestEnv.copyDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -78,9 +78,9 @@ class DependencyBasedOrderTest {
     fun updateToMostRecent(@TempDir baseDir: Path,
                            @TempDir timeDir: Path,
                            @TempDir coreJavaDir: Path) {
-        val movedBase = TestEnv.copyDirectory("base", baseDir)
-        val movedTime = TestEnv.copyDirectory("time", timeDir)
-        val movedCoreJava = TestEnv.copyDirectory("core-java", coreJavaDir)
+        val movedBase = copyDirectory("base", baseDir)
+        val movedTime = copyDirectory("time", timeDir)
+        val movedCoreJava = copyDirectory("core-java", coreJavaDir)
 
         val base = Library("base", listOf(), movedBase)
         val time = Library("time", listOf(base), movedTime)
@@ -98,6 +98,25 @@ class DependencyBasedOrderTest {
 
         assertEquals(coreJava.version("time"), expectedVersion)
         assertEquals(coreJava.version("base"), expectedVersion)
+    }
+
+    @Test
+    @DisplayName("update its dependency version when own version is the most recent one")
+    fun updateOwn(@TempDir libraryPath: Path, @TempDir subLibraryPath: Path) {
+        val libraryDir = copyDirectory("own-version-matches", libraryPath)
+        val subLibraryDir = copyDirectory("subLibrary", subLibraryPath)
+
+        val newVersion = Version(1, 3, 0)
+
+        val subLibrary = Library("subLibrary", listOf(), subLibraryDir)
+        val library = Library("library", listOf(subLibrary), libraryDir)
+
+        DependencyBasedOrder(setOf(library, subLibrary)).updateToTheMostRecent()
+
+        val versions = listOf(library.version(),
+                library.version(subLibrary.name),
+                subLibrary.version())
+        versions.forEach { assertThat(it).isEqualTo(newVersion) }
     }
 
     private fun assertEquals(actualVersion: Version, expectedVersion: Version) {

@@ -77,7 +77,6 @@ class LibraryTest {
     @DisplayName("not update its dependencies version files")
     fun notUpdateOtherVersionFiles(@TempDir dependencyTempDir: Path,
                                    @TempDir dependantTempDir: Path) {
-
         val dependencyRootDir = copyDirectory(DEPENDENCY, dependencyTempDir)
         val dependantRootDir = copyDirectory(DEPENDANT, dependantTempDir)
 

@@ -18,22 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
-
-import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.lib.Repository
-
-/**
- * A branch created to bump the library version.
+/*
+ * Version specification for a dummy project. The `own-versionmatches` project depends on this one.
  */
-class VersionBumpBranch(private val library: Library,
-                        private val name: BranchName = NAME) : Branch {
-
-    companion object {
-        const val NAME: BranchName = "bump-version"
-    }
-
-    override fun name(): BranchName = name
-
-    override fun repository(): Repository = library.repository()
-}
+val subLibrary = "1.2.0"
