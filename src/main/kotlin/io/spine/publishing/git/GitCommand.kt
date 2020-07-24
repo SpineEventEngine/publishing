@@ -34,7 +34,7 @@ sealed class GitCommand(payload: GitCommandPayload) {
 /**
  * Checks out a new branch in the local repository.
  */
-class CreateBranch(val branch: VersionBumpBranch) : GitCommand(branch)
+class CreateBranch(val branch: Branch) : GitCommand(branch)
 
 /**
  * Commits changed files to the current branch.
@@ -69,7 +69,7 @@ object Git {
             is CreateBranch -> git
                     .checkout()
                     .setCreateBranch(true)
-                    .setName(command.branch.name.value)
+                    .setName(command.branch.name())
                     .call()
 
             is CommitChanges -> git

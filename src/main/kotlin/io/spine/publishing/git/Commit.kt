@@ -20,26 +20,24 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.lib.Repository
 import java.nio.file.Path
 
 /**
- * Information about a version bump commit.
+ * A single-file commit.
  *
- * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
- * changed file. This commits includes all of the changes in the version file.
+ * Commits all of the changes in the file.
  */
-class VersionBumpCommit(val library: Library) : Commit {
+interface Commit : GitCommandPayload {
 
-    override fun file(): Path {
-        val versionFile = library.versionFile.file.toPath()
-        return library.rootDir.relativize(versionFile)
-    }
+    /** The message of the commit. */
+    fun message(): CommitMessage
 
-    override fun message(): CommitMessage {
-        return "Bump version to `${library.version()}`"
-    }
-
-    override fun repository(): Repository = library.repository()
+    /**
+     * Path to the changed file.
+     *
+     * Must be relative to the [repository][GitCommandPayload.repository].
+     */
+    fun file(): Path
 }
+
+typealias CommitMessage = String

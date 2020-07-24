@@ -31,7 +31,6 @@ sealed class Credentials {
     abstract fun credentialsProvider(): CredentialsProvider
 }
 
-
 // TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
 class Token(private val token: String) : Credentials() {
 

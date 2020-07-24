@@ -32,7 +32,6 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
                              private val credentials: CredentialsProvider) {
 
     companion object {
-        private val branchName = BranchName()
         private const val MASTER = "master"
     }
 
@@ -41,7 +40,7 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
      * repo.
      */
     fun pushBranch(): List<GitCommand> = listOf(
-            CreateBranch(VersionBumpBranch(remote.library, branchName)),
+            CreateBranch(VersionBumpBranch(remote.library)),
             CommitChanges(VersionBumpCommit(remote.library)),
             PushToRemote(PushMetadata(remote, credentials))
     )
@@ -56,7 +55,7 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
         GitHub.connect()
                 .getRepository(remote.gitHubRepository.repoIdentifier())
                 .createPullRequest(PrTitle().value,
-                        branchName.value,
+                        branchName,
                         MASTER,
                         PrDescription().value)
                 // `null` is fine, see `merge` javadoc.
@@ -69,5 +68,3 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
             "version of all Spine libraries up to `${this@VersionBumpPullRequest.remote.library
                     .version()}`")
 }
-
-data class BranchName(val value: String = "bump-version")

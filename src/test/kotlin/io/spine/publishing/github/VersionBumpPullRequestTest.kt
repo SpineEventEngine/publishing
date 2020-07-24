@@ -56,7 +56,7 @@ class VersionBumpPullRequestTest {
         assertThat(commands[1]).isInstanceOf(CommitChanges::class)
         assertThat(commands[2]).isInstanceOf(PushToRemote::class)
 
-        assertThat((commands[0] as CreateBranch).branch.name).isEqualTo(BranchName())
+        assertThat((commands[0] as CreateBranch).branch.name()).isEqualTo("bump-version")
         assertThat((commands[1] as CommitChanges).commit.file()).isEqualTo(Paths.get(GradleVersionFile.NAME))
     }
 

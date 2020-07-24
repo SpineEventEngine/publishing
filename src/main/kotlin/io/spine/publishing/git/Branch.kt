@@ -20,26 +20,19 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.gradle.Library
-import org.eclipse.jgit.lib.Repository
-import java.nio.file.Path
-
 /**
- * Information about a version bump commit.
+ * A branch to create.
  *
- * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
- * changed file. This commits includes all of the changes in the version file.
+ * Must have a non-empty name.
  */
-class VersionBumpCommit(val library: Library) : Commit {
+interface Branch: GitCommandPayload {
 
-    override fun file(): Path {
-        val versionFile = library.versionFile.file.toPath()
-        return library.rootDir.relativize(versionFile)
-    }
-
-    override fun message(): CommitMessage {
-        return "Bump version to `${library.version()}`"
-    }
-
-    override fun repository(): Repository = library.repository()
+    /**
+     * The name of the branch.
+     *
+     * Make sure to not use an existing one.
+     */
+    fun name(): BranchName
 }
+
+typealias BranchName = String

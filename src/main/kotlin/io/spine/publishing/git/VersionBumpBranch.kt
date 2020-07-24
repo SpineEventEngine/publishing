@@ -20,7 +20,6 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.github.BranchName
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
 
@@ -28,7 +27,9 @@ import org.eclipse.jgit.lib.Repository
  * A branch created to bump the library version.
  */
 class VersionBumpBranch(private val library: Library,
-                        val name: BranchName) : GitCommandPayload {
+                        private val name: BranchName = "bump-version") : Branch {
+
+    override fun name(): BranchName = name
 
     override fun repository(): Repository = library.repository()
 }
