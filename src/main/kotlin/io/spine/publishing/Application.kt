@@ -20,9 +20,10 @@
 
 package io.spine.publishing
 
+import io.spine.publishing.git.Git
+import io.spine.publishing.git.Token
+import io.spine.publishing.github.VersionBumpPullRequest
 import io.spine.publishing.gradle.DependencyBasedOrder
-import io.spine.publishing.gradle.Library
-import java.nio.file.Paths
 
 /**
  * The publishing application.
@@ -33,15 +34,22 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val libraries = DependencyBasedOrder(setOf(base, time, coreJava))
-        libraries.updateToTheMostRecent()
+        val spineLibs = SpineLibrary.values()
+
+        val orderedLibraries = DependencyBasedOrder(spineLibs.map { it.repo.library }.toSet())
+        val updated = orderedLibraries.updateToTheMostRecent()
+
+        val reposForPr = spineLibs
+                .filter { updated.contains(it.repo.library) }
+                .map { it.repo }
+
+        // TODO: 2020-07-24:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
+        val token = Token("")
+
+        val pullRequests = reposForPr.map { VersionBumpPullRequest(it, token.credentialsProvider()) }
+        for (pr in pullRequests) {
+            Git.executeAll(pr.pushBranch())
+            pr.mergeVersionBump()
+        }
     }
-
-    private val pathToBase = Paths.get("./base")
-    private val pathToCoreJava = Paths.get("./core-java")
-    private val pathToTime = Paths.get("./time")
-
-    private val base = Library("base", listOf(), pathToBase)
-    private val time = Library("time", listOf(base), pathToTime)
-    private val coreJava = Library("coreJava", listOf(base, time), pathToCoreJava)
 }

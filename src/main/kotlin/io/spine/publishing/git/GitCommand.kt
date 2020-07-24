@@ -54,6 +54,10 @@ class PushToRemote(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
  */
 object Git {
 
+    fun executeAll(commands: List<GitCommand>) {
+        commands.forEach { execute(it) }
+    }
+
     /**
      * Executes the specified Git command.
      *
