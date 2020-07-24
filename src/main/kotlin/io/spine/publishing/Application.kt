@@ -47,9 +47,6 @@ object Application {
         val token = Token("")
 
         val pullRequests = reposForPr.map { VersionBumpPullRequest(it, token.credentialsProvider()) }
-        for (pr in pullRequests) {
-            Git.executeAll(pr.pushBranch())
-            pr.mergeVersionBump()
-        }
+        pullRequests.forEach { Git.executeAll(it.pushBranch()) }
     }
 }

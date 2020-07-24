@@ -18,25 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.git.*
-import org.eclipse.jgit.transport.CredentialsProvider
+import io.spine.publishing.gradle.Library
+import org.eclipse.jgit.lib.Repository
 
 /**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
+ * A command to checkout an existing branch.
  */
-class VersionBumpPullRequest(private val remote: RemoteRepository,
-                             private val credentials: CredentialsProvider) {
+interface CheckoutBranch : GitCommandPayload {
 
-    /**
-     * Returns the list of commands to execute in order to push a version bump branch to the remote
-     * repo.
-     */
-    fun pushBranch(): List<GitCommand> = listOf(
-            Checkout(CheckoutMaster(remote.library)),
-            CommitChanges(VersionBumpCommit(remote.library)),
-            PushToRemote(PushMetadata(remote, credentials))
-    )
+    fun name(): BranchName
 }
+
+/**
+ * A command to checkout the `master` branch.
+ */
+class CheckoutMaster(val library: Library) : CheckoutBranch {
+
+    override fun repository(): Repository = library.repository()
+
+    override fun name(): BranchName = "master"
+
+}
+
+typealias BranchName = String

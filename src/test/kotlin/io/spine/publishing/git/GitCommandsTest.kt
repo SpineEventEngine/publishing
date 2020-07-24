@@ -59,23 +59,6 @@ class GitCommandsTest {
     }
 
     @Test
-    @DisplayName("create a new branch")
-    fun createBranch() {
-        val gitRepo = Git.open(repoPath.toFile())
-
-        val createBranch = CreateBranch(object : Branch {
-            override fun name(): BranchName = "test"
-            override fun repository(): Repository = gitRepo.repository
-        })
-
-        io.spine.publishing.git.Git.execute(createBranch)
-
-        val branches = Git(repository).branchList().call()
-        assertThat(branches).hasSize(2) // `master` and the newly created one.
-        assertThat(branches.map { it.name }.find { it.contains("test") }).isNotNull()
-    }
-
-    @Test
     @DisplayName("create a new commit")
     fun createCommit() {
         val gitRepo = Git.open(repoPath.toFile())

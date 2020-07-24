@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import io.spine.publishing.git.CheckoutBranch
 import io.spine.publishing.git.CommitChanges
 import io.spine.publishing.git.PushToRemote
 import io.spine.publishing.gradle.GradleVersionFile
@@ -50,11 +51,12 @@ class VersionBumpPullRequestTest {
         val pullRequest = VersionBumpPullRequest(remote, mockCredentials)
         val commands = pullRequest.pushBranch()
 
-        assertThat(commands).hasSize(2)
-        assertThat(commands[0]).isInstanceOf(CommitChanges::class)
-        assertThat(commands[1]).isInstanceOf(PushToRemote::class)
+        assertThat(commands).hasSize(3)
+        assertThat(commands[0]).isInstanceOf(CheckoutBranch::class)
+        assertThat(commands[1]).isInstanceOf(CommitChanges::class)
+        assertThat(commands[2]).isInstanceOf(PushToRemote::class)
 
-        assertThat((commands[0] as CommitChanges).commit.file()).isEqualTo(Paths.get(GradleVersionFile.NAME))
+        assertThat((commands[1] as CommitChanges).commit.file()).isEqualTo(Paths.get(GradleVersionFile.NAME))
     }
 
     private val mockCredentials: CredentialsProvider =

@@ -20,7 +20,13 @@
 
 package io.spine.publishing.git
 
+import io.spine.publishing.github.GitHubRepository
+import io.spine.publishing.github.RemoteRepository
+import io.spine.publishing.github.VersionBumpPullRequest
+import io.spine.publishing.gradle.DependencyBasedOrder
+import io.spine.publishing.gradle.Library
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * A single-file commit.
@@ -28,6 +34,30 @@ import java.nio.file.Path
  * Commits all of the changes in the file.
  */
 interface Commit : GitCommandPayload {
+
+    companion object {
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val twoCbPath = Paths.get("/Users/serhiilekariev/2cb")
+            val secondPath = Paths.get("/Users/serhiilekariev/second")
+
+            val second = Library("second", listOf(), secondPath)
+            val secondRepo = RemoteRepository(second, GitHubRepository("deadby25", "second"))
+
+            val twoCb = Library("twoCb", listOf(second), twoCbPath)
+            val twoCbRepo = RemoteRepository(twoCb, GitHubRepository("deadby25", "2cb"))
+
+            DependencyBasedOrder(setOf(second, twoCb)).updateToTheMostRecent()
+
+            val token = Token("3c13b836c0cfd698197e551137a48777bf15c74c")
+
+            listOf(secondRepo, twoCbRepo)
+                    .map { VersionBumpPullRequest(it, token.credentialsProvider()) }
+                    .map { it.pushBranch() }
+                    .forEach { Git.executeAll(it) }
+        }
+    }
 
     /** The message of the commit. */
     fun message(): CommitMessage

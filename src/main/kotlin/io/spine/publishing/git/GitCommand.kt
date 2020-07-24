@@ -31,10 +31,7 @@ sealed class GitCommand(payload: GitCommandPayload) {
     val repository: Repository = payload.repository()
 }
 
-/**
- * Checks out a new branch in the local repository.
- */
-class CreateBranch(val branch: Branch) : GitCommand(branch)
+class Checkout(val checkout: CheckoutBranch) : GitCommand(checkout)
 
 /**
  * Commits changed files to the current branch.
@@ -66,10 +63,9 @@ object Git {
     fun execute(command: GitCommand) {
         val git = Git(command.repository)
         when (command) {
-            is CreateBranch -> git
-                    .checkout()
-                    .setCreateBranch(true)
-                    .setName(command.branch.name())
+            is Checkout -> git.checkout()
+                    .setCreateBranch(false)
+                    .setName(command.checkout.name())
                     .call()
 
             is CommitChanges -> git
