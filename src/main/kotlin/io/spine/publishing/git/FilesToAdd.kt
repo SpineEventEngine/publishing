@@ -18,26 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.git.*
-import org.eclipse.jgit.transport.CredentialsProvider
+import io.spine.publishing.gradle.Library
+import org.eclipse.jgit.lib.Repository
+import java.nio.file.Path
 
-/**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
- */
-class VersionBumpPullRequest(private val remote: RemoteRepository,
-                             private val credentials: CredentialsProvider) {
+interface FilesToAdd : GitCommandPayload {
 
-    /**
-     * Returns the list of commands to execute in order to push a version bump branch to the remote
-     * repo.
-     */
-    fun pushBranch(): List<GitCommand> = listOf(
-            Checkout(CheckoutMaster(remote.library)),
-            Add(AddVersionFile(remote.library)),
-            CommitChanges(VersionBumpCommit(remote.library)),
-            PushToRemote(PushMetadata(remote, credentials))
-    )
+    fun files(): Set<Path>
+}
+
+class AddVersionFile(val library: Library) : FilesToAdd {
+
+    override fun files(): Set<Path> = setOf(relativeVersionPath())
+
+    override fun repository(): Repository = library.repository()
+
+    private fun relativeVersionPath(): Path {
+        val versionFilePath = library.versionFile.file.toPath()
+        return library.rootDir.relativize(versionFilePath)
+    }
 }

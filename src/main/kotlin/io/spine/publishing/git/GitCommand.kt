@@ -31,6 +31,8 @@ sealed class GitCommand(payload: GitCommandPayload) {
     val repository: Repository = payload.repository()
 }
 
+class Add(val files: FilesToAdd) : GitCommand(files)
+
 /**
  * Checks out a local branch.
  *
@@ -70,15 +72,18 @@ object Git {
     fun execute(command: GitCommand) {
         val git = Git(command.repository)
         when (command) {
+            is Add -> {
+                val add = git.add()
+                command.files.files().forEach { add.addFilepattern(it.toString()) }
+                add.call()
+            }
+
             is Checkout -> git.checkout()
                     .setCreateBranch(false)
                     .setName(command.checkout.name())
                     .call()
 
             is CommitChanges -> {
-                val add = git.add()
-                command.commit.files().forEach { add.addFilepattern(it.toString()) }
-                add.call()
                 val commitBuilder = git.commit().setMessage(command.commit.message())
                 command.commit.files().forEach { commitBuilder.setOnly(it.toString()) }
                 commitBuilder.call()

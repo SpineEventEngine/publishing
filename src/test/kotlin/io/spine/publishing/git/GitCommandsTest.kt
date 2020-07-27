@@ -102,12 +102,19 @@ class GitCommandsTest {
             it.println("a new line in the first file")
         }
 
+        val addSecondFile = Add(object: FilesToAdd {
+            override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
+                                                    repoPath.relativize(secondFile))
+            override fun repository(): Repository = gitRepo.repository
+        })
+
+        io.spine.publishing.git.Git.execute(addSecondFile)
+
         val message = "A change with two files."
         val commit = CommitChanges(object : Commit {
             override fun message(): CommitMessage = message
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
-                    repoPath.relativize(secondFile))
-
+                                                    repoPath.relativize(secondFile))
             override fun repository(): Repository = gitRepo.repository
         })
 
