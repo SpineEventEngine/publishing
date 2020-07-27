@@ -27,7 +27,7 @@ import java.nio.file.Path
  *
  * Files are added as a whole.
  */
-interface Commit : GitCommandPayload {
+interface CommitInfo : GitCommandPayload {
 
     /** The message of the commit. */
     fun message(): CommitMessage

@@ -31,26 +31,31 @@ sealed class GitCommand(payload: GitCommandPayload) {
     val repository: Repository = payload.repository()
 }
 
+/**
+ * Stages the files for commit, i.e. tracks them.
+ *
+ * If the files are not tracked, [Commit] won't be able to commit them.
+ */
 class Add(val files: FilesToAdd) : GitCommand(files)
 
 /**
  * Checks out a local branch.
  *
- * Does not create a new branch.
+ * Does not create a new branch, therefore the branch should exist.
  */
-class Checkout(val checkout: CheckoutBranch) : GitCommand(checkout)
+class Checkout(val checkout: BranchToCheckout) : GitCommand(checkout)
 
 /**
  * Commits changed files to the current branch.
  *
  * This command adds the files before committing them. Every file is added entirely.
  */
-class CommitChanges(val commit: Commit) : GitCommand(commit)
+class Commit(val commit: CommitInfo) : GitCommand(commit)
 
 /**
  * Pushes a current local branch to the remote repository.
  */
-class PushToRemote(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
+class Push(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
 
 /**
  * Executes Git commands.
@@ -60,9 +65,7 @@ object Git {
     /**
      * Executes the specified Git commands 1 by 1.
      */
-    fun executeAll(commands: List<GitCommand>) {
-        commands.forEach { execute(it) }
-    }
+    fun executeAll(commands: List<GitCommand>) = commands.forEach { execute(it) }
 
     /**
      * Executes the specified Git command.
@@ -83,13 +86,13 @@ object Git {
                     .setName(command.checkout.name())
                     .call()
 
-            is CommitChanges -> {
+            is Commit -> {
                 val commitBuilder = git.commit().setMessage(command.commit.message())
                 command.commit.files().forEach { commitBuilder.setOnly(it.toString()) }
                 commitBuilder.call()
             }
 
-            is PushToRemote -> git
+            is Push -> git
                     .push()
                     .setRemote(command.pushMetadata.remote.gitHubRepository.asUrl())
                     .setCredentialsProvider(command.pushMetadata.credentials)

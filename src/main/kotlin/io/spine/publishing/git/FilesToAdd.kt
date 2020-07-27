@@ -24,11 +24,20 @@ import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
 import java.nio.file.Path
 
+/**
+ * Files to add using a `git add` command.
+ *
+ * The files are added entirely, i.e. `--patch` is not supported.
+ */
 interface FilesToAdd : GitCommandPayload {
 
+    /** Files to `git add`. */
     fun files(): Set<Path>
 }
 
+/**
+ * Adds only the `version.gradle.kts` of the library specified to ctor.
+ */
 class AddVersionFile(val library: Library) : FilesToAdd {
 
     override fun files(): Set<Path> = setOf(relativeVersionPath())

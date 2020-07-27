@@ -30,7 +30,7 @@ import java.nio.file.Path
  * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
  * changed file. This commits includes all of the changes in the version file.
  */
-class VersionBumpCommit(val library: Library) : Commit {
+class VersionBumpCommit(val library: Library) : CommitInfo {
 
     override fun files(): Set<Path> {
         val versionFile = library.versionFile.file.toPath()

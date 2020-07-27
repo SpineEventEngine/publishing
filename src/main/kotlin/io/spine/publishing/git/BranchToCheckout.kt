@@ -24,17 +24,18 @@ import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
 
 /**
- * A command to checkout an existing branch.
+ * Specifies the name of the local branch to `git checkout`.
  */
-interface CheckoutBranch : GitCommandPayload {
+interface BranchToCheckout : GitCommandPayload {
 
+    /** Name of the branch to checkout. Must refer to an existing branch. */
     fun name(): BranchName
 }
 
 /**
  * A command to checkout the `master` branch.
  */
-class CheckoutMaster(val library: Library) : CheckoutBranch {
+class CheckoutMaster(val library: Library) : BranchToCheckout {
 
     override fun repository(): Repository = library.repository()
 

@@ -69,7 +69,7 @@ class GitCommandsTest {
             it.println()
         }
         val commitMessage = "A sample change"
-        val commitChanges = CommitChanges(object : Commit {
+        val commitChanges = Commit(object : CommitInfo {
             override fun message(): CommitMessage = commitMessage
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile))
             override fun repository(): Repository = gitRepo.repository
@@ -111,7 +111,7 @@ class GitCommandsTest {
         io.spine.publishing.git.Git.execute(addSecondFile)
 
         val message = "A change with two files."
-        val commit = CommitChanges(object : Commit {
+        val commit = Commit(object : CommitInfo {
             override fun message(): CommitMessage = message
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
                                                     repoPath.relativize(secondFile))

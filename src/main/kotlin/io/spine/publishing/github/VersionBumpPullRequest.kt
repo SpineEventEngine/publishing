@@ -37,7 +37,7 @@ class VersionBumpPullRequest(private val remote: RemoteRepository,
     fun pushBranch(): List<GitCommand> = listOf(
             Checkout(CheckoutMaster(remote.library)),
             Add(AddVersionFile(remote.library)),
-            CommitChanges(VersionBumpCommit(remote.library)),
-            PushToRemote(PushMetadata(remote, credentials))
+            Commit(VersionBumpCommit(remote.library)),
+            Push(PushMetadata(remote, credentials))
     )
 }
