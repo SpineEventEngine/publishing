@@ -32,9 +32,9 @@ import java.nio.file.Path
  */
 class VersionBumpCommit(val library: Library) : Commit {
 
-    override fun file(): Path {
+    override fun files(): Set<Path> {
         val versionFile = library.versionFile.file.toPath()
-        return library.rootDir.relativize(versionFile)
+        return setOf(library.rootDir.relativize(versionFile))
     }
 
     override fun message(): CommitMessage {

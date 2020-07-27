@@ -22,10 +22,11 @@ package io.spine.publishing.git
 
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
-import assertk.assertions.isNotNull
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.treewalk.TreeWalk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -70,7 +71,7 @@ class GitCommandsTest {
         val commitMessage = "A sample change"
         val commitChanges = CommitChanges(object : Commit {
             override fun message(): CommitMessage = commitMessage
-            override fun file(): Path = repoPath.relativize(sampleFile)
+            override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile))
             override fun repository(): Repository = gitRepo.repository
         })
 
@@ -85,5 +86,41 @@ class GitCommandsTest {
         // `log` outputs are FIFO - the freshest ones are at the top.
         val freshCommit = refs.toList()[0]
         assertThat(freshCommit.fullMessage).contains(commitMessage)
+    }
+
+    @Test
+    @DisplayName("create a commit with several files")
+    fun multiFileCommit() {
+        val gitRepo = Git.open(repoPath.toFile())
+
+        val secondFile = repoPath.resolve("second_file.txt")
+        secondFile.toFile().createNewFile()
+        secondFile.toFile().printWriter().use {
+            it.println("a new line in the second file")
+        }
+        sampleFile.toFile().printWriter().use {
+            it.println("a new line in the first file")
+        }
+
+        val message = "A change with two files."
+        val commit = CommitChanges(object : Commit {
+            override fun message(): CommitMessage = message
+            override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
+                    repoPath.relativize(secondFile))
+
+            override fun repository(): Repository = gitRepo.repository
+        })
+
+        io.spine.publishing.git.Git.execute(commit)
+
+        val commitTree = gitRepo.log().all().call().toList()[0].tree
+        val treeWalk = TreeWalk(gitRepo.repository)
+        treeWalk.reset(commitTree)
+        val files: MutableList<String> = mutableListOf()
+        while (treeWalk.next()) {
+            files.add(treeWalk.pathString)
+        }
+
+        assertThat(files).containsOnly(secondFile.toFile().name, sampleFile.toFile().name)
     }
 }

@@ -23,9 +23,9 @@ package io.spine.publishing.git
 import java.nio.file.Path
 
 /**
- * A single-file commit.
+ * Files and a message to include in a Git commit.
  *
- * Commits all of the changes in the file.
+ * Files are added as a whole.
  */
 interface Commit : GitCommandPayload {
 
@@ -33,11 +33,11 @@ interface Commit : GitCommandPayload {
     fun message(): CommitMessage
 
     /**
-     * Path to the changed file.
+     * Paths to the changed files.
      *
      * Must be relative to the [repository][GitCommandPayload.repository].
      */
-    fun file(): Path
+    fun files(): Set<Path>
 }
 
 typealias CommitMessage = String

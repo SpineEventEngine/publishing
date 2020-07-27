@@ -41,8 +41,7 @@ class Checkout(val checkout: CheckoutBranch) : GitCommand(checkout)
 /**
  * Commits changed files to the current branch.
  *
- * Note that this command cannot commit a file partially. The [entire file][Commit.file]
- * is committed.
+ * This command adds the files before committing them. Every file is added entirely.
  */
 class CommitChanges(val commit: Commit) : GitCommand(commit)
 
@@ -76,11 +75,14 @@ object Git {
                     .setName(command.checkout.name())
                     .call()
 
-            is CommitChanges -> git
-                    .commit()
-                    .setOnly(command.commit.file().toString())
-                    .setMessage(command.commit.message())
-                    .call()
+            is CommitChanges -> {
+                val add = git.add()
+                command.commit.files().forEach { add.addFilepattern(it.toString()) }
+                add.call()
+                val commitBuilder = git.commit().setMessage(command.commit.message())
+                command.commit.files().forEach { commitBuilder.setOnly(it.toString()) }
+                commitBuilder.call()
+            }
 
             is PushToRemote -> git
                     .push()
