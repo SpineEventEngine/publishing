@@ -31,6 +31,11 @@ sealed class GitCommand(payload: GitCommandPayload) {
     val repository: Repository = payload.repository()
 }
 
+/**
+ * Checks out a local branch.
+ *
+ * Does not create a new branch.
+ */
 class Checkout(val checkout: CheckoutBranch) : GitCommand(checkout)
 
 /**
