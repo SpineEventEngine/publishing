@@ -54,9 +54,15 @@ class GitCommandsTest {
             it.println()
         }
         repository = Git.open(repoPath.toFile()).repository
-        Git(repository).add().addFilepattern(".")
+        Git(repository)
+                .add()
+                .addFilepattern(".")
                 .call()
-        Git(repository).commit().setMessage("Add the sample file.").setAll(true).call()
+        Git(repository)
+                .commit()
+                .setMessage("Add the sample file.")
+                .setAll(true)
+                .call()
     }
 
     @Test
@@ -101,7 +107,7 @@ class GitCommandsTest {
             it.println("a new line in the first file")
         }
 
-        val addSecondFile = Add(object: FilesToAdd {
+        val addSecondFile = Add(object : FilesToAdd {
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
                                                     repoPath.relativize(secondFile))
             override fun repository(): Repository = gitRepo.repository
