@@ -23,6 +23,7 @@ package io.spine.publishing.github
 import assertk.assertThat
 import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
+import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import io.spine.publishing.git.Add
 import io.spine.publishing.git.Checkout
@@ -47,7 +48,9 @@ class VersionUpdateTest {
     fun correctCommands(@TempDir tempdir: Path) {
         val baseDirectory = TestEnv.copyDirectory("base", tempdir)
         val library = Library("base", listOf(), baseDirectory)
-        val remote = RemoteRepository(library, GitHubRepository("", ""))
+        val orgName = "TestOrganization"
+        val repo = "base"
+        val remote = RemoteRepository(library, GitHubRepository(orgName, repo))
 
         val pullRequest = VersionUpdate(remote, mockCredentials)
         val commands = pullRequest.pushBranch()
@@ -58,8 +61,10 @@ class VersionUpdateTest {
         assertThat(commands[2]).isInstanceOf(Commit::class)
         assertThat(commands[3]).isInstanceOf(Push::class)
 
+        assertThat((commands[0] as Checkout).checkout.name()).isEqualTo("master")
         assertThat((commands[1] as Add).files.files()).containsOnly(Paths.get(GradleVersionFile.NAME))
-//        assertThat((commands[2] as Commit).commit.files()).containsOnly(Paths.get(GradleVersionFile.NAME))
+        assertThat((commands[3] as Push).pushMetadata.remote.gitHubRepository)
+                .isEqualTo(GitHubRepository(orgName, repo))
     }
 
     private val mockCredentials: CredentialsProvider =
