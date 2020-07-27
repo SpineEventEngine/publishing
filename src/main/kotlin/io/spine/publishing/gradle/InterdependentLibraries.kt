@@ -43,8 +43,9 @@ class InterdependentLibraries(private val ordering: Ordering) {
      * 3) library B is built;
      * 4) library B is published to the local Maven repo;
      * 5) library A is built;
-     * 6) library B is published to the local Maven repo;
-     * 7) library A, B and C are published to the remote artifact repository.
+     * 6) library A is published to the local Maven repo;
+     * 7) library A, B and C are published to the remote artifact repository, as at this point
+     * it is known that it's safe to build them with new versions.
      *
      * @see Ordering
      */
