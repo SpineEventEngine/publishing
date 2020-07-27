@@ -88,8 +88,7 @@ object Git {
                     .setMessage(command.commit.message())
                     .call()
 
-            is Push -> git
-                    .push()
+            is Push -> git.push()
                     .setRemote(command.pushMetadata.remote.gitHubRepository.asUrl())
                     .setCredentialsProvider(command.pushMetadata.credentials)
                     .call()
