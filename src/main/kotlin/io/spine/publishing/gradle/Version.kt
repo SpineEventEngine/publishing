@@ -56,6 +56,11 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
         }
     }
 
+    /**
+     * Compares this version to the `other` one.
+     *
+     * The greater version has a greater major, minor or patch value.
+     */
     override fun compareTo(other: Version): Int = COMPARATOR.compare(this, other)
 
     override fun toString(): String {

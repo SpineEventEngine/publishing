@@ -32,7 +32,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @DisplayName("`DependencyBasedOrder` should")
-class DependencyBasedOrderTest {
+class OrderingTest {
 
     @Test
     @DisplayName("find a dependency-safe order")
@@ -41,7 +41,7 @@ class DependencyBasedOrderTest {
         val time = mockLibrary("time", base)
         val coreJava = mockLibrary("coreJava", base, time)
 
-        val result = DependencyBasedOrder(setOf(coreJava, base, time)).ordered
+        val result = Ordering(setOf(coreJava, base, time)).byDependencies
         assertThat(result).containsExactly(base, time, coreJava)
     }
 
@@ -66,7 +66,7 @@ class DependencyBasedOrderTest {
         val clockShop = mockLibrary("clockShop", time)
         val pinkFloyd = mockLibrary("pinkFloyd", time)
 
-        val order = DependencyBasedOrder(setOf(clockShop, pinkFloyd, base, time, coreJava)).ordered
+        val order = Ordering(setOf(clockShop, pinkFloyd, base, time, coreJava)).byDependencies
         assertThat(order[0]).isEqualTo(base)
         assertThat(order[1]).isEqualTo(time)
 
@@ -74,10 +74,10 @@ class DependencyBasedOrderTest {
     }
 
     @Test
-    @DisplayName("update the libraries to the most recent version")
-    fun updateToMostRecent(@TempDir baseDir: Path,
-                           @TempDir timeDir: Path,
-                           @TempDir coreJavaDir: Path) {
+    @DisplayName("find the most recent version")
+    fun findMostRecent(@TempDir baseDir: Path,
+                       @TempDir timeDir: Path,
+                       @TempDir coreJavaDir: Path) {
         val movedBase = copyDirectory("base", baseDir)
         val movedTime = copyDirectory("time", timeDir)
         val movedCoreJava = copyDirectory("core-java", coreJavaDir)
@@ -85,44 +85,10 @@ class DependencyBasedOrderTest {
         val base = Library("base", listOf(), movedBase)
         val time = Library("time", listOf(base), movedTime)
         val coreJava = Library("coreJava", listOf(time, base), movedCoreJava)
-        val graph = DependencyBasedOrder(setOf(base, time, coreJava))
 
-        graph.updateToTheMostRecent()
-
-        val expectedVersion = Version(1, 9, 9)
-        assertEquals(base.version(), expectedVersion)
-        assertEquals(coreJava.version(), expectedVersion)
-        assertEquals(base.version(), expectedVersion)
-
-        assertEquals(base.version("time"), expectedVersion)
-
-        assertEquals(coreJava.version("time"), expectedVersion)
-        assertEquals(coreJava.version("base"), expectedVersion)
+        val mostRecentVersion = Ordering(setOf(base, time, coreJava)).mostRecentVersion()
+        assertThat(mostRecentVersion).isEqualTo(Version(1, 9, 9))
     }
-
-    @Test
-    @DisplayName("update its dependency version when own version is the most recent one")
-    fun updateOwn(@TempDir libraryPath: Path, @TempDir subLibraryPath: Path) {
-        val libraryDir = copyDirectory("own-version-matches", libraryPath)
-        val subLibraryDir = copyDirectory("subLibrary", subLibraryPath)
-
-        val newVersion = Version(1, 3, 0)
-
-        val subLibrary = Library("subLibrary", listOf(), subLibraryDir)
-        val library = Library("library", listOf(subLibrary), libraryDir)
-
-        DependencyBasedOrder(setOf(library, subLibrary)).updateToTheMostRecent()
-
-        val versions = listOf(library.version(),
-                library.version(subLibrary.name),
-                subLibrary.version())
-        versions.forEach { assertThat(it).isEqualTo(newVersion) }
-    }
-
-    private fun assertEquals(actualVersion: Version, expectedVersion: Version) {
-        assertThat(actualVersion).isEqualTo(expectedVersion)
-    }
-
 
     private fun mockLibrary(name: String, vararg dependencies: Library): Library {
         val path = Paths.get("") // A mock path doesn't matter as we don't access the files.

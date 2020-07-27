@@ -20,52 +20,27 @@
 
 package io.spine.publishing.gradle
 
-import java.util.function.Predicate
-
 /**
  * A collection of libraries that can be traversed in the order based on dependencies between
  * the libraries.
  *
- * Such an order is the order in which the library is reached only when all of its dependencies
+ * Such an order is the order in which the library is reached only if all of its dependencies
  * have been previously reached.
  */
-class DependencyBasedOrder(private val libraries: Set<Library>) {
+class Ordering(private val libraries: Set<Library>) {
 
     /**
-     * Finds the most recent version among the libraries, then updates all of the libraries in
-     * this graph to the most recent one.
+     * Returns the largest version seen among these libraries.
      *
-     * Returns the set of the libraries that were updated. This means that the libraries that
-     * already has the most recent version are not included.
-     *
-     * @see Library.update
+     * @see Version.compareTo
      */
-    fun updateToTheMostRecent(): List<Library> {
-        return updateAll(mostRecentVersion())
-    }
+    fun mostRecentVersion() = byDependencies.maxBy { it.version() }!!.version()
 
     /**
-     * Returns the maximum found seen in this library graph.
+     * A sequence of libraries ordered in a way that dependency-libraries come before the libraries
+     * that depend on them.
      */
-    fun mostRecentVersion() = ordered.maxBy { it.version() }!!.version()
-
-    private fun updateAll(newVersion: Version): List<Library> {
-        val projects = ordered
-        val ownVersionBelow: Predicate<Library> = Predicate { it.version() < newVersion }
-        val atLeastOneDependencyBelow: Predicate<Library> = Predicate {
-            it.versionFile.declaredDependencies()
-                    .any { v -> v.value < newVersion }
-        }
-        val projectsToUpdate = projects
-                .filter { ownVersionBelow.or(atLeastOneDependencyBelow).test(it) }
-        projectsToUpdate.forEach { it.update(newVersion) }
-        return projectsToUpdate.toList()
-    }
-
-    /**
-     * Returns the libraries ordered in a way that allows a dependency-safe build.
-     */
-    val ordered: List<Library> by lazy {
+    val byDependencies: List<Library> by lazy {
         val visited = HashSet<Library>()
         val result = ArrayList<Library>()
         val toTraverse = libraries.toMutableList()

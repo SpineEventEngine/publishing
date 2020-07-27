@@ -23,8 +23,8 @@ package io.spine.publishing
 import io.spine.publishing.git.Git
 import io.spine.publishing.git.Token
 import io.spine.publishing.github.VersionUpdate
-import io.spine.publishing.gradle.DependencyBasedOrder
-import io.spine.publishing.gradle.GradleProject
+import io.spine.publishing.gradle.Ordering
+import io.spine.publishing.gradle.InterdependentLibraries
 
 /**
  * The publishing application.
@@ -37,17 +37,11 @@ object Application {
     fun main(args: Array<String>) {
         val spineLibs = SpineLibrary.values()
 
-        val orderedLibraries = DependencyBasedOrder(spineLibs.map { it.repo.library }.toSet())
-        val updated = orderedLibraries.updateToTheMostRecent()
-
-        val updatedLibraries = spineLibs.filter { updated.contains(it.repo.library) }
-        for (project in updatedLibraries.map { GradleProject(it.repo.library.rootDir) }) {
-            project.build()
-            project.publish()
-        }
+        val ordering = Ordering(spineLibs.map { it.repo.library }.toSet())
+        val updatedProjects = InterdependentLibraries(ordering).publish()
+        val updatedLibraries = spineLibs.filter { updatedProjects.contains(it.repo.library) }
 
         val reposToUpdate = updatedLibraries.map { it.repo }
-
         // TODO: 2020-07-24:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
         val token = Token("")
 
