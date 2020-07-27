@@ -46,11 +46,9 @@ class Add(val files: FilesToAdd) : GitCommand(files)
 class Checkout(val checkout: BranchToCheckout) : GitCommand(checkout)
 
 /**
- * Commits changed files to the current branch.
- *
- * This command adds the files before committing them. Every file is added entirely.
+ * Commits the [tracked files][Add] to the current branch.
  */
-class Commit(val commit: CommitInfo) : GitCommand(commit)
+class Commit(val commit: CommitMessage) : GitCommand(commit)
 
 /**
  * Pushes a current local branch to the remote repository.
@@ -86,11 +84,9 @@ object Git {
                     .setName(command.checkout.name())
                     .call()
 
-            is Commit -> {
-                val commitBuilder = git.commit().setMessage(command.commit.message())
-                command.commit.files().forEach { commitBuilder.setOnly(it.toString()) }
-                commitBuilder.call()
-            }
+            is Commit -> git.commit()
+                    .setMessage(command.commit.message())
+                    .call()
 
             is Push -> git
                     .push()

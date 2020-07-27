@@ -27,7 +27,7 @@ import java.nio.file.Path
  *
  * Allows to execute arbitrary Gradle tasks
  */
-class GradleProject(val rootDir: Path) {
+class GradleProject(private val rootDir: Path) {
 
     companion object {
         private const val GRADLEW = "./gradlew"

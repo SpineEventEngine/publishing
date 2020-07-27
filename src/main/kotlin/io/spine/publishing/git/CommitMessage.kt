@@ -22,24 +22,24 @@ package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
-import java.nio.file.Path
 
 /**
- * Information about a version bump commit.
+ * Files and a message to include in a Git commit.
  *
- * In such a commit [version file][io.spine.publishing.gradle.GradleVersionFile] is the only
- * changed file. This commits includes all of the changes in the version file.
+ * Files are added as a whole.
  */
-class VersionBumpCommit(val library: Library) : CommitInfo {
+interface CommitMessage : GitCommandPayload {
 
-    override fun files(): Set<Path> {
-        val versionFile = library.versionFile.file.toPath()
-        return setOf(library.rootDir.relativize(versionFile))
-    }
+    /** The message of the commit. */
+    fun message(): String
+}
 
-    override fun message(): CommitMessage {
-        return "Bump version to `${library.version()}`"
-    }
+/**
+ * A message associated with a version bump commit.
+ */
+class VersionBumpCommit(val library: Library) : CommitMessage {
 
     override fun repository(): Repository = library.repository()
+
+    override fun message(): String = "Bump version to `${library.version()}`"
 }

@@ -32,8 +32,6 @@ data class RemoteRepository(val library: Library, val gitHubRepository: GitHubRe
  */
 data class GitHubRepository(val organization: Organization, val name: RepositoryName) {
 
-    fun repoIdentifier(): String = "$organization/$name"
-
     fun asUrl(): String = "https://github.com/$organization/$name.git"
 }
 

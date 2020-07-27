@@ -22,7 +22,7 @@ package io.spine.publishing
 
 import io.spine.publishing.git.Git
 import io.spine.publishing.git.Token
-import io.spine.publishing.github.VersionBumpPullRequest
+import io.spine.publishing.github.VersionUpdate
 import io.spine.publishing.gradle.DependencyBasedOrder
 import io.spine.publishing.gradle.GradleProject
 
@@ -46,12 +46,12 @@ object Application {
             project.publish()
         }
 
-        val reposForPr = updatedLibraries.map { it.repo }
+        val reposToUpdate = updatedLibraries.map { it.repo }
 
         // TODO: 2020-07-24:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
         val token = Token("")
 
-        val pullRequests = reposForPr.map { VersionBumpPullRequest(it, token.credentialsProvider()) }
+        val pullRequests = reposToUpdate.map { VersionUpdate(it, token.credentialsProvider()) }
         pullRequests.forEach { Git.executeAll(it.pushBranch()) }
     }
 }

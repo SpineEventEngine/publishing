@@ -33,7 +33,7 @@ interface BranchToCheckout : GitCommandPayload {
 }
 
 /**
- * A command to checkout the `master` branch.
+ * Checks out the `master` branch.
  */
 class CheckoutMaster(val library: Library) : BranchToCheckout {
 

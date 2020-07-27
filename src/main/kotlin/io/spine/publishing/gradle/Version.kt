@@ -38,8 +38,6 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
          * a valid Spine version.
          */
         fun parseFrom(stringValue: String): Version? {
-            checkNotNull(stringValue)
-
             val versions: List<String> = stringValue.split(".")
 
             return if (versions.size == 3) {

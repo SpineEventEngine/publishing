@@ -24,11 +24,18 @@ import io.spine.publishing.git.*
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
+ * An update to the version of a library.
+ *
+ * To update the version, the following Git commands are performed:
+ *
+ * 1) the `master` branch is checked out, as the version change is a direct `master` push'
+ * 2) the `version.gradle.kts` file is added. It is expected that this file has already been
+ * changed to have the correct version;
+ * 3) the commit is performed;
+ * 4) the local `master` branch is pushed to the respective remote repository.
  */
-class VersionBumpPullRequest(private val remote: RemoteRepository,
-                             private val credentials: CredentialsProvider) {
+class VersionUpdate(private val remote: RemoteRepository,
+                    private val credentials: CredentialsProvider) {
 
     /**
      * Returns the list of commands to execute in order to push a version bump branch to the remote
