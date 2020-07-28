@@ -23,25 +23,23 @@ package io.spine.publishing
 import io.spine.publishing.github.GitHubRepository
 import io.spine.publishing.github.RemoteRepository
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.gradle.LibraryName
 import java.nio.file.Paths
 
 /**
- * One of the Spine libraries published by this application.
+ * A Spine library to publish.
  */
 enum class SpineLibrary(val repo: RemoteRepository) {
 
-    BASE(RemoteRepository(
-            Library("base", listOf(), Paths.get("base")),
-            GitHubRepository(ORGANIZATION, "base"))),
-    TIME(RemoteRepository(
-            Library("time", listOf(BASE.repo.library), Paths.get("time")),
-            GitHubRepository(ORGANIZATION, "time"))),
-    CORE_JAVA(RemoteRepository(
-            Library("coreJava",
-                    listOf(BASE.repo.library, TIME.repo.library),
-                    Paths.get("core-java")),
-            GitHubRepository(ORGANIZATION, "core-java")
-    ))
+    BASE(RemoteRepository(base, spineGitHubRepo("base"))),
+    TIME(RemoteRepository(time, spineGitHubRepo("time"))),
+    CORE_JAVA(RemoteRepository(coreJava, spineGitHubRepo("coreJava")))
 }
 
+
+private val base = Library("base", listOf(), Paths.get("base"))
+private val time = Library("time", listOf(base), Paths.get("time"))
+private val coreJava = Library("coreJava", listOf(base, time), Paths.get("core-java"))
+
+private fun spineGitHubRepo(libraryName: LibraryName) = GitHubRepository(ORGANIZATION, libraryName)
 private const val ORGANIZATION = "SpineEventEngine"
