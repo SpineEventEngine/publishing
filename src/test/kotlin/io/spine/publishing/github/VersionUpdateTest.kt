@@ -52,7 +52,7 @@ class VersionUpdateTest {
         val library = Library("base", listOf(), baseDirectory)
         val orgName = "TestOrganization"
         val repo = "base"
-        val remote = RemoteRepository(library, GitHubRepository(orgName, repo))
+        val remote = RemoteLibraryRepository(library, GitHubRepository(orgName, repo))
 
         val pullRequest = VersionUpdate(remote, mockCredentials)
         val commands = pullRequest.pushBranch()

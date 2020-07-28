@@ -21,7 +21,7 @@
 package io.spine.publishing
 
 import io.spine.publishing.github.GitHubRepository
-import io.spine.publishing.github.RemoteRepository
+import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.LibraryName
 import java.nio.file.Paths
@@ -29,11 +29,11 @@ import java.nio.file.Paths
 /**
  * A Spine library to publish.
  */
-enum class SpineLibrary(val repo: RemoteRepository) {
+enum class SpineLibrary(val repo: RemoteLibraryRepository) {
 
-    BASE(RemoteRepository(base, spineGitHubRepo("base"))),
-    TIME(RemoteRepository(time, spineGitHubRepo("time"))),
-    CORE_JAVA(RemoteRepository(coreJava, spineGitHubRepo("coreJava")))
+    BASE(RemoteLibraryRepository(base, spineGitHubRepo("base"))),
+    TIME(RemoteLibraryRepository(time, spineGitHubRepo("time"))),
+    CORE_JAVA(RemoteLibraryRepository(coreJava, spineGitHubRepo("coreJava")))
 }
 
 

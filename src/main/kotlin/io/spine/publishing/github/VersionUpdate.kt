@@ -34,7 +34,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * 3) the commit is performed;
  * 4) the local `master` branch is pushed to the respective remote repository.
  */
-class VersionUpdate(private val remote: RemoteRepository,
+class VersionUpdate(private val remote: RemoteLibraryRepository,
                     private val credentials: CredentialsProvider) {
 
     /**
