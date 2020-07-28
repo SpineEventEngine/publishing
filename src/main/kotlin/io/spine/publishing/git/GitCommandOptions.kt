@@ -25,9 +25,9 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.lib.RepositoryBuilder
 
 /**
- * Information associated with a [GitCommand].
+ * Options associated with a Git command that specify its behavior.
  */
-interface GitCommandPayload {
+interface GitCommandOptions {
 
     /**
      * Returns a local repository that the respective command is associated with.

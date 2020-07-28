@@ -26,9 +26,9 @@ import org.eclipse.jgit.lib.Repository
 /**
  * Git commands necessary for the Publishing application.
  */
-sealed class GitCommand(payload: GitCommandPayload) {
+sealed class GitCommand(options: GitCommandOptions) {
 
-    val repository: Repository = payload.repository()
+    val repository: Repository = options.repository()
 }
 
 /**

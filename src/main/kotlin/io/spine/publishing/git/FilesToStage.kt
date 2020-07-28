@@ -29,7 +29,7 @@ import java.nio.file.Path
  *
  * All of the changes in the file are staged, i.e. `--patch` is not supported.
  */
-interface FilesToStage : GitCommandPayload {
+interface FilesToStage : GitCommandOptions {
 
     /** Files to `git add`. */
     fun files(): Set<Path>

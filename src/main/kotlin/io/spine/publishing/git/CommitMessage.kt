@@ -26,7 +26,7 @@ import org.eclipse.jgit.lib.Repository
 /**
  * A message that accompanies a commit.
  */
-interface CommitMessage : GitCommandPayload {
+interface CommitMessage : GitCommandOptions {
 
     /** The message of the commit. */
     fun message(): String

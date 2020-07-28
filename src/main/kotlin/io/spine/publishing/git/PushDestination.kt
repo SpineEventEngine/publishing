@@ -28,7 +28,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * A payload that specifies the remote repository to push as well as the credentials to use.
  */
 class PushDestination(val remote: RemoteLibraryRepository,
-                      val credentials: CredentialsProvider) : GitCommandPayload {
+                      val credentials: CredentialsProvider) : GitCommandOptions {
 
     override fun repository(): Repository = remote.library.repository()
 }
