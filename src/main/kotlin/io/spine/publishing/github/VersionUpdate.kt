@@ -28,7 +28,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  *
  * To update the version, the following Git commands are performed:
  *
- * 1) the `master` branch is checked out, as the version change is a direct `master` push'
+ * 1) the `master` branch is checked out, as the version change is a direct `master` push;
  * 2) the `version.gradle.kts` file is added. It is expected that this file has already been
  * changed to have the correct version;
  * 3) the commit is performed;
@@ -38,8 +38,8 @@ class VersionUpdate(private val remote: RemoteLibraryRepository,
                     private val credentials: CredentialsProvider) {
 
     /**
-     * Returns the list of commands to execute in order to push a version bump branch to the remote
-     * repo.
+     * Returns the list of Git commands to execute in order to push a version bump branch
+     * to the remote repository.
      */
     fun pushBranch(): List<GitCommand> = listOf(
             Checkout(Master(remote.library)),

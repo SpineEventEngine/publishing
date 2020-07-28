@@ -33,19 +33,22 @@ class InterdependentLibraries(private val ordering: Ordering) {
      * new versions them to the remote artifact repositories.
      *
      * First, updates the versions of all libraries. Then, starts building and publishing the
-     * libraries in a dependency-based order, e.g:
+     * libraries in a dependency-based order. For example:
      *
+     *          A --------------> B
+     *           \               /
+     *            --------> C <--
      * library A depends on library B and C. Library B depends on library C.
      * In such a configuration, the following happens:
      *
-     * 1) library C is built;
-     * 2) library C is published to the local Maven repo, so that it can be used for further builds;
-     * 3) library B is built;
-     * 4) library B is published to the local Maven repo;
-     * 5) library A is built;
-     * 6) library A is published to the local Maven repo;
-     * 7) library A, B and C are published to the remote artifact repository, as at this point
-     * it is known that it's safe to build them with new versions.
+     * 1) C is built;
+     * 2) C is published to the local Maven repo, so that it can be used for further builds;
+     * 3) B is built;
+     * 4) B is published to the local Maven repo;
+     * 5) A is built;
+     * 6) A is published to the local Maven repo;
+     * 7) A, B and C are published to the remote artifact repository, as at this point it is known
+     * that it's safe to build them with new versions.
      *
      * @see Ordering
      */
