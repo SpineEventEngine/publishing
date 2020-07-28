@@ -61,7 +61,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination)
 object Git {
 
     /**
-     * Executes the specified Git commands, equivalent to commands.forEach {}
+     * Executes the specified Git commands, equivalent to commands.forEach { Git.exeute(it) }.
      */
     fun executeAll(commands: List<GitCommand>) = commands.forEach { execute(it) }
 
