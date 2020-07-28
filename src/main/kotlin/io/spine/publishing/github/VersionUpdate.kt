@@ -29,8 +29,8 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * To update the version, the following Git commands are performed:
  *
  * 1) the `master` branch is checked out, as the version change is a direct `master` push;
- * 2) the `version.gradle.kts` file is added. It is expected that this file has already been
- * changed to have the correct version;
+ * 2) the `version.gradle.kts` file is staged for commit. It is expected that this file has already
+ * been changed to have the correct version;
  * 3) the commit is performed;
  * 4) the local `master` branch is pushed to the respective remote repository.
  */

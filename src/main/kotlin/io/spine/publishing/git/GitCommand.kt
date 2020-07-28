@@ -46,12 +46,12 @@ class StageFiles(val files: FilesToStage) : GitCommand(files)
 class Checkout(val branch: Branch) : GitCommand(branch)
 
 /**
- * Commits the [tracked files][StageFiles] to the current branch.
+ * Commits the [staged files][StageFiles] to the current branch.
  */
 class Commit(val message: CommitMessage) : GitCommand(message)
 
 /**
- * Pushes a current local branch to the remote repository.
+ * Pushes the current local branch to the remote repository.
  */
 class PushToRemote(val destination: PushDestination) : GitCommand(destination)
 
@@ -61,7 +61,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination)
 object Git {
 
     /**
-     * Executes the specified Git commands, equivalent to commands.forEach { Git.exeute(it) }.
+     * Executes the specified Git commands, equivalent to `commands.forEach { Git.exeute(it) }`.
      */
     fun executeAll(commands: List<GitCommand>) = commands.forEach { execute(it) }
 

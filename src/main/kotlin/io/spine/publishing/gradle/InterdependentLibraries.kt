@@ -32,8 +32,8 @@ package io.spine.publishing.gradle
 class InterdependentLibraries(private val ordering: Ordering) {
 
     /**
-     * Goes through the libraries one by one, updating their version, building and publishing
-     * new versions them to the remote artifact repositories.
+     * Goes through each library, updating their versions, building and publishing new versions to
+     * the remote artifact repositories.
      *
      * First, updates the versions of all libraries. Then, starts building and publishing the
      * libraries in a dependency-based order. For example:

@@ -38,7 +38,7 @@ interface GitCommandOptions {
 /**
  * Given a library, returns a Git repository in its root working directory.
  *
- * If the repository does not contain a Git repo, an `RepositoryNotFoundException` is thrown.
+ * If the repository does not contain a Git repo, a `RepositoryNotFoundException` is thrown.
  */
 fun Library.repository(): Repository {
     val repoPath = this.rootDir.toAbsolutePath().toFile()
