@@ -24,7 +24,7 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Git commands necessary for the `Publishing` application.
+ * Git commands necessary for the Publishing application.
  */
 sealed class GitCommand(payload: GitCommandPayload) {
 
@@ -32,28 +32,28 @@ sealed class GitCommand(payload: GitCommandPayload) {
 }
 
 /**
- * Stages the files for commit, i.e. tracks them.
+ * Stages the files for commit.
  *
- * If the files are not tracked, [Commit] won't be able to commit them.
+ * Note that only the staged files can be [committed][Commit].
  */
-class Add(val files: FilesToAdd) : GitCommand(files)
+class StageFiles(val files: FilesToStage) : GitCommand(files)
 
 /**
  * Checks out a local branch.
  *
  * Does not create a new branch, therefore the branch should exist.
  */
-class Checkout(val checkout: Branch) : GitCommand(checkout)
+class Checkout(val branch: Branch) : GitCommand(branch)
 
 /**
- * Commits the [tracked files][Add] to the current branch.
+ * Commits the [tracked files][StageFiles] to the current branch.
  */
-class Commit(val commit: CommitMessage) : GitCommand(commit)
+class Commit(val message: CommitMessage) : GitCommand(message)
 
 /**
  * Pushes a current local branch to the remote repository.
  */
-class Push(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
+class PushToRemote(val destination: PushDestination) : GitCommand(destination)
 
 /**
  * Executes Git commands.
@@ -61,7 +61,7 @@ class Push(val pushMetadata: PushMetadata) : GitCommand(pushMetadata)
 object Git {
 
     /**
-     * Executes the specified Git commands 1 by 1.
+     * Executes the specified Git commands, equivalent to commands.forEach {}
      */
     fun executeAll(commands: List<GitCommand>) = commands.forEach { execute(it) }
 
@@ -73,7 +73,7 @@ object Git {
     fun execute(command: GitCommand) {
         val git = Git(command.repository)
         when (command) {
-            is Add -> {
+            is StageFiles -> {
                 val add = git.add()
                 command.files.files().forEach { add.addFilepattern(it.toString()) }
                 add.call()
@@ -81,16 +81,16 @@ object Git {
 
             is Checkout -> git.checkout()
                     .setCreateBranch(false)
-                    .setName(command.checkout.name())
+                    .setName(command.branch.name())
                     .call()
 
             is Commit -> git.commit()
-                    .setMessage(command.commit.message())
+                    .setMessage(command.message.message())
                     .call()
 
-            is Push -> git.push()
-                    .setRemote(command.pushMetadata.remote.gitHubRepository.asUrl())
-                    .setCredentialsProvider(command.pushMetadata.credentials)
+            is PushToRemote -> git.push()
+                    .setRemote(command.destination.remote.gitHubRepository.asUrl())
+                    .setCredentialsProvider(command.destination.credentials)
                     .call()
         }
     }

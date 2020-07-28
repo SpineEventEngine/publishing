@@ -25,10 +25,10 @@ import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import io.spine.publishing.git.Add
+import io.spine.publishing.git.StageFiles
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
-import io.spine.publishing.git.Push
+import io.spine.publishing.git.PushToRemote
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.given.TestEnv
@@ -57,13 +57,13 @@ class VersionUpdateTest {
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
-        assertThat(commands[1]).isInstanceOf(Add::class)
+        assertThat(commands[1]).isInstanceOf(StageFiles::class)
         assertThat(commands[2]).isInstanceOf(Commit::class)
-        assertThat(commands[3]).isInstanceOf(Push::class)
+        assertThat(commands[3]).isInstanceOf(PushToRemote::class)
 
-        assertThat((commands[0] as Checkout).checkout.name()).isEqualTo("master")
-        assertThat((commands[1] as Add).files.files()).containsOnly(Paths.get(GradleVersionFile.NAME))
-        assertThat((commands[3] as Push).pushMetadata.remote.gitHubRepository)
+        assertThat((commands[0] as Checkout).branch.name()).isEqualTo("master")
+        assertThat((commands[1] as StageFiles).files.files()).containsOnly(Paths.get(GradleVersionFile.NAME))
+        assertThat((commands[3] as PushToRemote).destination.remote.gitHubRepository)
                 .isEqualTo(GitHubRepository(orgName, repo))
     }
 

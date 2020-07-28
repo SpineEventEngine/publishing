@@ -25,10 +25,10 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * A payload that specifies how to execute a push operation.
+ * A payload that specifies the remote repository to push as well as the credentials to use.
  */
-class PushMetadata(val remote: RemoteRepository,
-                   val credentials: CredentialsProvider) : GitCommandPayload {
+class PushDestination(val remote: RemoteRepository,
+                      val credentials: CredentialsProvider) : GitCommandPayload {
 
     override fun repository(): Repository = remote.library.repository()
 }

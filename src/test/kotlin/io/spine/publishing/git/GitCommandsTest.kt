@@ -21,9 +21,7 @@
 package io.spine.publishing.git
 
 import assertk.assertThat
-import assertk.assertions.contains
 import assertk.assertions.containsOnly
-import assertk.assertions.hasSize
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
@@ -107,13 +105,13 @@ class GitCommandsTest {
             it.println("a new line in the first file")
         }
 
-        val addSecondFile = Add(object : FilesToAdd {
+        val stageSecondFile = StageFiles(object : FilesToStage {
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
                                                     repoPath.relativize(secondFile))
             override fun repository(): Repository = gitRepo.repository
         })
 
-        io.spine.publishing.git.Git.execute(addSecondFile)
+        io.spine.publishing.git.Git.execute(stageSecondFile)
 
         val commit = Commit(object : CommitMessage {
             override fun message(): String = "A change with two files."
