@@ -23,8 +23,11 @@ package io.spine.publishing.gradle
 /**
  * A number of libraries that have dependencies between them.
  *
- * Allows to [update and publish new versions][InterdependentLibraries.publish] in a
- * dependency-based order.
+ * Allows to [update and publish new versions][InterdependentLibraries.publish].
+ *
+ * Successful builds are ensured by the fact that the libraries are [ordered][Ordering].
+ *
+ * For every library that depends on other libraries, the dependencies are built before the library.
  */
 class InterdependentLibraries(private val ordering: Ordering) {
 
