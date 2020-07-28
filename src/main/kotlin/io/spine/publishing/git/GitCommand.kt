@@ -43,7 +43,7 @@ class Add(val files: FilesToAdd) : GitCommand(files)
  *
  * Does not create a new branch, therefore the branch should exist.
  */
-class Checkout(val checkout: BranchToCheckout) : GitCommand(checkout)
+class Checkout(val checkout: Branch) : GitCommand(checkout)
 
 /**
  * Commits the [tracked files][Add] to the current branch.

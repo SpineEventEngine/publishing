@@ -26,7 +26,7 @@ import org.eclipse.jgit.lib.Repository
 /**
  * Specifies the name of the local branch to `git checkout`.
  */
-interface BranchToCheckout : GitCommandPayload {
+interface Branch : GitCommandPayload {
 
     /** Name of the branch to checkout. Must refer to an existing branch. */
     fun name(): BranchName
@@ -35,7 +35,7 @@ interface BranchToCheckout : GitCommandPayload {
 /**
  * Checks out the `master` branch.
  */
-class CheckoutMaster(val library: Library) : BranchToCheckout {
+class Master(val library: Library) : Branch {
 
     override fun repository(): Repository = library.repository()
 

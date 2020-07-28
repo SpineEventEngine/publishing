@@ -24,9 +24,7 @@ import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Files and a message to include in a Git commit.
- *
- * Files are added as a whole.
+ * A message that accompanies a commit.
  */
 interface CommitMessage : GitCommandPayload {
 
@@ -35,7 +33,7 @@ interface CommitMessage : GitCommandPayload {
 }
 
 /**
- * A message associated with a version bump commit.
+ * A message that accompanies a commit that contains only a Spine library version update.
  */
 class VersionBumpCommit(val library: Library) : CommitMessage {
 
