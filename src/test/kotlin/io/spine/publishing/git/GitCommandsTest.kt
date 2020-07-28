@@ -21,7 +21,9 @@
 package io.spine.publishing.git
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.containsOnly
+import assertk.assertions.hasSize
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk

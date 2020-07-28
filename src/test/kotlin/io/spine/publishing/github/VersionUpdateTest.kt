@@ -25,13 +25,14 @@ import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import io.spine.publishing.git.StageFiles
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
 import io.spine.publishing.git.PushToRemote
+import io.spine.publishing.git.StageFiles
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.given.TestEnv
+import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.junit.jupiter.api.DisplayName
@@ -40,13 +41,14 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@DisplayName("`VersionBumpPullRequest` should")
+@DisplayName("`VersionUpdate` should")
 class VersionUpdateTest {
 
     @Test
     @DisplayName("emit correct commands when updating a library")
     fun correctCommands(@TempDir tempdir: Path) {
         val baseDirectory = TestEnv.copyDirectory("base", tempdir)
+        Git.init().setDirectory(baseDirectory.toFile()).call()
         val library = Library("base", listOf(), baseDirectory)
         val orgName = "TestOrganization"
         val repo = "base"

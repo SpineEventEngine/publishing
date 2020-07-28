@@ -22,9 +22,12 @@ package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import io.spine.publishing.git.repository
 import io.spine.publishing.gradle.given.TestEnv.copyDirectory
+import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -91,5 +94,12 @@ class LibraryTest {
 
         val oldDependencyVersion = dependency.version()
         assertThat(dependency.version()).isEqualTo(oldDependencyVersion)
+    }
+
+    @Test
+    @DisplayName("throw an exception if the library doesn't contain a Git repository")
+    fun noGitRepo(@TempDir tempDir: Path) {
+        assertThrows<RepositoryNotFoundException>
+        { Library("no_git_repo_library", listOf(), tempDir).repository() }
     }
 }
