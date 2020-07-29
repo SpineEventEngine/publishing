@@ -2,21 +2,25 @@ package io.spine.publishing
 
 import io.spine.publishing.gradle.Library
 
+/**
+ * A series of operations performed over a set of libraries.
+ *
+ * Each operation may [error out][Error], in which case the execution is stopped and the error
+ * is returned.
+ *
+ * If every operation finishes successfully, [Ok] is returned.
+ */
 class LibrariesPipeline(val libraries: Set<Library>, val operations: List<PipelineOperation>) {
 
+    /**
+     * Passes the libraries through all of the operations, terminating early on the first
+     * [Error].
+     */
     fun eval(): OperationResult {
-        var libraries = libraries
-
-        for (operation in operations) {
-            val result = operationResult(operation, libraries)
-            if (result is Error) {
-                return result
-            } else {
-                libraries = (result as Ok).libraries
-            }
-        }
-
-        return Ok(libraries)
+        return operations
+                .map { operationResult(it, libraries) }
+                .firstOrNull { it is Error }
+                ?: Ok
     }
 
     private fun operationResult(ops: PipelineOperation, libs: Set<Library>): OperationResult {
@@ -28,6 +32,11 @@ class LibrariesPipeline(val libraries: Set<Library>, val operations: List<Pipeli
     }
 }
 
+/**
+ * An operation in a pipeline.
+ *
+ * Either [finishes successfully][Ok], or returns an [error with a description][Error].
+ */
 interface PipelineOperation {
 
     fun perform(libraries: Set<Library>): OperationResult
@@ -35,7 +44,7 @@ interface PipelineOperation {
 
 sealed class OperationResult
 
-class Ok(val libraries: Set<Library>) : OperationResult()
+object Ok : OperationResult()
 
 class Error(val description: String, e: Exception?) : OperationResult() {
 

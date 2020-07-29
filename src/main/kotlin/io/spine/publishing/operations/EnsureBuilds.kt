@@ -55,6 +55,6 @@ class EnsureBuilds : PipelineOperation {
                         "to Maven local. " + CHECK_LOGS)
             }
         }
-        return Ok(libraries)
+        return Ok
     }
 }

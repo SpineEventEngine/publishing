@@ -19,6 +19,6 @@ class UpdateVersions : PipelineOperation {
             library.update(maxVersion)
         }
 
-        return Ok(libraries)
+        return Ok
     }
 }

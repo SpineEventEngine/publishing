@@ -19,7 +19,7 @@ class UpdateToRecent : PipelineOperation {
         return try {
             libraries.map { FetchFreshRemote(it).fetchFresh() }
                     .forEach { Git.executeAll(it) }
-            Ok(libraries)
+            Ok
         } catch (e: Exception) {
             Error("Could not update fetch recent library versions: `$libraries`.", e)
         }

@@ -25,7 +25,7 @@ class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepo
             val commands = VersionUpdate(repo, credentials).pushBranch()
             Git.executeAll(commands)
         }
-        return Ok(libraries)
+        return Ok
     }
 
     private fun remote(library: Library): RemoteLibraryRepository = respectiveRemotes[library]!!

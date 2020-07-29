@@ -16,6 +16,6 @@ class Publish: PipelineOperation {
     override fun perform(libraries: Set<Library>): OperationResult {
         libraries.map { GradleProject(it.rootDir) }
                 .forEach { it.publish() }
-        return Ok(libraries)
+        return Ok
     }
 }
