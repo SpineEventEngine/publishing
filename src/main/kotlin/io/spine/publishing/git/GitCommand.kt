@@ -20,6 +20,7 @@
 
 package io.spine.publishing.git
 
+import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 
@@ -30,6 +31,10 @@ sealed class GitCommand(options: GitCommandOptions) {
 
     val repository: Repository = options.repository()
 }
+
+class UpdateSubmodules(library: Library) : GitCommand(object : GitCommandOptions {
+    override fun repository() = library.repository()
+})
 
 /**
  * Stages the files for commit.
@@ -73,6 +78,9 @@ object Git {
     fun execute(command: GitCommand) {
         val git = Git(command.repository)
         when (command) {
+            is UpdateSubmodules -> git.submoduleUpdate()
+                    .call()
+
             is StageFiles -> {
                 val add = git.add()
                 command.files.files().forEach { add.addFilepattern(it.toString()) }
