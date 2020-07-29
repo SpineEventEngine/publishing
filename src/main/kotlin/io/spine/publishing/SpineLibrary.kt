@@ -33,7 +33,9 @@ enum class SpineLibrary(val repo: RemoteLibraryRepository) {
 
     BASE(RemoteLibraryRepository(base, spineGitHubRepo("base"))),
     TIME(RemoteLibraryRepository(time, spineGitHubRepo("time"))),
-    CORE_JAVA(RemoteLibraryRepository(coreJava, spineGitHubRepo("coreJava")))
+    CORE_JAVA(RemoteLibraryRepository(coreJava, spineGitHubRepo("coreJava")));
+
+    fun library(): Library = repo.library
 }
 
 

@@ -9,19 +9,24 @@ import io.spine.publishing.github.VersionUpdate
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
 
-class UpdateRemote : PipelineOperation {
+/**
+ * Updates the remote library repositories.
+ *
+ * This operation assumes that the libraries have initialised Git repositories.
+ *
+ * @see VersionUpdate
+ */
+class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepository>,
+                   private val credentials: CredentialsProvider) : PipelineOperation {
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
             val repo = remote(library)
-            val commands = VersionUpdate(repo, credentials()).pushBranch()
+            val commands = VersionUpdate(repo, credentials).pushBranch()
             Git.executeAll(commands)
         }
         return Ok(libraries)
     }
 
-    private fun remote(library: Library): RemoteLibraryRepository = TODO()
-
-
-    private fun credentials(): CredentialsProvider = TODO()
+    private fun remote(library: Library): RemoteLibraryRepository = respectiveRemotes[library]!!
 }

@@ -6,6 +6,11 @@ import io.spine.publishing.PipelineOperation
 import io.spine.publishing.gradle.GradleProject
 import io.spine.publishing.gradle.Library
 
+/**
+ * Publishes the libraries to the remote artifact repository.
+ *
+ * The artifact repository to use is defined by the libraries `publish` task.
+ */
 class Publish: PipelineOperation {
 
     override fun perform(libraries: Set<Library>): OperationResult {

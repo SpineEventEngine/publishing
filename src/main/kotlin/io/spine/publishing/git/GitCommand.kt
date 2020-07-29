@@ -22,6 +22,7 @@ package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.ResetCommand.ResetType.HARD
 import org.eclipse.jgit.lib.Repository
 
 /**
@@ -32,7 +33,17 @@ sealed class GitCommand(options: GitCommandOptions) {
     val repository: Repository = options.repository()
 }
 
-class UpdateSubmodules(library: Library) : GitCommand(object : GitCommandOptions {
+/**
+ * Resets the current branch to the state specified by the [ResetTarget].
+ */
+class Reset(val reset: ResetTarget) : GitCommand(reset)
+
+/**
+ * Fetches the update from the remote repo.
+ *
+ * Note that no remote is given to this command, as the default `origin` is sufficient.
+ */
+class Fetch(library: Library) : GitCommand(object : GitCommandOptions {
     override fun repository() = library.repository()
 })
 
@@ -78,8 +89,17 @@ object Git {
     fun execute(command: GitCommand) {
         val git = Git(command.repository)
         when (command) {
-            is UpdateSubmodules -> git.submoduleUpdate()
+            is Fetch -> git.fetch()
                     .call()
+
+            is Reset -> {
+                val reset = git.reset()
+                        .setRef(command.reset.ref())
+                if (command.reset.isHard()) {
+                    reset.setMode(HARD)
+                }
+                reset.call()
+            }
 
             is StageFiles -> {
                 val add = git.add()

@@ -37,5 +37,8 @@ sealed class OperationResult
 
 class Ok(val libraries: Set<Library>) : OperationResult()
 
-class Error(val description: String, e: Exception?) : OperationResult()
+class Error(val description: String, e: Exception?) : OperationResult() {
+
+    constructor(description: String) : this(description, null)
+}
 

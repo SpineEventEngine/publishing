@@ -20,11 +20,11 @@
 
 package io.spine.publishing
 
-import io.spine.publishing.git.Git
+import io.spine.publishing.SpineLibrary.*
 import io.spine.publishing.git.Token
-import io.spine.publishing.github.VersionUpdate
-import io.spine.publishing.gradle.Ordering
-import io.spine.publishing.gradle.InterdependentLibraries
+import io.spine.publishing.github.RemoteLibraryRepository
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.operations.*
 
 /**
  * The publishing application.
@@ -35,17 +35,19 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val spineLibs = SpineLibrary.values()
-
-        val ordering = Ordering(spineLibs.map { it.repo.library }.toSet())
-        val updatedProjects = InterdependentLibraries(ordering).publish()
-        val updatedLibraries = spineLibs.filter { updatedProjects.contains(it.repo.library) }
-
-        val reposToUpdate = updatedLibraries.map { it.repo }
-        // TODO: 2020-07-24:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
-        val token = Token("")
-
-        val pullRequests = reposToUpdate.map { VersionUpdate(it, token.credentialsProvider()) }
-        pullRequests.forEach { Git.executeAll(it.pushBranch()) }
+        publishingPipeline(setOf(BASE.library(), TIME.library(), CORE_JAVA.library()))
+                .eval()
     }
 }
+
+fun publishingPipeline(libraries: Set<Library>): LibrariesPipeline =
+        LibrariesPipeline(libraries, listOf(
+                UpdateToRecent(),
+                UpdateVersions(),
+                EnsureBuilds(),
+                Publish(),
+                UpdateRemote(libsToRemotes, Token("").credentialsProvider())
+        ))
+
+val libsToRemotes: Map<Library, RemoteLibraryRepository> =
+        SpineLibrary.values().associate { Pair(it.repo.library, it.repo) }
