@@ -13,8 +13,7 @@ import io.spine.publishing.gradle.Library
 class LibrariesPipeline(val libraries: Set<Library>, val operations: List<PipelineOperation>) {
 
     /**
-     * Passes the libraries through all of the operations, terminating early on the first
-     * [Error].
+     * Passes the libraries through all of the operations, terminating early on the first [Error].
      */
     fun eval(): OperationResult {
         return operations
