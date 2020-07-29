@@ -4,16 +4,16 @@ import io.spine.publishing.gradle.Library
 
 /**
  * A series of operations performed over a set of libraries.
- *
- * Each operation may [error out][Error], in which case the execution is stopped and the error
- * is returned.
- *
- * If every operation finishes successfully, [Ok] is returned.
  */
 class LibrariesPipeline(val libraries: Set<Library>, val operations: List<PipelineOperation>) {
 
     /**
      * Passes the libraries through all of the operations, terminating early on the first [Error].
+     *
+     * Each operation may [error out][Error], in which case the execution is stopped and the error
+     * is returned.
+     *
+     * If every operation finishes successfully, [Ok] is returned.
      */
     fun eval(): OperationResult {
         return operations
