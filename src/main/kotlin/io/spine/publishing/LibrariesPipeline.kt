@@ -3,7 +3,7 @@ package io.spine.publishing
 import io.spine.publishing.gradle.Library
 
 /**
- * A series of operations performed over a set of libraries.
+ * A series of operations to perform over a set of libraries.
  */
 class LibrariesPipeline(val libraries: Set<Library>, val operations: List<PipelineOperation>) {
 

@@ -18,18 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.gradle
+package io.spine.publishing.operation
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.gradle.Version
 import io.spine.publishing.gradle.given.TestEnv
+import io.spine.publishing.operations.UpdateVersions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
-@DisplayName("`InterdependentLibraries` should")
-class InterdependentLibrariesTest {
+@DisplayName("`UpdateVersions` should")
+class UpdateVersionsTest {
 
     @Test
     @DisplayName("update the libraries to the most recent version")
@@ -43,9 +46,8 @@ class InterdependentLibrariesTest {
         val base = Library("base", listOf(), movedBase)
         val time = Library("time", listOf(base), movedTime)
         val coreJava = Library("coreJava", listOf(time, base), movedCoreJava)
-        val ordering = Ordering(setOf(base, time, coreJava))
 
-        InterdependentLibraries(ordering).updateToTheMostRecent()
+        UpdateVersions().perform(setOf(base, time, coreJava))
 
         val expectedVersion = Version(1, 9, 9)
         assertThat(base.version()).isEqualTo(expectedVersion)
@@ -69,8 +71,7 @@ class InterdependentLibrariesTest {
         val subLibrary = Library("subLibrary", listOf(), subLibraryDir)
         val library = Library("library", listOf(subLibrary), libraryDir)
 
-        val ordering = Ordering(setOf(library, subLibrary))
-        InterdependentLibraries(ordering).updateToTheMostRecent()
+        UpdateVersions().perform(setOf(library, subLibrary))
 
         val versions = listOf(library.version(),
                 library.version(subLibrary.name),
