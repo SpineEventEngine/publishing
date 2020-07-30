@@ -25,7 +25,6 @@ class UpdateVersions : PipelineOperation {
         return Ok
     }
 
-
     private fun needsUpdate(library: Library, newVersion: Version) =
             needsOwnUpdate(library, newVersion) || needsDependencyUpdate(library, newVersion)
 

@@ -38,7 +38,6 @@ enum class SpineLibrary(val repo: RemoteLibraryRepository) {
     fun library(): Library = repo.library
 }
 
-
 private val base = Library("base", listOf(), Paths.get("base"))
 private val time = Library("time", listOf(base), Paths.get("time"))
 private val coreJava = Library("coreJava", listOf(base, time), Paths.get("core-java"))
