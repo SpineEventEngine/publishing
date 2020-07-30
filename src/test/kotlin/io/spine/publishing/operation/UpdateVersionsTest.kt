@@ -25,7 +25,6 @@ import assertk.assertions.isEqualTo
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.Version
 import io.spine.publishing.gradle.given.TestEnv
-import io.spine.publishing.operations.UpdateVersions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

@@ -35,7 +35,7 @@ interface CommitMessage : GitCommandOptions {
 /**
  * A message that accompanies a commit that contains only a Spine library version update.
  */
-class VersionBumpCommit(val library: Library) : CommitMessage {
+class VersionBumpMessage(val library: Library) : CommitMessage {
 
     override fun repository(): Repository = library.repository()
 

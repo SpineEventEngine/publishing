@@ -24,12 +24,10 @@ import io.spine.publishing.SpineLibrary.*
 import io.spine.publishing.git.Token
 import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.gradle.Library
-import io.spine.publishing.operations.*
+import io.spine.publishing.operation.*
 
 /**
  * The publishing application.
- *
- * Make sure that the local Spine libraries are up to date before running.
  */
 object Application {
 
@@ -46,7 +44,7 @@ fun publishingPipeline(libraries: Set<Library>): LibrariesPipeline =
                 UpdateVersions(),
                 EnsureBuilds(),
                 Publish(),
-                UpdateRemote(libsToRemotes, Token("").credentialsProvider())
+                UpdateRemote(libsToRemotes, Token("").provider())
         ))
 
 val libsToRemotes: Map<Library, RemoteLibraryRepository> =

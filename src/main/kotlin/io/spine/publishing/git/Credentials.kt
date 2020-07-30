@@ -28,11 +28,15 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
  */
 sealed class Credentials {
 
-    abstract fun credentialsProvider(): CredentialsProvider
+    /**
+     * Returns a JGit credentials object that is used to authorize operations like
+     * [org.eclipse.jgit.api.PushCommand].
+     */
+    abstract fun provider(): CredentialsProvider
 }
 
 // TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
 class Token(private val token: String) : Credentials() {
 
-    override fun credentialsProvider() = UsernamePasswordCredentialsProvider(token, "")
+    override fun provider() = UsernamePasswordCredentialsProvider(token, "")
 }

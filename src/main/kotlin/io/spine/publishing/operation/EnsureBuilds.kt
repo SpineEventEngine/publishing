@@ -1,4 +1,4 @@
-package io.spine.publishing.operations
+package io.spine.publishing.operation
 
 import io.spine.publishing.Error
 import io.spine.publishing.Ok

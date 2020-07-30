@@ -44,7 +44,7 @@ class VersionUpdate(private val remote: RemoteLibraryRepository,
     fun pushBranch(): List<GitCommand> = listOf(
             Checkout(Master(remote.library)),
             StageFiles(StageVersionFile(remote.library)),
-            Commit(VersionBumpCommit(remote.library)),
+            Commit(VersionBumpMessage(remote.library)),
             PushToRemote(PushDestination(remote, credentials))
     )
 }
