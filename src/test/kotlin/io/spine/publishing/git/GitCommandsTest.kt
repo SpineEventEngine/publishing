@@ -109,7 +109,8 @@ class GitCommandsTest {
 
         val stageSecondFile = StageFiles(object : FilesToStage {
             override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
-                                                    repoPath.relativize(secondFile))
+                    repoPath.relativize(secondFile))
+
             override fun repository(): Repository = gitRepo.repository
         })
 
@@ -131,5 +132,34 @@ class GitCommandsTest {
         }
 
         assertThat(files).containsOnly(secondFile.toFile().name, sampleFile.toFile().name)
+    }
+
+    @Test
+    @DisplayName("reset to a commit")
+    fun resetHard() {
+        val gitRepo = Git.open(repoPath.toFile())
+        sampleFile.toFile().printWriter().use {
+            it.println()
+            it.println("a fresh new line")
+            it.println()
+        }
+        val commitMessage = "A sample change"
+        val commitChanges = Commit(object : CommitMessage {
+            override fun message(): String = commitMessage
+            override fun repository(): Repository = gitRepo.repository
+        })
+        io.spine.publishing.git.Git.execute(commitChanges)
+
+        val allCommits = gitRepo.log().all().call().toList()
+        assertThat(allCommits).hasSize(2)
+        val firstCommit = allCommits[1]
+        val reset = Reset(object: ResetTarget {
+            override fun ref(): String = firstCommit.name.toString()
+            override fun isHard(): Boolean = true
+            override fun repository(): Repository = gitRepo.repository
+        })
+        io.spine.publishing.git.Git.execute(reset)
+        val commitsAfterReset = gitRepo.log().all().call().toList()
+        assertThat(commitsAfterReset).hasSize(1)
     }
 }
