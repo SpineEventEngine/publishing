@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
+import assertk.assertions.isEqualTo
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
@@ -161,5 +162,31 @@ class GitCommandsTest {
         io.spine.publishing.git.Git.execute(reset)
         val commitsAfterReset = gitRepo.log().all().call().toList()
         assertThat(commitsAfterReset).hasSize(1)
+    }
+
+    @Test
+    @DisplayName("checkout a local branch")
+    fun checkout() {
+        val gitRepo = Git.open(repoPath.toFile())
+
+        val newBranch = "new-branch"
+        gitRepo.checkout()
+                .setName(newBranch)
+                .setCreateBranch(true)
+                .call()
+
+        val currentBranch = gitRepo.repository.branch
+        assertThat(currentBranch).isEqualTo(newBranch)
+
+        val master = "master"
+        val checkoutMaster = Checkout(object : Branch {
+            override fun name(): BranchName = master
+
+            override fun repository(): Repository = gitRepo.repository
+        })
+
+        io.spine.publishing.git.Git.execute(checkoutMaster)
+        val branchAfterCheckout = gitRepo.repository.branch
+        assertThat(branchAfterCheckout).isEqualTo(master)
     }
 }

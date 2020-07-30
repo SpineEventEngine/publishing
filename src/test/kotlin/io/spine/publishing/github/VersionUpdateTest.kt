@@ -21,10 +21,7 @@
 package io.spine.publishing.github
 
 import assertk.assertThat
-import assertk.assertions.containsOnly
-import assertk.assertions.hasSize
-import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
+import assertk.assertions.*
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
 import io.spine.publishing.git.PushToRemote
@@ -64,7 +61,10 @@ class VersionUpdateTest {
         assertThat(commands[3]).isInstanceOf(PushToRemote::class)
 
         assertThat((commands[0] as Checkout).branch.name()).isEqualTo("master")
-        assertThat((commands[1] as StageFiles).files.files()).containsOnly(Paths.get(GradleVersionFile.NAME))
+        assertThat((commands[1] as StageFiles).files.files())
+                .containsOnly(Paths.get(GradleVersionFile.NAME))
+        val commitMessage = (commands[2] as Commit).message
+        assertThat(commitMessage.message()).startsWith("Bump version")
         assertThat((commands[3] as PushToRemote).destination.remote.gitHubRepository)
                 .isEqualTo(GitHubRepository(orgName, repo))
     }
