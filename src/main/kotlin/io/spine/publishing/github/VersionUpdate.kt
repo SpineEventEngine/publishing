@@ -24,27 +24,24 @@ import io.spine.publishing.git.*
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * An update to the version of a library.
+ * Returns the list of Git commands to execute in order to push a version bump branch
+ * to the remote repository.
  *
- * To update the version, the following Git commands are performed:
+ * To update the version, the following Git commands are returned:
  *
  * 1) the `master` branch is checked out, as the version change is a direct `master` push;
  * 2) the `version.gradle.kts` file is staged for commit. It is expected that this file has already
  * been changed to have the correct version;
  * 3) the commit is performed;
  * 4) the local `master` branch is pushed to the respective remote repository.
+ *
+ * @param remote the remote repo to push the update to
+ * @param creds the credentials to use to authorize the version update
  */
-class VersionUpdate(private val remote: RemoteLibraryRepository,
-                    private val credentials: CredentialsProvider) {
-
-    /**
-     * Returns the list of Git commands to execute in order to push a version bump branch
-     * to the remote repository.
-     */
-    fun pushBranch(): List<GitCommand> = listOf(
-            Checkout(Master(remote.library)),
-            StageFiles(StageVersionFile(remote.library)),
-            Commit(VersionBumpMessage(remote.library)),
-            PushToRemote(PushDestination(remote, credentials))
-    )
-}
+fun updateVersion(remote: RemoteLibraryRepository, creds: CredentialsProvider): List<GitCommand> =
+        listOf(
+                Checkout(Master(remote.library)),
+                StageFiles(StageVersionFile(remote.library)),
+                Commit(VersionBumpMessage(remote.library)),
+                PushToRemote(PushDestination(remote, creds))
+        )

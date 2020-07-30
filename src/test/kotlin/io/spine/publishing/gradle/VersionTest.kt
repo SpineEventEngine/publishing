@@ -23,16 +23,16 @@ package io.spine.publishing.gradle
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import io.spine.publishing.gradle.VersionTest.ComparisonResult.EQUAL
 import io.spine.publishing.gradle.VersionTest.ComparisonResult.LARGER
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-@DisplayName("`Version` shuld when")
+@DisplayName("`Version` should when")
 class VersionTest {
 
     @Nested
@@ -60,7 +60,7 @@ class VersionTest {
         @DisplayName("not parse a semver-compatible version")
         @CsvSource("1.0.0-alpha", "1.0.0-alpha+1.2", "1.8.2-beta.1.13")
         fun notParseSemver(version: String) {
-            assertThat(Version.parseFrom(version)).isNull()
+            assertThrows<IllegalStateException> { Version.parseFrom(version) }
         }
     }
 

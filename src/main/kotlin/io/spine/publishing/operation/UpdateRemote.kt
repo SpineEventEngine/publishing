@@ -5,7 +5,7 @@ import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.git.Git
 import io.spine.publishing.github.RemoteLibraryRepository
-import io.spine.publishing.github.VersionUpdate
+import io.spine.publishing.github.updateVersion
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
 
@@ -14,7 +14,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  *
  * This operation assumes that the libraries have initialised Git repositories.
  *
- * @see VersionUpdate
+ * @see updateVersion
  */
 class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepository>,
                    private val credentials: CredentialsProvider) : PipelineOperation {
@@ -22,7 +22,7 @@ class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepo
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
             val repo = remote(library)
-            val commands = VersionUpdate(repo, credentials).pushBranch()
+            val commands = updateVersion(repo, credentials)
             Git.executeAll(commands)
         }
         return Ok

@@ -51,8 +51,7 @@ class VersionUpdateTest {
         val repo = "base"
         val remote = RemoteLibraryRepository(library, GitHubRepository(orgName, repo))
 
-        val pullRequest = VersionUpdate(remote, mockCredentials)
-        val commands = pullRequest.pushBranch()
+        val commands = updateVersion(remote, mockCredentials)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)

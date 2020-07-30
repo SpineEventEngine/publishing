@@ -50,13 +50,12 @@ data class AssignVersion(val libraryName: LibraryName, val version: Version) {
          *
          * Otherwise, an exception is thrown.
          */
-        fun parse(rawExpression: String): AssignVersion {
+        fun parse(rawExpression: String): AssignVersion? {
             val result = regex.find(rawExpression)
             val groups = result?.groupValues
 
             if (groups?.size != 3) {
-                throw IllegalStateException("$rawExpression is not an expression that assigns" +
-                        """a version. It must look like this: `val library = "1.2.3"`""")
+                return null
             }
 
             val name = groups[1]
