@@ -31,14 +31,14 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
 @DisplayName("`VersionAssigningExpression` should")
-class VersionAssigningExpressionTest {
+class AssignVersionTest {
 
     @Test
     @DisplayName("parse a valid expression")
     fun parse() {
         val validExpr = """val library = "1.0.0""""
 
-        val expression = VersionAssigningExpression.parse(validExpr)
+        val expression = AssignVersion.parse(validExpr)
         assertThat(expression).isNotNull()
         assertThat(expression?.libraryName).isEqualTo("library")
         assertThat(expression?.version).isEqualTo(Version(1, 0, 0))
@@ -49,7 +49,7 @@ class VersionAssigningExpressionTest {
     fun notParse() {
         val invalidExpr = """var library = "1.5.2""""
 
-        val expression = VersionAssigningExpression.parse(invalidExpr)
+        val expression = AssignVersion.parse(invalidExpr)
         assertThat(expression).isNull()
     }
 
@@ -58,7 +58,7 @@ class VersionAssigningExpressionTest {
     @Disabled // https://github.com/SpineEventEngine/publishing/issues/4
     fun notParseExplicitType() {
         val expr = """val base: String = "1.3.15""""
-        val actual = VersionAssigningExpression.parse(expr)
+        val actual = AssignVersion.parse(expr)
         assertThat(actual).isNull()
     }
 
@@ -72,16 +72,16 @@ class VersionAssigningExpressionTest {
     )
     @DisplayName("not parse semver-compatible versions")
     fun notParseSemver(rawExpr: String) {
-        assertThat(VersionAssigningExpression.parse(rawExpr)).isNull()
+        assertThat(AssignVersion.parse(rawExpr)).isNull()
     }
 
     @Test
     @DisplayName("return a parsable expression with toString()")
     fun toStringTest() {
         val version = Version(3, 0, 23)
-        val expression = VersionAssigningExpression("base", version)
+        val expression = AssignVersion("base", version)
         val asString = expression.toString()
-        assertThat(VersionAssigningExpression.parse(asString))
+        assertThat(AssignVersion.parse(asString))
                 .isEqualTo(expression)
     }
 }

@@ -54,7 +54,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     fun version(library: LibraryName = projectName): Version? {
         return file
                 .readLines()
-                .map { VersionAssigningExpression.parse(it) }
+                .map { AssignVersion.parse(it) }
                 .find { e -> e?.libraryName == library }
                 ?.version
     }
@@ -65,7 +65,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     fun declaredDependencies(): Map<LibraryName, Version> {
         return file
                 .readLines()
-                .mapNotNull { VersionAssigningExpression.parse(it) }
+                .mapNotNull { AssignVersion.parse(it) }
                 .filter { it.libraryName != projectName }
                 .associateBy({ it.libraryName }, { it.version })
     }
@@ -95,12 +95,12 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     fun overrideVersions(versions: Map<LibraryName, Version>) {
         var atLeastOnceOverridden = false
         val lines = file.readLines().map {
-            val expr = VersionAssigningExpression.parse(it)
+            val expr = AssignVersion.parse(it)
             if (expr != null && versions.containsKey(expr.libraryName)) {
                 atLeastOnceOverridden = true
                 val version: Version = versions.getValue(expr.libraryName)
                 val expression =
-                        VersionAssigningExpression(expr.libraryName, version)
+                        AssignVersion(expr.libraryName, version)
                 expression.toString()
             } else {
                 it

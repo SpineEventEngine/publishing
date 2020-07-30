@@ -27,6 +27,10 @@ import java.nio.file.Path
  *
  * The project uses Gradle and declares its dependencies using a `version.gradle.kts` with a
  * Spine-specific formatting.
+ *
+ * @param name the name of the library
+ * @param dependencies the libraries that this library depends on
+ * @param rootDir the directory that contains the library
  */
 data class Library(val name: LibraryName, val dependencies: List<Library>, val rootDir: Path) {
 
@@ -37,15 +41,24 @@ data class Library(val name: LibraryName, val dependencies: List<Library>, val r
      *
      * All of the dependency declarations are also updated. The version files of the libraries that
      * this library depends on are left as is.
+     *
+     * @param newVersion the version that this library is updated to
      */
     fun update(newVersion: Version) {
-        val libraries = versionFile.declaredDependencies().toMutableMap()
+        val libraries = versionFile.declaredDependencies()
+                .toMutableMap()
         libraries[this.name] = version()
         updateVersions(libraries, newVersion)
     }
 
     /**
      * Returns the version of the specified library as declared in the libraries version file.
+     *
+     * If no name is passed, returns the library of the version itself. If a name is specified,
+     * returns the version of the library as per [GradleVersionFile]. If this library does not
+     * depend on the library with the specified name, an exception is thrown.
+     *
+     * @param libraryName the name of the version to check.
      */
     fun version(libraryName: LibraryName = name): Version {
         return versionFile.version(libraryName)!!
@@ -53,8 +66,7 @@ data class Library(val name: LibraryName, val dependencies: List<Library>, val r
 
     private fun updateVersions(libraries: Map<LibraryName, Version>,
                                newVersion: Version) {
-        val toUpdate = libraries
-                .filter { it.value < newVersion }
+        val toUpdate = libraries.filter { it.value < newVersion }
                 .mapValues { newVersion }
 
         versionFile.overrideVersions(toUpdate)

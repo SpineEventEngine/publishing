@@ -27,20 +27,22 @@ import java.nio.file.Path
 /**
  * Files to stage for commit using the `git add` command.
  *
- * All of the changes in the file are staged, i.e. `--patch` is not supported.
+ * The `--patch` option is not supported, i.e. in each file, every change is staged for commit.
  */
 interface FilesToStage : GitCommandOptions {
 
-    /** Files to `git add`. */
-    fun files(): Set<Path>
+    /** Paths to the files staged for commit. */
+    fun paths(): Set<Path>
 }
 
 /**
  * Stages only the `version.gradle.kts` of the library specified to ctor.
+ *
+ * @param library the library that has its version file staged for commit
  */
 class StageVersionFile(val library: Library) : FilesToStage {
 
-    override fun files(): Set<Path> = setOf(relativeVersionPath())
+    override fun paths(): Set<Path> = setOf(relativeVersionPath())
 
     override fun repository(): Repository = library.repository()
 

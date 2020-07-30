@@ -103,7 +103,7 @@ object Git {
 
             is StageFiles -> {
                 val add = git.add()
-                command.files.files().forEach { add.addFilepattern(it.toString()) }
+                command.files.paths().forEach { add.addFilepattern(it.toString()) }
                 add.call()
             }
 

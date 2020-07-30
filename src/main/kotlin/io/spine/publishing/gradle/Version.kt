@@ -37,7 +37,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
          * Returns the version represented by this string, or `null` if it doesn't represent
          * a valid Spine version.
          */
-        fun parseFrom(stringValue: String): Version? {
+        fun parseFrom(stringValue: String): Version {
             val versions: List<String> = stringValue.split(".")
 
             return if (versions.size == 3) {
@@ -48,12 +48,16 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
                 if (major != null && minor != null && patch != null) {
                     Version(major, minor, patch)
                 } else {
-                    null
+                    throw cannotParseVersion(stringValue)
                 }
             } else {
-                null
+                throw cannotParseVersion(stringValue)
             }
         }
+
+        private fun cannotParseVersion(versionAsString: String) =
+                IllegalStateException("Could not parse a `Version` from the specified string " +
+                        "value: `$versionAsString`")
     }
 
     /**

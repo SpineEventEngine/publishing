@@ -20,6 +20,8 @@
 
 package io.spine.publishing.gradle
 
+import java.lang.IllegalStateException
+
 /**
  * A Kotlin expression that defines a version of a library.
  *
@@ -33,7 +35,7 @@ package io.spine.publishing.gradle
  * Note that the version must adhere to the Spine versioning policy, more in
  * [Version] documentation.
  */
-data class VersionAssigningExpression(val libraryName: LibraryName, val version: Version) {
+data class AssignVersion(val libraryName: LibraryName, val version: Version) {
 
     companion object {
 
@@ -46,14 +48,15 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
          * If the expression matches the expected template, returns the name and the version of
          * the library.
          *
-         * Otherwise, returns `null`.
+         * Otherwise, an exception is thrown.
          */
-        fun parse(rawExpression: String): VersionAssigningExpression? {
+        fun parse(rawExpression: String): AssignVersion {
             val result = regex.find(rawExpression)
             val groups = result?.groupValues
 
             if (groups?.size != 3) {
-                return null
+                throw IllegalStateException("$rawExpression is not an expression that assigns" +
+                        """a version. It must look like this: `val library = "1.2.3"`""")
             }
 
             val name = groups[1]
@@ -61,7 +64,7 @@ data class VersionAssigningExpression(val libraryName: LibraryName, val version:
             val rawVersion = groups[2]
             val version = rawVersion.let { Version.parseFrom(it) }
 
-            return version?.let { VersionAssigningExpression(name, it) }
+            return AssignVersion(name, version)
         }
     }
 

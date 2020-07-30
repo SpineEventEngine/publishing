@@ -109,7 +109,7 @@ class GitCommandsTest {
         }
 
         val stageSecondFile = StageFiles(object : FilesToStage {
-            override fun files(): Set<Path> = setOf(repoPath.relativize(sampleFile),
+            override fun paths(): Set<Path> = setOf(repoPath.relativize(sampleFile),
                     repoPath.relativize(secondFile))
 
             override fun repository(): Repository = gitRepo.repository

@@ -10,10 +10,7 @@ import io.spine.publishing.gradle.Library
  * Sets the Git repository associated with the specified library to the current state of its
  * remote `master` branch.
  */
-class FetchFreshRemote(private val library: Library) {
-
-    fun fetchFresh(): List<GitCommand> = listOf(
-            Fetch(library),
-            Reset(ResetHardOriginMaster(library))
-    )
-}
+fun fetchFresh(library: Library): List<GitCommand> = listOf(
+        Fetch(library),
+        Reset(ResetHardOriginMaster(library))
+)

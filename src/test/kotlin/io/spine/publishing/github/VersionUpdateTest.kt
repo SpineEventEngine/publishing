@@ -61,7 +61,7 @@ class VersionUpdateTest {
         assertThat(commands[3]).isInstanceOf(PushToRemote::class)
 
         assertThat((commands[0] as Checkout).branch.name()).isEqualTo("master")
-        assertThat((commands[1] as StageFiles).files.files())
+        assertThat((commands[1] as StageFiles).files.paths())
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")

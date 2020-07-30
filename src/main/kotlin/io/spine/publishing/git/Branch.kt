@@ -34,6 +34,9 @@ interface Branch : GitCommandOptions {
 
 /**
  * Checks out the `master` branch.
+ *
+ * @param library the library that hosts a [repository][Library.repository] for which to checkout
+ * the `master` branch
  */
 class Master(val library: Library) : Branch {
 

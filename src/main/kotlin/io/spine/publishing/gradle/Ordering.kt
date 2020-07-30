@@ -26,6 +26,8 @@ package io.spine.publishing.gradle
  *
  * Such an order is the order in which the library is reached only if all of its dependencies
  * have been previously reached.
+ *
+ * @param libraries libraries to order
  */
 class Ordering(private val libraries: Set<Library>) {
 
