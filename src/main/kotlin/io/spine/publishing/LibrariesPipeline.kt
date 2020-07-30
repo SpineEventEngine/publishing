@@ -45,7 +45,7 @@ sealed class OperationResult
 
 object Ok : OperationResult()
 
-class Error(val description: String, e: Exception?) : OperationResult() {
+class Error(val description: String, val exception: Exception?) : OperationResult() {
 
     constructor(description: String) : this(description, null)
 }
