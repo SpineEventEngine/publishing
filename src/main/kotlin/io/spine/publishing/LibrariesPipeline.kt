@@ -49,4 +49,3 @@ class Error(val description: String, val exception: Exception?) : OperationResul
 
     constructor(description: String) : this(description, null)
 }
-
