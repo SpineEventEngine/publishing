@@ -23,7 +23,7 @@ package io.spine.publishing.github
 import assertk.assertThat
 import assertk.assertions.*
 import io.spine.publishing.GitHubRepoAddress
-import io.spine.publishing.RemoteLibrary
+import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
 import io.spine.publishing.git.PushToRemote
@@ -56,7 +56,7 @@ class VersionUpdateTest {
         val remote = GitHubRepoAddress(orgName, repo)
 
         val commands =
-                updateVersion(RemoteLibrary(library, remote), mockCredentials)
+                updateVersion(LibraryToUpdate(library, remote), mockCredentials)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)

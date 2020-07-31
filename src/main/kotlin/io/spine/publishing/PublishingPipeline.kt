@@ -15,7 +15,7 @@ class PublishingPipeline(val libraries: Set<Library>,
                          private val operations: List<PipelineOperation>) {
 
     companion object {
-        private fun toLibs(libraries: Set<RemoteLibrary>) =
+        private fun toLibs(libraries: Set<LibraryToUpdate>) =
                 libraries.map { it.local }
                         .toSet()
     }
@@ -29,7 +29,7 @@ class PublishingPipeline(val libraries: Set<Library>,
      * 4) [publish the updated libraries to a remote artifact repository][Publish];
      * 5) [update the libraries in the respective remote repositories][UpdateRemote].
      */
-    constructor(libraries: Set<RemoteLibrary>) :
+    constructor(libraries: Set<LibraryToUpdate>) :
             this(toLibs(libraries).toSet(), listOf(
                     UpdateToRecent(),
                     UpdateVersions(),

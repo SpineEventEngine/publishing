@@ -3,7 +3,7 @@ package io.spine.publishing.operation
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
-import io.spine.publishing.RemoteLibrary
+import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.github.updateVersion
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -15,7 +15,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  *
  * @see updateVersion
  */
-class UpdateRemote(private val libraries: List<RemoteLibrary>,
+class UpdateRemote(private val libraries: List<LibraryToUpdate>,
                    private val credentials: CredentialsProvider) : PipelineOperation {
 
     override fun perform(libraries: Set<Library>): OperationResult {
@@ -26,7 +26,7 @@ class UpdateRemote(private val libraries: List<RemoteLibrary>,
         return Ok
     }
 
-    private fun remoteLibrary(localLibrary: Library): RemoteLibrary {
+    private fun remoteLibrary(localLibrary: Library): LibraryToUpdate {
         return libraries.find { it.local == localLibrary }!!
     }
 }

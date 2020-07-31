@@ -23,10 +23,12 @@ fun Library.localGitRepository(): Repository {
 /**
  * A local library that has a matching remote repository.
  *
+ * As such, local updates can be propagated to remote and the library is updated.
+ *
  * @param local the local library. Contains a Git repo
  * @param remoteAddress a remote repository that contains the library
  */
-data class RemoteLibrary(val local: Library, val remoteAddress: GitHubRepoAddress)
+data class LibraryToUpdate(val local: Library, val remoteAddress: GitHubRepoAddress)
 
 /**
  * An address of a GitHub repository.

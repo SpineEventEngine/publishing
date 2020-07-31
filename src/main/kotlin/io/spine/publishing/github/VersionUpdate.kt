@@ -20,7 +20,7 @@
 
 package io.spine.publishing.github
 
-import io.spine.publishing.RemoteLibrary
+import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.git.*
 import org.eclipse.jgit.transport.CredentialsProvider
 
@@ -39,7 +39,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * @param library the library that has its version updated
  * @param provider the provider of the credentials to use to authorize the version update
  */
-fun updateVersion(library: RemoteLibrary,
+fun updateVersion(library: LibraryToUpdate,
                   provider: CredentialsProvider): List<GitCommand> = listOf(
         Checkout(Master(library.local)),
         StageFiles(StageVersionFile(library.local)),
