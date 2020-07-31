@@ -21,6 +21,14 @@ fun Library.localGitRepository(): Repository {
 }
 
 /**
+ * A local library that has a matching remote repository.
+ *
+ * @param local the local library. Contains a Git repo
+ * @param remoteAddress a remote repository that contains the library
+ */
+data class RemoteLibrary(val local: Library, val remoteAddress: GitHubRepoAddress)
+
+/**
  * An address of a GitHub repository.
  *
  * @param organization the name of the organization that this repository belongs to

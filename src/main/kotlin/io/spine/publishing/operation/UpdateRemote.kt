@@ -1,9 +1,9 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.GitHubRepoAddress
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
+import io.spine.publishing.RemoteLibrary
 import io.spine.publishing.github.updateVersion
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -15,19 +15,18 @@ import org.eclipse.jgit.transport.CredentialsProvider
  *
  * @see updateVersion
  */
-class UpdateRemote(private val respectiveRemotes: Map<Library, GitHubRepoAddress>,
+class UpdateRemote(private val libraries: List<RemoteLibrary>,
                    private val credentials: CredentialsProvider) : PipelineOperation {
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val repo = remote(library)
-            val commands = updateVersion(library, repo, credentials)
+            val commands = updateVersion(remoteLibrary(library), credentials)
             commands.forEach { it.execute() }
         }
         return Ok
     }
 
-    @Suppress("MapGetWithNotNullAssertionOperator"/*  Not having a remote repo is a
-                                                      show-stopper .*/)
-    private fun remote(library: Library): GitHubRepoAddress = respectiveRemotes[library]!!
+    private fun remoteLibrary(localLibrary: Library): RemoteLibrary {
+        return libraries.find { it.local == localLibrary }!!
+    }
 }

@@ -27,11 +27,11 @@ import java.nio.file.Paths
 /**
  * A Spine library to publish.
  */
-enum class SpineLibrary(val remote: GitHubRepoAddress, val local: Library) {
+enum class SpineLibrary(val local: Library, val remote: GitHubRepoAddress) {
 
-    BASE(spineGitHubRepo("base"), base),
-    TIME(spineGitHubRepo("time"), time),
-    CORE_JAVA(spineGitHubRepo("coreJava"), coreJava);
+    BASE(base, spineGitHubRepo("base")),
+    TIME(time, spineGitHubRepo("time")),
+    CORE_JAVA(coreJava, spineGitHubRepo("coreJava"));
 }
 
 private val base = Library("base", listOf(), Paths.get("base"))

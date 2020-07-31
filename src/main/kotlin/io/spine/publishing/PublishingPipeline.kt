@@ -14,6 +14,12 @@ import io.spine.publishing.operation.*
 class PublishingPipeline(val libraries: Set<Library>,
                          private val operations: List<PipelineOperation>) {
 
+    companion object {
+        private fun toLibs(libraries: Set<RemoteLibrary>) =
+                libraries.map { it.local }
+                        .toSet()
+    }
+
     /**
      * Constructs a publishing pipeline for the specified libraries using the following operations:
      *
@@ -23,13 +29,13 @@ class PublishingPipeline(val libraries: Set<Library>,
      * 4) [publish the updated libraries to a remote artifact repository][Publish];
      * 5) [update the libraries in the respective remote repositories][UpdateRemote].
      */
-    constructor(libraries: Set<Library>) :
-            this(libraries, listOf(
+    constructor(libraries: Set<RemoteLibrary>) :
+            this(toLibs(libraries).toSet(), listOf(
                     UpdateToRecent(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),
-                    UpdateRemote(libsToRemotes, Token("").provider())
+                    UpdateRemote(libraries.toList(), Token("").provider())
             ))
 
     /**

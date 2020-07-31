@@ -20,9 +20,6 @@
 
 package io.spine.publishing
 
-import io.spine.publishing.SpineLibrary.*
-import io.spine.publishing.gradle.Library
-
 /**
  * The publishing application.
  */
@@ -30,12 +27,15 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        PublishingPipeline(setOf(BASE.local, TIME.local, CORE_JAVA.local))
-                .eval()
+        PublishingPipeline(remoteLibs).eval()
     }
 }
 
+/**
+ * Local spine libraries associated with their remote repository counterparts.
+ */
 @Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-val libsToRemotes: Map<Library, GitHubRepoAddress> =
+private val remoteLibs: Set<RemoteLibrary> =
         SpineLibrary.values()
-                .associate { Pair(it.local, it.remote) }
+                .map { RemoteLibrary(it.local, it.remote) }
+                .toSet()

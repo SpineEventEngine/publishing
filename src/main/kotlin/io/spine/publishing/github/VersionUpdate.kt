@@ -20,9 +20,8 @@
 
 package io.spine.publishing.github
 
-import io.spine.publishing.GitHubRepoAddress
+import io.spine.publishing.RemoteLibrary
 import io.spine.publishing.git.*
-import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
@@ -38,14 +37,12 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * 4) the local `master` branch is pushed to the respective remote repository.
  *
  * @param library the library that has its version updated
- * @param remote the remote repo to push the update to
  * @param provider the provider of the credentials to use to authorize the version update
  */
-fun updateVersion(library: Library,
-                  remote: GitHubRepoAddress,
+fun updateVersion(library: RemoteLibrary,
                   provider: CredentialsProvider): List<GitCommand> = listOf(
-        Checkout(Master(library)),
-        StageFiles(StageVersionFile(library)),
-        Commit(VersionBumpMessage(library)),
-        PushToRemote(PushDestination(library, remote, provider))
+        Checkout(Master(library.local)),
+        StageFiles(StageVersionFile(library.local)),
+        Commit(VersionBumpMessage(library.local)),
+        PushToRemote(PushDestination(library, provider))
 )
