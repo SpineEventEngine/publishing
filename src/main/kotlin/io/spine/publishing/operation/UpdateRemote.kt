@@ -3,7 +3,6 @@ package io.spine.publishing.operation
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
-import io.spine.publishing.git.Git
 import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.github.updateVersion
 import io.spine.publishing.gradle.Library
@@ -23,7 +22,7 @@ class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepo
         for (library in libraries) {
             val repo = remote(library)
             val commands = updateVersion(repo, credentials)
-            Git.executeAll(commands)
+            commands.forEach { it.execute() }
         }
         return Ok
     }

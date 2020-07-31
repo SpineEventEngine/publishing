@@ -27,99 +27,125 @@ import org.eclipse.jgit.lib.Repository
 
 /**
  * Git commands necessary for the Publishing application.
+ *
+ * @param options options that customize the behavior of this command
  */
 sealed class GitCommand(options: GitCommandOptions) {
 
+    /**
+     * A repository associated with a Git command.
+     */
     val repository: Repository = options.repository()
+
+    /**
+     * Executes the command.
+     *
+     * May throw an exception if an error occurs.
+     */
+    abstract fun execute()
+
+    /**
+     * Returns the `Git` API-object that eases the construction of commands.
+     *
+     * Call only from extenders.
+     */
+    internal fun git() = Git(repository)
 }
 
 /**
  * Resets the current branch to the state specified by the [ResetTarget].
+ *
+ * @param target specifies the behavior of the reset command
  */
-class Reset(val reset: ResetTarget) : GitCommand(reset)
+class Reset(private val target: ResetTarget) : GitCommand(target) {
+
+    override fun execute() {
+        val command = git().reset()
+                .setRef(target.ref())
+        if (target.isHard()) {
+            command.setMode(HARD)
+        }
+        command.call()
+    }
+}
 
 /**
  * Fetches the update from the remote repo.
  *
  * Note that no remote is given to this command, as the default `origin` is sufficient.
+ *
+ * @param library the library to fetch the remote master version of
  */
 class Fetch(library: Library) : GitCommand(object : GitCommandOptions {
     override fun repository() = library.repository()
-})
+}) {
+
+    override fun execute() {
+        git().fetch()
+                .call()
+    }
+}
 
 /**
  * Stages the files for commit.
  *
  * Note that only the staged files can be [committed][Commit].
+ *
+ * @param files specifies which files are staged for commit
  */
-class StageFiles(val files: FilesToStage) : GitCommand(files)
+class StageFiles(val files: FilesToStage) : GitCommand(files) {
+
+    override fun execute() {
+        val add = git().add()
+        files.paths()
+                .forEach { add.addFilepattern(it.toString()) }
+        add.call()
+    }
+}
 
 /**
  * Checks out a local branch.
  *
  * Does not create a new branch, therefore the branch should exist.
+ *
+ * @param branch specifies the branch to checkout
  */
-class Checkout(val branch: Branch) : GitCommand(branch)
+class Checkout(val branch: Branch) : GitCommand(branch) {
+
+    override fun execute() {
+        git().checkout()
+                .setCreateBranch(false)
+                .setName(branch.name())
+                .call()
+    }
+}
 
 /**
  * Commits the [staged files][StageFiles] to the current branch.
+ *
+ * @param message the message that is associated with the commit
  */
-class Commit(val message: CommitMessage) : GitCommand(message)
+class Commit(val message: CommitMessage) : GitCommand(message) {
+    override fun execute() {
+        git().commit()
+                .setMessage(message.message())
+                .call()
+
+    }
+}
 
 /**
  * Pushes the current local branch to the remote repository.
+ *
+ * @param destination specifies how to perform the push: the repository to use and the credentials
+ * to authorize the push
  */
-class PushToRemote(val destination: PushDestination) : GitCommand(destination)
+class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
 
-/**
- * Executes Git commands.
- */
-object Git {
-
-    /**
-     * Executes the specified Git commands, equivalent to `commands.forEach { Git.exeute(it) }`.
-     */
-    fun executeAll(commands: List<GitCommand>) = commands.forEach { execute(it) }
-
-    /**
-     * Executes the specified Git command.
-     *
-     * This method causes changes in the underlying local repositories.
-     */
-    fun execute(command: GitCommand) {
-        val git = Git(command.repository)
-        when (command) {
-            is Fetch -> git.fetch()
-                    .call()
-
-            is Reset -> {
-                val reset = git.reset()
-                        .setRef(command.reset.ref())
-                if (command.reset.isHard()) {
-                    reset.setMode(HARD)
-                }
-                reset.call()
-            }
-
-            is StageFiles -> {
-                val add = git.add()
-                command.files.paths().forEach { add.addFilepattern(it.toString()) }
-                add.call()
-            }
-
-            is Checkout -> git.checkout()
-                    .setCreateBranch(false)
-                    .setName(command.branch.name())
-                    .call()
-
-            is Commit -> git.commit()
-                    .setMessage(command.message.message())
-                    .call()
-
-            is PushToRemote -> git.push()
-                    .setRemote(command.destination.remote.gitHubRepository.asUrl())
-                    .setCredentialsProvider(command.destination.credentials)
-                    .call()
-        }
+    override fun execute() {
+        git().push()
+                .setRemote(destination.remote.gitHubRepository.asUrl())
+                .setCredentialsProvider(destination.credentials)
+                .call()
     }
 }

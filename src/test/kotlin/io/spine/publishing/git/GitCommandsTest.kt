@@ -48,12 +48,17 @@ class GitCommandsTest {
     fun setupRepo() {
         repoPath = Files.createTempDirectory("io.spine.publishing.git_commands_test")
         sampleFile = repoPath.resolve(sampleFileName)
-        Git.init().setDirectory(repoPath.toFile()).call()
-        sampleFile.toFile().createNewFile()
-        sampleFile.toFile().printWriter().use {
-            it.println(sampleFileContents)
-            it.println()
-        }
+        Git.init()
+                .setDirectory(repoPath.toFile())
+                .call()
+        sampleFile.toFile()
+                .createNewFile()
+        sampleFile.toFile()
+                .printWriter()
+                .use {
+                    it.println(sampleFileContents)
+                    it.println()
+                }
         repository = Git.open(repoPath.toFile()).repository
         Git(repository)
                 .add()
@@ -70,23 +75,28 @@ class GitCommandsTest {
     @DisplayName("create a new commit")
     fun createCommit() {
         val gitRepo = Git.open(repoPath.toFile())
-        sampleFile.toFile().printWriter().use {
-            it.println()
-            it.println("a fresh new line")
-            it.println()
-        }
+        sampleFile.toFile()
+                .printWriter()
+                .use {
+                    it.println()
+                    it.println("a fresh new line")
+                    it.println()
+                }
         val commitMessage = "A sample change"
         val commitChanges = Commit(object : CommitMessage {
             override fun message(): String = commitMessage
             override fun repository(): Repository = gitRepo.repository
         })
 
-        io.spine.publishing.git.Git.execute(commitChanges)
+        commitChanges.execute()
 
-        val branches = Git(repository).branchList().call()
+        val branches = Git(repository).branchList()
+                .call()
         // `master` only.
         assertThat(branches).hasSize(1)
-        val refs = Git(repository).log().call().toList()
+        val refs = Git(repository).log()
+                .call()
+                .toList()
         // Initial commit and a newly created one.
         assertThat(refs).hasSize(2)
         // `log` outputs are FIFO - the freshest ones are at the top.
@@ -100,13 +110,18 @@ class GitCommandsTest {
         val gitRepo = Git.open(repoPath.toFile())
 
         val secondFile = repoPath.resolve("second_file.txt")
-        secondFile.toFile().createNewFile()
-        secondFile.toFile().printWriter().use {
-            it.println("a new line in the second file")
-        }
-        sampleFile.toFile().printWriter().use {
-            it.println("a new line in the first file")
-        }
+        secondFile.toFile()
+                .createNewFile()
+        secondFile.toFile()
+                .printWriter()
+                .use {
+                    it.println("a new line in the second file")
+                }
+        sampleFile.toFile()
+                .printWriter()
+                .use {
+                    it.println("a new line in the first file")
+                }
 
         val stageSecondFile = StageFiles(object : FilesToStage {
             override fun paths(): Set<Path> = setOf(repoPath.relativize(sampleFile),
@@ -115,16 +130,19 @@ class GitCommandsTest {
             override fun repository(): Repository = gitRepo.repository
         })
 
-        io.spine.publishing.git.Git.execute(stageSecondFile)
+        stageSecondFile.execute()
 
         val commit = Commit(object : CommitMessage {
             override fun message(): String = "A change with two files."
             override fun repository(): Repository = gitRepo.repository
         })
 
-        io.spine.publishing.git.Git.execute(commit)
+        commit.execute()
 
-        val commitTree = gitRepo.log().all().call().toList()[0].tree
+        val commitTree = gitRepo.log()
+                .all()
+                .call()
+                .toList()[0].tree
         val treeWalk = TreeWalk(gitRepo.repository)
         treeWalk.reset(commitTree)
         val files: MutableList<String> = mutableListOf()
@@ -139,28 +157,36 @@ class GitCommandsTest {
     @DisplayName("reset to a commit")
     fun resetHard() {
         val gitRepo = Git.open(repoPath.toFile())
-        sampleFile.toFile().printWriter().use {
-            it.println()
-            it.println("a fresh new line")
-            it.println()
-        }
+        sampleFile.toFile()
+                .printWriter()
+                .use {
+                    it.println()
+                    it.println("a fresh new line")
+                    it.println()
+                }
         val commitMessage = "A sample change"
         val commitChanges = Commit(object : CommitMessage {
             override fun message(): String = commitMessage
             override fun repository(): Repository = gitRepo.repository
         })
-        io.spine.publishing.git.Git.execute(commitChanges)
+        commitChanges.execute()
 
-        val allCommits = gitRepo.log().all().call().toList()
+        val allCommits = gitRepo.log()
+                .all()
+                .call()
+                .toList()
         assertThat(allCommits).hasSize(2)
         val firstCommit = allCommits[1]
-        val reset = Reset(object: ResetTarget {
+        val reset = Reset(object : ResetTarget {
             override fun ref(): String = firstCommit.name.toString()
             override fun isHard(): Boolean = true
             override fun repository(): Repository = gitRepo.repository
         })
-        io.spine.publishing.git.Git.execute(reset)
-        val commitsAfterReset = gitRepo.log().all().call().toList()
+        reset.execute()
+        val commitsAfterReset = gitRepo.log()
+                .all()
+                .call()
+                .toList()
         assertThat(commitsAfterReset).hasSize(1)
     }
 
@@ -185,7 +211,7 @@ class GitCommandsTest {
             override fun repository(): Repository = gitRepo.repository
         })
 
-        io.spine.publishing.git.Git.execute(checkoutMaster)
+        checkoutMaster.execute()
         val branchAfterCheckout = gitRepo.repository.branch
         assertThat(branchAfterCheckout).isEqualTo(master)
     }
