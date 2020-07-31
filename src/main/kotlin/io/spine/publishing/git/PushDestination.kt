@@ -31,7 +31,6 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * @param library the library that is being pushed. It is associated with a
  * [local][io.spine.publishing.gradle.Library.localGitRepository] and a
  * [remote][LibraryToUpdate.remoteAddress] Git repositories
- *
  * @param credentials credentials to authorize a push
  */
 class PushDestination(val library: LibraryToUpdate,

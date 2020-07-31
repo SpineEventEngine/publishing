@@ -38,7 +38,7 @@ interface FilesToStage : GitCommandOptions {
 }
 
 /**
- * Stages only the `version.gradle.kts` of the library specified to ctor.
+ * Specifies to only stage the `version.gradle.kts` of a particular library.
  *
  * @param library the library that has its version file staged for commit
  */
