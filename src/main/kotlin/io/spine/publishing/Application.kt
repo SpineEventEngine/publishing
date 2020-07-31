@@ -23,7 +23,7 @@ package io.spine.publishing
 /**
  * The publishing application.
  *
- * @see PublishingPipeline secondary constructor for the description of the publishing flow
+ * @see PublishingPipeline secondary constructor for the description of the publishing process
  */
 object Application {
 
