@@ -10,8 +10,15 @@ import org.eclipse.jgit.lib.Repository
  */
 interface ResetTarget : GitCommandOptions {
 
+    /** The ID of the commit or other version-history entity to reset to. */
     fun ref(): String
 
+    /**
+     * Whether a `--hard` reset should be performed.
+     *
+     * Hard resets don't stage the changes for commit and simply modifies the files back to the
+     * state at [ref].
+     */
     fun isHard(): Boolean
 }
 

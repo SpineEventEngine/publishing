@@ -23,7 +23,8 @@ fun Library.localGitRepository(): Repository {
 /**
  * A local library that has a matching remote repository.
  *
- * As such, local updates can be propagated to remote and the library is updated.
+ * Local updates can be propagated to the remote repository, see
+ * [io.spine.publishing.git.PushToRemote].
  *
  * @param local the local library. Contains a Git repo
  * @param remoteAddress a remote repository that contains the library

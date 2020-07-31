@@ -23,7 +23,7 @@ package io.spine.publishing
 /**
  * The publishing application.
  *
- * @see PublishingPipeline secondary constructor for the description of the publishing process
+ * See [PublishingPipeline] secondary constructor for the description of the publishing process
  */
 object Application {
 
@@ -34,7 +34,7 @@ object Application {
 }
 
 /**
- * Local spine libraries associated with their remote repository counterparts.
+ * Local Spine libraries associated with their remote repositories.
  */
 @Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
 private val remoteLibs: Set<LibraryToUpdate> =

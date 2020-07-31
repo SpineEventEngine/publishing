@@ -130,11 +130,11 @@ class Checkout(val branch: Branch) : GitCommand(branch) {
  * @param message the message that is associated with the commit
  */
 class Commit(val message: CommitMessage) : GitCommand(message) {
+
     override fun execute() {
         git().commit()
                 .setMessage(message.message())
                 .call()
-
     }
 }
 

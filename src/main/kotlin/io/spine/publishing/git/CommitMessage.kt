@@ -29,7 +29,7 @@ import org.eclipse.jgit.lib.Repository
  */
 interface CommitMessage : GitCommandOptions {
 
-    /** The message of the commit. */
+    /** The text of the commit message. */
     fun message(): String
 }
 

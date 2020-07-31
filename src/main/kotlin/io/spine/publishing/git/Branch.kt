@@ -34,7 +34,7 @@ interface Branch : GitCommandOptions {
 }
 
 /**
- * Specifies that `master` branch to `git checkout`.
+ * Specifies that the `master` branch must be checked out.
  *
  * @param library the library that hosts a [repository][Library.localGitRepository] for which to
  * checkout the `master` branch
