@@ -130,13 +130,18 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Contents of a text file.
      *
      * Allows to read the file once, and reuse the lines as long as the contents are not
-     * [overridden][invalidate]. Once they are overridden, the file is re-read again.
+     * [overridden][invalidate]. Once they are overridden, the file is re-read on the next
+     * [lines] call.
      */
     private class CachedFileContents(private val file: File) {
 
         private var dirty: Boolean = false
         private var lines: List<String> = listOf()
 
+        /**
+         * Either returns the cached lines from the files, or, if the cache is not valid, reads the
+         * contents from the actual file.
+         */
         internal fun lines(): List<String> = synchronized(this) {
             if (lines.isEmpty() || dirty) {
                 lines = file.readLines()
@@ -145,6 +150,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             lines
         }
 
+        /**
+         * Forces the next [lines] to read the file contents.
+         */
         internal fun invalidate() {
             dirty = true
         }
