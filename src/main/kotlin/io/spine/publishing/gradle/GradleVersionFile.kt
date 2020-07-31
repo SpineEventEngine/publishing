@@ -114,7 +114,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
             }
-            contents.notifyContentsChanged()
+            contents.invalidate()
         }
     }
 
@@ -122,11 +122,17 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
         checkNotNull(findFile(rootDir.toFile()))
     }
 
-    private val contents: LazilyReadLines by lazy {
-        LazilyReadLines(file)
+    private val contents: CachedFileContents by lazy {
+        CachedFileContents(file)
     }
 
-    private class LazilyReadLines(private val file: File) {
+    /**
+     * Contents of a text file.
+     *
+     * Allows to read the file once, and reuse the lines as long as the contents are not
+     * [overridden][invalidate]. Once they are overridden, the file is re-read again.
+     */
+    private class CachedFileContents(private val file: File) {
 
         private var dirty: Boolean = false
         private var lines: List<String> = listOf()
@@ -134,11 +140,12 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
         internal fun lines(): List<String> = synchronized(this) {
             if (lines.isEmpty() || dirty) {
                 lines = file.readLines()
+                dirty = false
             }
             lines
         }
 
-        internal fun notifyContentsChanged() {
+        internal fun invalidate() {
             dirty = true
         }
     }
