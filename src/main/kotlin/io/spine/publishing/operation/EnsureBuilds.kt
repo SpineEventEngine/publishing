@@ -16,10 +16,6 @@ import io.spine.publishing.gradle.Ordering
  */
 class EnsureBuilds : PipelineOperation {
 
-    companion object {
-        private const val CHECK_LOGS = "Check logs for Gradle output."
-    }
-
     /**
      * Goes through each library, building them to ensure that the dependencies are consistent.
      *

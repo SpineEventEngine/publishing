@@ -27,6 +27,8 @@ import io.spine.publishing.gradle.Library
  */
 data class RemoteLibraryRepository(val library: Library, val gitHubRepository: GitHubRepository)
 
+
+
 /**
  * A GitHub repository.
  */

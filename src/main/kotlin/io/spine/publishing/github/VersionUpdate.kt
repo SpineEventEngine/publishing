@@ -36,12 +36,12 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * 4) the local `master` branch is pushed to the respective remote repository.
  *
  * @param remote the remote repo to push the update to
- * @param creds the credentials to use to authorize the version update
+ * @param provider the provider of the credentials to use to authorize the version update
  */
-fun updateVersion(remote: RemoteLibraryRepository, creds: CredentialsProvider): List<GitCommand> =
-        listOf(
-                Checkout(Master(remote.library)),
-                StageFiles(StageVersionFile(remote.library)),
-                Commit(VersionBumpMessage(remote.library)),
-                PushToRemote(PushDestination(remote, creds))
-        )
+fun updateVersion(remote: RemoteLibraryRepository,
+                  provider: CredentialsProvider): List<GitCommand> = listOf(
+        Checkout(Master(remote.library)),
+        StageFiles(StageVersionFile(remote.library)),
+        Commit(VersionBumpMessage(remote.library)),
+        PushToRemote(PushDestination(remote, provider))
+)

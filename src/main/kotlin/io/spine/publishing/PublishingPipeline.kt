@@ -21,7 +21,7 @@ class PublishingPipeline(val libraries: Set<Library>,
      * 2) [change their versions locally][UpdateVersions];
      * 3) [verify that the version update went successfully by building the libraries][EnsureBuilds];
      * 4) [publish the updated libraries to a remote artifact repository][Publish];
-     * 5) [update the libraries in the respective remote repositories][UpdateRemote]
+     * 5) [update the libraries in the respective remote repositories][UpdateRemote].
      */
     constructor(libraries: Set<Library>) :
             this(libraries, listOf(

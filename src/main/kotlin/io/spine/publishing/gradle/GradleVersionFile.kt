@@ -52,8 +52,8 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Parameter may be specified  to read the version of a dependency.
      */
     fun version(library: LibraryName = projectName): Version? {
-        return file
-                .readLines()
+        return contents
+                .lines()
                 .map { AssignVersion.parse(it) }
                 .find { e -> e?.libraryName == library }
                 ?.version
@@ -63,8 +63,8 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Returns the libraries that the project declaring this versions file depends on.
      */
     fun declaredDependencies(): Map<LibraryName, Version> {
-        return file
-                .readLines()
+        return contents
+                .lines()
                 .mapNotNull { AssignVersion.parse(it) }
                 .filter { it.libraryName != projectName }
                 .associateBy({ it.libraryName }, { it.version })
@@ -114,10 +114,32 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
             }
+            contents.notifyContentsChanged()
         }
     }
 
     internal val file: File by lazy {
         checkNotNull(findFile(rootDir.toFile()))
+    }
+
+    private val contents: LazilyReadLines by lazy {
+        LazilyReadLines(file)
+    }
+
+    private class LazilyReadLines(private val file: File) {
+
+        private var dirty: Boolean = false
+        private var lines: List<String> = listOf()
+
+        internal fun lines(): List<String> = synchronized(this) {
+            if (lines.isEmpty() || dirty) {
+                lines = file.readLines()
+            }
+            lines
+        }
+
+        internal fun notifyContentsChanged() {
+            dirty = true
+        }
     }
 }

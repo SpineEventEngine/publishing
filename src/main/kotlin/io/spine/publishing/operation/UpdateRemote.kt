@@ -27,5 +27,7 @@ class UpdateRemote(private val respectiveRemotes: Map<Library, RemoteLibraryRepo
         return Ok
     }
 
+    @Suppress("MapGetWithNotNullAssertionOperator"/*  Not having a remote repo is a
+                                                      show-stopper .*/)
     private fun remote(library: Library): RemoteLibraryRepository = respectiveRemotes[library]!!
 }

@@ -20,8 +20,6 @@
 
 package io.spine.publishing.gradle
 
-import java.lang.IllegalStateException
-
 /**
  * A Kotlin expression that defines a version of a library.
  *

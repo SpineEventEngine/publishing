@@ -21,10 +21,8 @@
 package io.spine.publishing
 
 import io.spine.publishing.SpineLibrary.*
-import io.spine.publishing.git.Token
 import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.gradle.Library
-import io.spine.publishing.operation.*
 
 /**
  * The publishing application.
@@ -38,6 +36,7 @@ object Application {
     }
 }
 
-
+@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
 val libsToRemotes: Map<Library, RemoteLibraryRepository> =
-        SpineLibrary.values().associate { Pair(it.repo.library, it.repo) }
+        SpineLibrary.values()
+                .associate { Pair(it.repo.library, it.repo) }
