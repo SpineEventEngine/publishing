@@ -21,6 +21,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.lib.Repository
 import java.nio.file.Path
 
@@ -44,7 +45,7 @@ class StageVersionFile(val library: Library) : FilesToStage {
 
     override fun paths(): Set<Path> = setOf(relativeVersionPath())
 
-    override fun repository(): Repository = library.repository()
+    override fun repository(): Repository = library.localGitRepository()
 
     private fun relativeVersionPath(): Path {
         val versionFilePath = library.versionFile.file.toPath()

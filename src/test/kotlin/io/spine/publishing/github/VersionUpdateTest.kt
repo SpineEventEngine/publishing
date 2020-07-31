@@ -22,6 +22,7 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.*
+import io.spine.publishing.GitHubRepoAddress
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
 import io.spine.publishing.git.PushToRemote
@@ -45,13 +46,15 @@ class VersionUpdateTest {
     @DisplayName("emit correct commands when updating a library")
     fun correctCommands(@TempDir tempdir: Path) {
         val baseDirectory = TestEnv.copyDirectory("base", tempdir)
-        Git.init().setDirectory(baseDirectory.toFile()).call()
+        Git.init()
+                .setDirectory(baseDirectory.toFile())
+                .call()
         val library = Library("base", listOf(), baseDirectory)
         val orgName = "TestOrganization"
         val repo = "base"
-        val remote = RemoteLibraryRepository(library, GitHubRepository(orgName, repo))
+        val remote = GitHubRepoAddress(orgName, repo)
 
-        val commands = updateVersion(remote, mockCredentials)
+        val commands = updateVersion(library, remote, mockCredentials)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -64,8 +67,8 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.remote.gitHubRepository)
-                .isEqualTo(GitHubRepository(orgName, repo))
+        assertThat((commands[3] as PushToRemote).destination.remote)
+                .isEqualTo(GitHubRepoAddress(orgName, repo))
     }
 
     private val mockCredentials: CredentialsProvider =

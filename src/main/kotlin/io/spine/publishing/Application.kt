@@ -21,7 +21,6 @@
 package io.spine.publishing
 
 import io.spine.publishing.SpineLibrary.*
-import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.gradle.Library
 
 /**
@@ -31,12 +30,12 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        PublishingPipeline(setOf(BASE.library(), TIME.library(), CORE_JAVA.library()))
+        PublishingPipeline(setOf(BASE.local, TIME.local, CORE_JAVA.local))
                 .eval()
     }
 }
 
 @Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-val libsToRemotes: Map<Library, RemoteLibraryRepository> =
+val libsToRemotes: Map<Library, GitHubRepoAddress> =
         SpineLibrary.values()
-                .associate { Pair(it.repo.library, it.repo) }
+                .associate { Pair(it.local, it.remote) }

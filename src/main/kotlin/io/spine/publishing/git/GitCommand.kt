@@ -21,6 +21,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType.HARD
 import org.eclipse.jgit.lib.Repository
@@ -77,7 +78,7 @@ class Reset(private val target: ResetTarget) : GitCommand(target) {
  * @param library the library to fetch the remote master version of
  */
 class Fetch(library: Library) : GitCommand(object : GitCommandOptions {
-    override fun repository() = library.repository()
+    override fun repository() = library.localGitRepository()
 }) {
 
     override fun execute() {
@@ -144,7 +145,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
 
     override fun execute() {
         git().push()
-                .setRemote(destination.remote.gitHubRepository.asUrl())
+                .setRemote(destination.remote.asUrl())
                 .setCredentialsProvider(destination.credentials)
                 .call()
     }

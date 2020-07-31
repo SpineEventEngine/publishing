@@ -20,8 +20,6 @@
 
 package io.spine.publishing
 
-import io.spine.publishing.github.GitHubRepository
-import io.spine.publishing.github.RemoteLibraryRepository
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.LibraryName
 import java.nio.file.Paths
@@ -29,18 +27,16 @@ import java.nio.file.Paths
 /**
  * A Spine library to publish.
  */
-enum class SpineLibrary(val repo: RemoteLibraryRepository) {
+enum class SpineLibrary(val remote: GitHubRepoAddress, val local: Library) {
 
-    BASE(RemoteLibraryRepository(base, spineGitHubRepo("base"))),
-    TIME(RemoteLibraryRepository(time, spineGitHubRepo("time"))),
-    CORE_JAVA(RemoteLibraryRepository(coreJava, spineGitHubRepo("coreJava")));
-
-    fun library(): Library = repo.library
+    BASE(spineGitHubRepo("base"), base),
+    TIME(spineGitHubRepo("time"), time),
+    CORE_JAVA(spineGitHubRepo("coreJava"), coreJava);
 }
 
 private val base = Library("base", listOf(), Paths.get("base"))
 private val time = Library("time", listOf(base), Paths.get("time"))
 private val coreJava = Library("coreJava", listOf(base, time), Paths.get("core-java"))
 
-private fun spineGitHubRepo(libraryName: LibraryName) = GitHubRepository(ORGANIZATION, libraryName)
+private fun spineGitHubRepo(name: LibraryName) = GitHubRepoAddress(ORGANIZATION, name)
 private const val ORGANIZATION = "SpineEventEngine"

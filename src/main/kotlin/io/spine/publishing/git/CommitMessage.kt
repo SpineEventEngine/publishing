@@ -21,6 +21,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.lib.Repository
 
 /**
@@ -39,7 +40,7 @@ interface CommitMessage : GitCommandOptions {
  */
 class VersionBumpMessage(val library: Library) : CommitMessage {
 
-    override fun repository(): Repository = library.repository()
+    override fun repository(): Repository = library.localGitRepository()
 
     override fun message(): String = "Bump version to `${library.version()}`"
 }

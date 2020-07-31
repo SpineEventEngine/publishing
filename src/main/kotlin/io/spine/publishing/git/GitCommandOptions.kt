@@ -20,9 +20,7 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.lib.RepositoryBuilder
 
 /**
  * Options associated with a Git command that specify its behavior.
@@ -33,18 +31,4 @@ interface GitCommandOptions {
      * Returns a local repository that the respective command is associated with.
      */
     fun repository(): Repository
-}
-
-/**
- * Given a library, returns a Git repository in its root working directory.
- *
- * If the repository does not contain a Git repo, a `RepositoryNotFoundException` is thrown.
- */
-fun Library.repository(): Repository {
-    val repoPath = this.rootDir.toAbsolutePath().toFile()
-    return RepositoryBuilder()
-            .readEnvironment()
-            .setMustExist(true)
-            .setWorkTree(repoPath)
-            .build()
 }

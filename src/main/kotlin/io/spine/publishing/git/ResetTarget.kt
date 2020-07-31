@@ -1,6 +1,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.lib.Repository
 
 /**
@@ -28,5 +29,5 @@ class ResetHardOriginMaster(val library: Library) : ResetTarget {
 
     override fun isHard(): Boolean = true
 
-    override fun repository(): Repository = library.repository()
+    override fun repository(): Repository = library.localGitRepository()
 }

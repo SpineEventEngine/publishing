@@ -21,6 +21,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.lib.Repository
 
 /**
@@ -35,12 +36,12 @@ interface Branch : GitCommandOptions {
 /**
  * Checks out the `master` branch.
  *
- * @param library the library that hosts a [repository][Library.repository] for which to checkout
+ * @param library the library that hosts a [repository][Library.localGitRepository] for which to checkout
  * the `master` branch
  */
 class Master(val library: Library) : Branch {
 
-    override fun repository(): Repository = library.repository()
+    override fun repository(): Repository = library.localGitRepository()
 
     override fun name(): BranchName = "master"
 }
