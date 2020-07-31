@@ -16,14 +16,15 @@ interface ResetTarget : GitCommandOptions {
 }
 
 /**
- * An equivalent of running `git reset --hard origin/master`.
+ * Specifies that the repository must match the current `master` in the `origin` remote.
  *
- * This set of options ensures that the repository is going to contain exactly the pulled
- * master branch of the remote repository.
+ * `ToOriginMaster` ensures that the repository is going to contain exactly the pulled
+ * master branch of the remote repository. Running a [Reset] with `ToOriginMaster` is akin
+ * to running `git reset --hard origin/master`.
  *
  * @param library the library to bring back to the state of the remote `master` branch
  */
-class ResetHardOriginMaster(val library: Library) : ResetTarget {
+class ToOriginMaster(val library: Library) : ResetTarget {
 
     override fun ref(): String = "origin/master"
 

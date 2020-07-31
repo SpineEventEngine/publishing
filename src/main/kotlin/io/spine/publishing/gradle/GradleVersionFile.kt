@@ -28,6 +28,9 @@ import java.nio.file.Path
 /**
  * A file that contains information about the version of the library and the
  * versions of its dependencies.
+ *
+ * @param projectName the name of the Gradle project that this file is contained in
+ * @param rootDir the directory that contains this version file
  */
 class GradleVersionFile(private val projectName: LibraryName, private val rootDir: Path) {
 
@@ -50,6 +53,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Gradle file].
      *
      * Parameter may be specified  to read the version of a dependency.
+     *
+     * @param library the name of the library to check the version from. If none specified,
+     * [projectName] is used
      */
     fun version(library: LibraryName = projectName): Version? {
         return contents
@@ -74,6 +80,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Overrides the version of the specified library to the specified one.
      *
      * If the specified library is not found in the file, no action is performed.
+     *
+     * @param library the name of the library to assign a new version to
+     * @param newVersion the version to assign to the library with the specified name
      */
     fun overrideVersion(library: LibraryName, newVersion: Version) {
         overrideVersions(mapOf(library to newVersion))
@@ -91,6 +100,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * ```
      *
      * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` does not change the file.
+     *
+     * @param versions a mapping of names to versions. The keys are libraries to have their versions
+     * assigned, the values are the versions to assign to libraries
      */
     fun overrideVersions(versions: Map<LibraryName, Version>) {
         var atLeastOnceOverridden = false

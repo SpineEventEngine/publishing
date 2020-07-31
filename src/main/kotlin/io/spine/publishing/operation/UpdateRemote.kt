@@ -1,9 +1,9 @@
 package io.spine.publishing.operation
 
+import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
-import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.github.updateVersion
 import io.spine.publishing.gradle.Library
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -12,6 +12,10 @@ import org.eclipse.jgit.transport.CredentialsProvider
  * Updates the remote library repositories.
  *
  * This operation assumes that the libraries have initialised Git repositories.
+ *
+ * @param libraries the local libraries associated with their remote repositories. The libraries
+ * that are being updated must exist in this list
+ * @param credentials the credentials to authorize the remote repository update
  *
  * @see updateVersion
  */

@@ -34,7 +34,10 @@ class EnsureBuilds : PipelineOperation {
      * 5) A is built;
      * 6) A is published to the local Maven repo;
      *
-     * @see Ordering
+     *
+     * @param libraries a collection of interdependent libraries to check
+     *
+     * @see Ordering for a dependency-safe way to order libraries
      */
     override fun perform(libraries: Set<Library>): OperationResult {
         val ordered = Ordering(libraries).byDependencies

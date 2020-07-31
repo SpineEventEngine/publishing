@@ -28,7 +28,8 @@ import java.nio.file.Path
 /**
  * Files to stage for commit using the `git add` command.
  *
- * The `--patch` option is not supported, i.e. in each file, every change is staged for commit.
+ * The `--patch` option is not supported, i.e. for each file, all of its changes are
+ * staged for commit.
  */
 interface FilesToStage : GitCommandOptions {
 
@@ -41,7 +42,7 @@ interface FilesToStage : GitCommandOptions {
  *
  * @param library the library that has its version file staged for commit
  */
-class StageVersionFile(val library: Library) : FilesToStage {
+class VersionFile(val library: Library) : FilesToStage {
 
     override fun paths(): Set<Path> = setOf(relativeVersionPath())
 

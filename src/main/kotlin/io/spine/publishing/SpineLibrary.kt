@@ -26,6 +26,9 @@ import java.nio.file.Paths
 
 /**
  * A Spine library to publish.
+ *
+ * @param local the local library with a local Git repository
+ * @param remote the remote repository that contains this library
  */
 enum class SpineLibrary(val local: Library, val remote: GitHubRepoAddress) {
 

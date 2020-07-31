@@ -32,6 +32,9 @@ package io.spine.publishing.gradle
  *
  * Note that the version must adhere to the Spine versioning policy, more in
  * [Version] documentation.
+ *
+ * @param libraryName the name of the library that has its version assigned
+ * @param version the version that the library is being assigned
  */
 data class AssignVersion(val libraryName: LibraryName, val version: Version) {
 
@@ -47,6 +50,8 @@ data class AssignVersion(val libraryName: LibraryName, val version: Version) {
          * the library.
          *
          * Otherwise, an exception is thrown.
+         *
+         * @param rawExpression the string to parse the expression from
          */
         fun parse(rawExpression: String): AssignVersion? {
             val result = regex.find(rawExpression)

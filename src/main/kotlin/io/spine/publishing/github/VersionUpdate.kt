@@ -42,7 +42,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
 fun updateVersion(library: LibraryToUpdate,
                   provider: CredentialsProvider): List<GitCommand> = listOf(
         Checkout(Master(library.local)),
-        StageFiles(StageVersionFile(library.local)),
+        StageFiles(VersionFile(library.local)),
         Commit(VersionBumpMessage(library.local)),
         PushToRemote(PushDestination(library, provider))
 )

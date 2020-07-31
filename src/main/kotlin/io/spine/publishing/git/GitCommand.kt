@@ -27,7 +27,7 @@ import org.eclipse.jgit.api.ResetCommand.ResetType.HARD
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Git commands necessary for the Publishing application.
+ * Git command necessary for the Publishing application.
  *
  * @param options options that customize the behavior of this command
  */
@@ -71,7 +71,7 @@ class Reset(private val target: ResetTarget) : GitCommand(target) {
 }
 
 /**
- * Fetches the update from the remote repo.
+ * Fetches the updates from the remote repo.
  *
  * Note that no remote is given to this command, as the default `origin` is sufficient.
  *
