@@ -11,8 +11,8 @@ import io.spine.publishing.given.PipelineTestEnv.sampleLibrary
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-@DisplayName("`LibrariesPipeline` should")
-class LibrariesPipelineTest {
+@DisplayName("`PublishingPipeline` should")
+class PublishingPipelineTest {
 
     @Test
     @DisplayName("terminate if one of the operations throws an exception")
@@ -45,5 +45,6 @@ class LibrariesPipelineTest {
     }
 
     private fun pipeline(vararg operations: PipelineOperation) =
-            LibrariesPipeline(setOf(sampleLibrary), operations.toList())
+
+            PublishingPipeline(setOf(sampleLibrary), operations.toList())
 }

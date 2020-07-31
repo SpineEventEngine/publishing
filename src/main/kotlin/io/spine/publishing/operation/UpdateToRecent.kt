@@ -20,7 +20,7 @@ class UpdateToRecent : PipelineOperation {
                     .forEach { it.execute() }
             Ok
         } catch (e: Exception) {
-            Error("Could not update fetch recent library versions: `$libraries`.", e)
+            Error(e)
         }
     }
 }

@@ -8,7 +8,7 @@ import io.spine.publishing.gradle.Library
 import java.nio.file.Paths
 
 /**
- * Utilities for testing the [io.spine.publishing.LibrariesPipeline]
+ * Utilities for testing the [io.spine.publishing.PublishingPipeline]
  */
 object PipelineTestEnv {
 
@@ -29,7 +29,7 @@ object PipelineTestEnv {
      */
     object ErroringOperation : PipelineOperation {
         override fun perform(libraries: Set<Library>): OperationResult =
-                Error("Sample description")
+                Error()
     }
 
     class CollectingOperation : PipelineOperation {

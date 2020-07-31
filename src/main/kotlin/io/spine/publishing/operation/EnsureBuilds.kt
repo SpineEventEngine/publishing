@@ -46,13 +46,11 @@ class EnsureBuilds : PipelineOperation {
             val gradleProject = GradleProject(library.rootDir)
             val builds = gradleProject.build()
             if (!builds) {
-                return Error("Library `${library.name}` does not pass the build. " +
-                        CHECK_LOGS)
+                return Error()
             }
             val published = gradleProject.publishToMavenLocal()
             if (!published) {
-                return Error("Library `${library.name}` could not be published " +
-                        "to Maven local. " + CHECK_LOGS)
+                return Error()
             }
         }
         return Ok

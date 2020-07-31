@@ -33,19 +33,11 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        publishingPipeline(setOf(BASE.library(), TIME.library(), CORE_JAVA.library()))
+        PublishingPipeline(setOf(BASE.library(), TIME.library(), CORE_JAVA.library()))
                 .eval()
     }
 }
 
-fun publishingPipeline(libraries: Set<Library>): LibrariesPipeline =
-        LibrariesPipeline(libraries, listOf(
-                UpdateToRecent(),
-                UpdateVersions(),
-                EnsureBuilds(),
-                Publish(),
-                UpdateRemote(libsToRemotes, Token("").provider())
-        ))
 
 val libsToRemotes: Map<Library, RemoteLibraryRepository> =
         SpineLibrary.values().associate { Pair(it.repo.library, it.repo) }
