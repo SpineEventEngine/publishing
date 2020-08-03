@@ -18,26 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] secondary constructor for the description of the publishing process
+ * Credentials to authorize an operation with a remote repository.
  */
-object Application {
+sealed class Credentials {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /**
+     * Returns a JGit credentials object that is used to authorize operations like
+     * [org.eclipse.jgit.api.PushCommand].
+     */
+    abstract fun provider(): CredentialsProvider
 }
 
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()
+// TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
+class Token(private val token: String) : Credentials() {
+
+    override fun provider() = UsernamePasswordCredentialsProvider(token, "")
+}

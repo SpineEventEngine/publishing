@@ -24,6 +24,10 @@ package io.spine.publishing.gradle
  * A version of a Spine library.
  *
  * @see <a href=https://spine.io/versioning/>Spine versioning policy</a>
+ *
+ * @param major the most significant version part
+ * @param minor the second most significant version part
+ * @param patch the least significant version part
  */
 data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Version> {
 
@@ -36,10 +40,10 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
         /**
          * Returns the version represented by this string, or `null` if it doesn't represent
          * a valid Spine version.
+         *
+         * @param stringValue the string to parse a version from
          */
-        fun parseFrom(stringValue: String): Version? {
-            checkNotNull(stringValue)
-
+        fun parseFrom(stringValue: String): Version {
             val versions: List<String> = stringValue.split(".")
 
             return if (versions.size == 3) {
@@ -50,14 +54,25 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
                 if (major != null && minor != null && patch != null) {
                     Version(major, minor, patch)
                 } else {
-                    null
+                    throw cannotParseVersion(stringValue)
                 }
             } else {
-                null
+                throw cannotParseVersion(stringValue)
             }
         }
+
+        private fun cannotParseVersion(versionAsString: String) =
+                IllegalStateException("Could not parse a `Version` from the specified string " +
+                        "value: `$versionAsString`")
     }
 
+    /**
+     * Compares this version to the `other` one.
+     *
+     * The greater version has a greater major, minor or patch value.
+     *
+     * @param other the version to compare this one to
+     */
     override fun compareTo(other: Version): Int = COMPARATOR.compare(this, other)
 
     override fun toString(): String {

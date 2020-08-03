@@ -18,26 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
+import org.eclipse.jgit.lib.Repository
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] secondary constructor for the description of the publishing process
+ * Specifies the name of the local branch to `git checkout`.
  */
-object Application {
+interface Branch : GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /** Name of the branch to checkout. Must refer to an existing branch. */
+    fun name(): BranchName
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * Specifies that the `master` branch must be checked out.
+ *
+ * @param library the library that hosts a [repository][Library.localGitRepository] for which to
+ * checkout the `master` branch
  */
-@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()
+class Master(val library: Library) : Branch {
+
+    override fun repository(): Repository = library.localGitRepository()
+
+    override fun name(): BranchName = "master"
+}
+
+typealias BranchName = String

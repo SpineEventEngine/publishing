@@ -18,25 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.gradle.GradleProject
-import java.net.URL
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
+import org.eclipse.jgit.lib.Repository
+import java.nio.file.Path
 
 /**
- * A local git repository connected with a Gradle project to update and publish.
+ * Files to stage for commit using the `git add` command.
+ *
+ * The `--patch` option is not supported, i.e. for each file, all of its changes are
+ * staged for commit.
  */
-class LocalGitRepository(private val gradleProject: GradleProject,
-                         val remote: RemoteGitHubRepository) {
+interface FilesToStage : GitCommandOptions {
 
-    /**
-     * Pushes the changes to the remote repository under a new branch with the specified name.
-     */
-    fun pushNewBranch(name: BranchName) {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    /** Paths to the files staged for commit. */
+    fun paths(): Set<Path>
 }
 
-data class RemoteGitHubRepository(val address: URL, val name: String)
+/**
+ * Specifies to only stage the `version.gradle.kts` of a particular library.
+ *
+ * @param library the library that has its version file staged for commit
+ */
+class VersionFile(val library: Library) : FilesToStage {
 
-data class BranchName(val name: String = "bump-version")
+    override fun paths(): Set<Path> = setOf(relativeVersionPath())
+
+    override fun repository(): Repository = library.localGitRepository()
+
+    private fun relativeVersionPath(): Path {
+        val versionFilePath = library.versionFile.file.toPath()
+        return library.rootDir.relativize(versionFilePath)
+    }
+}

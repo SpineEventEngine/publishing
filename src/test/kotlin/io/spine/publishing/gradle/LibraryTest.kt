@@ -23,8 +23,11 @@ package io.spine.publishing.gradle
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.spine.publishing.gradle.given.TestEnv.copyDirectory
+import io.spine.publishing.localGitRepository
+import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -77,7 +80,6 @@ class LibraryTest {
     @DisplayName("not update its dependencies version files")
     fun notUpdateOtherVersionFiles(@TempDir dependencyTempDir: Path,
                                    @TempDir dependantTempDir: Path) {
-
         val dependencyRootDir = copyDirectory(DEPENDENCY, dependencyTempDir)
         val dependantRootDir = copyDirectory(DEPENDANT, dependantTempDir)
 
@@ -92,5 +94,12 @@ class LibraryTest {
 
         val oldDependencyVersion = dependency.version()
         assertThat(dependency.version()).isEqualTo(oldDependencyVersion)
+    }
+
+    @Test
+    @DisplayName("throw an exception if the library doesn't contain a Git repository")
+    fun noGitRepo(@TempDir tempDir: Path) {
+        assertThrows<RepositoryNotFoundException>
+        { Library("no_git_repo_library", listOf(), tempDir).localGitRepository() }
     }
 }

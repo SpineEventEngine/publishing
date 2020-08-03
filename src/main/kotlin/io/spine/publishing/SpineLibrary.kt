@@ -20,24 +20,26 @@
 
 package io.spine.publishing
 
-/**
- * The publishing application.
- *
- * See [PublishingPipeline] secondary constructor for the description of the publishing process
- */
-object Application {
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.gradle.LibraryName
+import java.nio.file.Paths
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+/**
+ * A Spine library to publish.
+ *
+ * @param local the local library with a local Git repository
+ * @param remote the remote repository that contains this library
+ */
+enum class SpineLibrary(val local: Library, val remote: GitHubRepoAddress) {
+
+    BASE(base, spineGitHubRepo("base")),
+    TIME(time, spineGitHubRepo("time")),
+    CORE_JAVA(coreJava, spineGitHubRepo("coreJava"));
 }
 
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()
+private val base = Library("base", listOf(), Paths.get("base"))
+private val time = Library("time", listOf(base), Paths.get("time"))
+private val coreJava = Library("coreJava", listOf(base, time), Paths.get("core-java"))
+
+private fun spineGitHubRepo(name: LibraryName) = GitHubRepoAddress(ORGANIZATION, name)
+private const val ORGANIZATION = "SpineEventEngine"

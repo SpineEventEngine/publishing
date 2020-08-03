@@ -18,35 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.gradle.LibraryName
-import io.spine.publishing.gradle.Version
+import io.spine.publishing.LibraryToUpdate
+import io.spine.publishing.localGitRepository
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
+ * Specifies the remote repository to push as well as the credentials to use while pushing.
+ *
+ * @param library the library that is being pushed. It is associated with a
+ * [local][io.spine.publishing.gradle.Library.localGitRepository] and a
+ * [remote][LibraryToUpdate.remoteAddress] Git repositories
+ * @param credentials credentials to authorize a push
  */
-class VersionBumpPullRequest(private val branchName: BranchName,
-                             private val libraryName: LibraryName,
-                             private val newVersion: Version) {
+class PushDestination(val library: LibraryToUpdate,
+                      val credentials: CredentialsProvider) : GitCommandOptions {
 
-    override fun toString(): String {
-        return """Bump version to `$newVersion`"""
-    }
-
-    /**
-     * Creates this pull request. The branch must already be present in the
-     * remote repository.
-     */
-    fun create() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
-
-    /**
-     * Merges this pull request to the `master` remote branch.
-     */
-    fun merge() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    override fun repository(): Repository = library.local.localGitRepository()
 }

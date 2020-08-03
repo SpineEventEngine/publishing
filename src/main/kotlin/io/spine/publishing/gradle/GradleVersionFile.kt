@@ -28,13 +28,19 @@ import java.nio.file.Path
 /**
  * A file that contains information about the version of the library and the
  * versions of its dependencies.
+ *
+ * @param projectName the name of the Gradle project that this file is contained in
+ * @param rootDir the directory that contains this version file
  */
 class GradleVersionFile(private val projectName: LibraryName, private val rootDir: Path) {
 
     companion object {
+
+        internal const val NAME = "version.gradle.kts"
+
         private fun findFile(dir: File): File? {
             val children = dir.listFiles()
-            return children?.find { it.name == "version.gradle.kts" }
+            return children?.find { it.name == NAME }
         }
     }
 
@@ -47,11 +53,14 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Gradle file].
      *
      * Parameter may be specified  to read the version of a dependency.
+     *
+     * @param library the name of the library to check the version from. If none specified,
+     * [projectName] is used
      */
     fun version(library: LibraryName = projectName): Version? {
-        return file
-                .readLines()
-                .map { VersionAssigningExpression.parse(it) }
+        return contents
+                .lines()
+                .map { AssignVersion.parse(it) }
                 .find { e -> e?.libraryName == library }
                 ?.version
     }
@@ -60,9 +69,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Returns the libraries that the project declaring this versions file depends on.
      */
     fun declaredDependencies(): Map<LibraryName, Version> {
-        return file
-                .readLines()
-                .mapNotNull { VersionAssigningExpression.parse(it) }
+        return contents
+                .lines()
+                .mapNotNull { AssignVersion.parse(it) }
                 .filter { it.libraryName != projectName }
                 .associateBy({ it.libraryName }, { it.version })
     }
@@ -71,6 +80,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Overrides the version of the specified library to the specified one.
      *
      * If the specified library is not found in the file, no action is performed.
+     *
+     * @param library the name of the library to assign a new version to
+     * @param newVersion the version to assign to the library with the specified name
      */
     fun overrideVersion(library: LibraryName, newVersion: Version) {
         overrideVersions(mapOf(library to newVersion))
@@ -88,31 +100,73 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * ```
      *
      * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` does not change the file.
+     *
+     * @param versions a mapping of names to versions. The keys are libraries to have their versions
+     * assigned, the values are the versions to assign to libraries
      */
     fun overrideVersions(versions: Map<LibraryName, Version>) {
         var atLeastOnceOverridden = false
-        val lines = file.readLines().map {
-            val expr = VersionAssigningExpression.parse(it)
-            if (expr != null && versions.containsKey(expr.libraryName)) {
-                atLeastOnceOverridden = true
-                val version: Version = versions.getValue(expr.libraryName)
-                val expression =
-                        VersionAssigningExpression(expr.libraryName, version)
-                expression.toString()
-            } else {
-                it
-            }
-        }
+        val lines = file
+                .readLines()
+                .map {
+                    val expr = AssignVersion.parse(it)
+                    if (expr != null && versions.containsKey(expr.libraryName)) {
+                        atLeastOnceOverridden = true
+                        val version: Version = versions.getValue(expr.libraryName)
+                        val expression =
+                                AssignVersion(expr.libraryName, version)
+                        expression.toString()
+                    } else {
+                        it
+                    }
+                }
 
         if (atLeastOnceOverridden) {
             PrintWriter(FileWriter(file)).use { writer ->
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
             }
+            contents.invalidate()
         }
     }
 
-    private val file: File by lazy {
+    internal val file: File by lazy {
         checkNotNull(findFile(rootDir.toFile()))
+    }
+
+    private val contents: CachedFileContents by lazy {
+        CachedFileContents(file)
+    }
+
+    /**
+     * Contents of a text file.
+     *
+     * Allows to read the file once, and reuse the lines as long as the contents are not
+     * [overridden][invalidate]. Once they are overridden, the file is re-read on the next
+     * [lines] call.
+     */
+    private class CachedFileContents(private val file: File) {
+
+        private var dirty: Boolean = false
+        private var lines: List<String> = listOf()
+
+        /**
+         * Either returns the cached lines from the files, or, if the cache is not valid, reads the
+         * contents from the actual file.
+         */
+        internal fun lines(): List<String> = synchronized(this) {
+            if (lines.isEmpty() || dirty) {
+                lines = file.readLines()
+                dirty = false
+            }
+            lines
+        }
+
+        /**
+         * Forces the next [lines] to read the file contents.
+         */
+        internal fun invalidate() {
+            dirty = true
+        }
     }
 }

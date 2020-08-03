@@ -26,8 +26,10 @@ import java.nio.file.Path
  * A project that uses Gradle.
  *
  * Allows to execute arbitrary Gradle tasks
+ *
+ * @param rootDir path to the directory that contains a Gradle project
  */
-class GradleProject(private val rootDir: Path) {
+data class GradleProject(private val rootDir: Path) {
 
     companion object {
         private const val GRADLEW = "./gradlew"
@@ -46,6 +48,11 @@ class GradleProject(private val rootDir: Path) {
      * Returns `false` if the task has failed.
      */
     fun publish(): Boolean = runCommand("publish")
+
+    /**
+     * Publishes this project to the local Maven repository.
+     */
+    fun publishToMavenLocal(): Boolean = runCommand("publishToMavenLocal")
 
     private fun runCommand(vararg commands: String): Boolean {
         return try {

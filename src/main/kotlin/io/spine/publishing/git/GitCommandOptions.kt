@@ -18,26 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import org.eclipse.jgit.lib.Repository
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] secondary constructor for the description of the publishing process
+ * Options associated with a Git command that specify its behavior.
  */
-object Application {
+interface GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /**
+     * Returns a local repository that the respective command is associated with.
+     */
+    fun repository(): Repository
 }
-
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()

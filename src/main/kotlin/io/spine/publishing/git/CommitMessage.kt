@@ -18,26 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import io.spine.publishing.gradle.Library
+import io.spine.publishing.localGitRepository
+import org.eclipse.jgit.lib.Repository
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] secondary constructor for the description of the publishing process
+ * A message that accompanies a commit.
  */
-object Application {
+interface CommitMessage : GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /** The text of the commit message. */
+    fun message(): String
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * A message that accompanies a commit that contains only a Spine library version update.
+ *
+ * @param library library that has its version bumped
  */
-@Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()
+class VersionBumpMessage(val library: Library) : CommitMessage {
+
+    override fun repository(): Repository = library.localGitRepository()
+
+    override fun message(): String = "Bump version to `${library.version()}`"
+}
