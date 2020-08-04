@@ -148,7 +148,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
 
     override fun execute() {
         git().push()
-                .setRemote(destination.library.remoteAddress.asUrl())
+                .setRemote(destination.library.remoteUrl.value())
                 .setCredentialsProvider(destination.credentials)
                 .call()
     }

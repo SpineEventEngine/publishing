@@ -27,22 +27,22 @@ fun Library.localGitRepository(): Repository {
  * [io.spine.publishing.git.PushToRemote].
  *
  * @param local the local library. Contains a Git repo
- * @param remoteAddress a remote repository that contains the library
+ * @param remoteUrl a remote repository that contains the library
  */
-data class LibraryToUpdate(val local: Library, val remoteAddress: GitHubRepoAddress)
+data class LibraryToUpdate(val local: Library, val remoteUrl: GitHubRepoUrl)
 
 /**
- * An address of a GitHub repository.
+ * A location of a GitHub repository.
  *
  * @param organization the name of the organization that this repository belongs to
  * @param name the name of the repository
  */
-data class GitHubRepoAddress(val organization: Organization, val name: RepositoryName) {
+data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName) {
 
     /**
      * Returns a URL to access the GitHub repository.
      */
-    fun asUrl(): String = "https://github.com/$organization/$name.git"
+    fun value(): String = "https://github.com/$organization/$name.git"
 }
 
 typealias Organization = String

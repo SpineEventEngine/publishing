@@ -22,7 +22,7 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.*
-import io.spine.publishing.GitHubRepoAddress
+import io.spine.publishing.GitHubRepoUrl
 import io.spine.publishing.LibraryToUpdate
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
@@ -54,7 +54,7 @@ class VersionUpdateTest {
         val library = Library("base", listOf(), baseDirectory)
         val orgName = "TestOrganization"
         val repo = "base"
-        val remote = GitHubRepoAddress(orgName, repo)
+        val remote = GitHubRepoUrl(orgName, repo)
 
         val commands =
                 updateVersion(LibraryToUpdate(library, remote), mockCredentials)
@@ -70,8 +70,8 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.library.remoteAddress)
-                .isEqualTo(GitHubRepoAddress(orgName, repo))
+        assertThat((commands[3] as PushToRemote).destination.library.remoteUrl)
+                .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 
     private val mockCredentials: CredentialsProvider =

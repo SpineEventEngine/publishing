@@ -30,7 +30,7 @@ import java.nio.file.Paths
  * @param local the local library with a local Git repository
  * @param remote the remote repository that contains this library
  */
-enum class SpineLibrary(val local: Library, val remote: GitHubRepoAddress) {
+enum class SpineLibrary(val local: Library, val remote: GitHubRepoUrl) {
 
     BASE(base, spineGitHubRepo("base")),
     TIME(time, spineGitHubRepo("time")),
@@ -41,5 +41,5 @@ private val base = Library("base", listOf(), Paths.get("base"))
 private val time = Library("time", listOf(base), Paths.get("time"))
 private val coreJava = Library("coreJava", listOf(base, time), Paths.get("core-java"))
 
-private fun spineGitHubRepo(name: LibraryName) = GitHubRepoAddress(ORGANIZATION, name)
+private fun spineGitHubRepo(name: LibraryName) = GitHubRepoUrl(ORGANIZATION, name)
 private const val ORGANIZATION = "SpineEventEngine"
