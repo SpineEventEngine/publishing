@@ -107,6 +107,9 @@ object Ok : OperationResult()
 
 /**
  * Signifies that the pipeline operation has finished with an error.
+ *
+ * @param description a human-readable description of the error
+ * @param exception an exception that has lead to the error
  */
 class Error(val description: String, val exception: Exception?) : OperationResult() {
 

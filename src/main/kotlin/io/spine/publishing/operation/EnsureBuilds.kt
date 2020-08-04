@@ -32,6 +32,9 @@ class EnsureBuilds : PipelineOperation() {
      * 5) A is built;
      * 6) A is published to the local Maven repo;
      *
+     * Returns [Ok] if all of the libraries are built successfully. Returns [Error] if a library
+     * could not be built or published to the local Maven repo.
+     *
      * @param libraries a collection of interdependent libraries to check
      *
      * @see Ordering for a dependency-safe way to order libraries
