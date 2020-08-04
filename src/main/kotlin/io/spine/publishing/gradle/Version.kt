@@ -37,7 +37,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
     init {
         if (major < 0 || minor < 0 || patch < 0) {
             throw IllegalArgumentException(
-                    "Major, minor, and patch `Version` parts must all be positive. " +
+                    "Major, minor, and patch `Version` parts cannot be negative. " +
                             "Provided values: major: $major, minor: $minor, patch: $patch.")
         }
     }
