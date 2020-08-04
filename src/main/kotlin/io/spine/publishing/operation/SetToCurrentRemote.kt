@@ -11,10 +11,8 @@ import io.spine.publishing.Library
 
 /**
  * Sets the state of the libraries to the current state of their remote GitHub counterpart.
- *
- * @see fetchFresh
  */
-class UpdateToRecent : PipelineOperation() {
+class SetToCurrentRemote : PipelineOperation() {
 
     override fun perform(libraries: Set<Library>): OperationResult {
         libraries.flatMap { fetchFresh(it) }

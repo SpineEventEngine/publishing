@@ -27,8 +27,8 @@ import io.spine.publishing.gradle.Version
 /**
  * A collection of files from a remote repository.
  *
- * The project uses Gradle and declares its dependencies using a `version.gradle.kts` with a
- * Spine-specific formatting.
+ * The library uses Gradle and declares its dependencies using a [`version.gradle.kts`]
+ * [GradleVersionFile] with a Spine-specific formatting.
  *
  * The library may depend on other libraries. Such dependencies are declared in the version file.
  *

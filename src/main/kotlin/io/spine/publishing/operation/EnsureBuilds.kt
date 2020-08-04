@@ -21,6 +21,7 @@ class EnsureBuilds : PipelineOperation() {
      *          A --------------> B
      *           \               /
      *            --------> C <--
+     *
      * library A depends on library B and C. Library B depends on library C.
      * In such a configuration, the following happens:
      *

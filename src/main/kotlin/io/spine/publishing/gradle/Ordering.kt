@@ -27,7 +27,7 @@ import io.spine.publishing.Library
  * the libraries.
  *
  * Such an order is the order in which the library is reached only if all of its dependencies
- * have been previously reached.
+ * have already been reached.
  *
  * @param libraries libraries to order
  */

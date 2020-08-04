@@ -25,7 +25,7 @@ import java.nio.file.Path
 /**
  * A project that uses Gradle.
  *
- * Allows to execute arbitrary Gradle tasks
+ * Allows to execute arbitrary Gradle tasks.
  *
  * @param rootDir path to the directory that contains a Gradle project
  */

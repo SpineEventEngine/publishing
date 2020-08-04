@@ -24,7 +24,7 @@ import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Specifies the name of the local branch.
+ * A name of an existing local Git branch.
  */
 interface Branch : GitCommandOptions {
 
@@ -36,7 +36,7 @@ interface Branch : GitCommandOptions {
  * The `master` branch.
  *
  * @param library the library that hosts a [repository][GitRepository.localGitRepository] that
- * this branch refers to
+ * this branch is contained in
  */
 class Master(val library: Library) : Branch {
 

@@ -5,16 +5,12 @@ import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.git.*
-import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * Updates the remote library repositories.
+ * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
  *
- * This operation assumes that the libraries have initialised Git repositories.
  * @param credentials the credentials to authorize the remote repository update
- *
- * @see updateVersion
  */
 class UpdateRemote(private val credentials: CredentialsProvider) : PipelineOperation() {
 

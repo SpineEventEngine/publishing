@@ -9,7 +9,7 @@ import io.spine.publishing.operation.*
  *
  * To publish libraries, a set of predefined operations is performed.
  *
- * 1) [Libraries are ensured to match their remote versions][UpdateToRecent].
+ * 1) [Libraries are ensured to match their remote versions][SetToCurrentRemote].
  * 2) [The versions are changed locally][UpdateVersions].
  * 3) [The libraries are built to verify that the version updated went correctly][EnsureBuilds].
  * 4) [The updated libraries are published to the remote artifact library][Publish].
@@ -30,7 +30,7 @@ class PublishingPipeline(val libraries: Set<Library>,
      */
     constructor(libraries: Set<Library>) :
             this(libraries, listOf(
-                    UpdateToRecent(),
+                    SetToCurrentRemote(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),

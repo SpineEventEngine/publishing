@@ -51,7 +51,7 @@ data class AssignVersion(val libraryName: LibraryName, val version: Version) {
          * If the expression matches the expected template, returns the name and the version of
          * the library.
          *
-         * Otherwise, an exception is thrown.
+         * Otherwise, a `null` is returned.
          *
          * @param rawExpression the string to parse the expression from
          */
