@@ -28,8 +28,8 @@ import org.eclipse.jgit.lib.Repository
 /**
  * A configurable Git command.
  *
- * Wraps around an [Eclipse JGit][Git] object to provide the commands necessary for the Publishing
- * application.
+ * Wraps around an [Eclipse JGit][Git] object to provide the commands necessary for
+ * the Publishing application.
  *
  * @param options options that customize the behavior of this command
  */

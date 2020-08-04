@@ -15,8 +15,8 @@ data class GitRepository(val localRootPath: Path, val remote: GitHubRepoUrl) {
     /**
      * Returns the local `Repository`.
      *
-     * If no repository is associated with the [localRootPath], a `RepositoryNotFoundException` is
-     * thrown.
+     * If no repository is associated with the [localRootPath], an
+     * [org.eclipse.jgit.errors.RepositoryNotFoundException] is thrown.
      */
     fun localGitRepository(): Repository {
         val repoPath = localRootPath.toAbsolutePath()

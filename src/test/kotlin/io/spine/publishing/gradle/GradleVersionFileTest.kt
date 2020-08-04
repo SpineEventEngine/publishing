@@ -27,6 +27,7 @@ import assertk.assertions.isNull
 import io.spine.publishing.LibraryName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
@@ -53,12 +54,13 @@ class GradleVersionFileTest {
     }
 
     @Test
-    @DisplayName("do nothing on an attempt to override a non-existing library version")
+    @DisplayName("throw an ISE upon an attempt to override a non-existing library version")
     fun doNothing(@TempDir dir: Path) {
         val versionFile = gradleVersionFile(dir)
-        versionFile.overrideVersion("nonExistingLibrary",
-                Version(1, 5, 6))
-        assertAllMatch(INITIAL_VALUES, versionFile)
+        assertThrows<IllegalStateException> {
+            versionFile.overrideVersion("nonExistingLibrary",
+                    Version(1, 5, 6))
+        }
     }
 
     @Test
@@ -104,7 +106,8 @@ class GradleVersionFileTest {
     fun identifyLibraries(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
 
-        assertThat(versionFile.declaredDependencies().map { it.key })
+        assertThat(versionFile.declaredDependencies()
+                .map { it.key })
                 .containsOnly("coreJava", "base")
     }
 
@@ -119,7 +122,8 @@ class GradleVersionFileTest {
         val resource = javaClass.classLoader.getResource(resourceName)
         val projectDir = tempDir.resolve("project")
         val file = projectDir.resolve(resourceName)
-        projectDir.toFile().mkdirs()
+        projectDir.toFile()
+                .mkdirs()
 
         Files.copy(Paths.get(resource.toURI()), file, REPLACE_EXISTING)
         return projectDir

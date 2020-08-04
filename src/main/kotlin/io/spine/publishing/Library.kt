@@ -76,8 +76,7 @@ data class Library(val name: LibraryName,
                                newVersion: Version) {
         val toUpdate = libraries.filter { it.value < newVersion }
                 .mapValues { newVersion }
-
-        versionFile.overrideVersions(toUpdate)
+        versionFile.updateVersions(toUpdate)
     }
 
     internal val versionFile: GradleVersionFile by lazy {

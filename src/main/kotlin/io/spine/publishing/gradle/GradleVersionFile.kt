@@ -86,13 +86,13 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * @param newVersion the version to assign to the library with the specified name
      */
     fun overrideVersion(library: LibraryName, newVersion: Version) {
-        overrideVersions(mapOf(library to newVersion))
+        updateVersions(mapOf(library to newVersion))
     }
 
     /**
      * Sets the versions of the specified libraries to new versions.
      *
-     * If the specified library is not found in the file, no action is performed.
+     * If the specified library is not found in the file, an error is thrown.
      *
      * E.g. for a file
      *
@@ -100,12 +100,14 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * val base = "1.5.0"
      * ```
      *
-     * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` does not change the file.
+     * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` leads
+     * to an `IllegalStateException`.
      *
      * @param versions a mapping of names to versions. The keys are libraries to have their versions
      * assigned, the values are the versions to assign to libraries
      */
-    fun overrideVersions(versions: Map<LibraryName, Version>) {
+    fun updateVersions(versions: Map<LibraryName, Version>) {
+        checkContainsAll(versions.keys)
         var atLeastOneOverridden = false
         val lines = file
                 .readLines()
@@ -129,6 +131,10 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             }
             contents.invalidate()
         }
+    }
+
+    private fun checkContainsAll(keys: Set<LibraryName>) {
+        keys.forEach { checkNotNull(version(it)) }
     }
 
     internal val file: File by lazy {
