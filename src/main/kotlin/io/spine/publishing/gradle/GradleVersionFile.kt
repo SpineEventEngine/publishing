@@ -106,13 +106,13 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * assigned, the values are the versions to assign to libraries
      */
     fun overrideVersions(versions: Map<LibraryName, Version>) {
-        var atLeastOnceOverridden = false
+        var atLeastOneOverridden = false
         val lines = file
                 .readLines()
                 .map {
                     val expr = AssignVersion.parse(it)
                     if (expr != null && versions.containsKey(expr.libraryName)) {
-                        atLeastOnceOverridden = true
+                        atLeastOneOverridden = true
                         val version: Version = versions.getValue(expr.libraryName)
                         val expression =
                                 AssignVersion(expr.libraryName, version)
@@ -122,7 +122,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                     }
                 }
 
-        if (atLeastOnceOverridden) {
+        if (atLeastOneOverridden) {
             PrintWriter(FileWriter(file)).use { writer ->
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
