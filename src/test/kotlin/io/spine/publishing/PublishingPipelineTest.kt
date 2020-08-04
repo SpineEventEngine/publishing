@@ -5,7 +5,7 @@ import assertk.assertions.containsOnly
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNull
 import io.spine.publishing.given.PipelineTestEnv.CollectingOperation
-import io.spine.publishing.given.PipelineTestEnv.ErroringOperation
+import io.spine.publishing.given.PipelineTestEnv.ErroneousOperation
 import io.spine.publishing.given.PipelineTestEnv.ThrowingOperation
 import io.spine.publishing.given.PipelineTestEnv.sampleLibrary
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +26,7 @@ class PublishingPipelineTest {
     @Test
     @DisplayName("terminate if one of the operations returns an error")
     fun endOnError() {
-        val pipeline = pipeline(CollectingOperation(), ErroringOperation)
+        val pipeline = pipeline(CollectingOperation(), ErroneousOperation)
         val result = pipeline.eval()
         assertThat(result).isInstanceOf(Error::class)
         assertThat((result as Error).exception).isNull()
@@ -45,6 +45,5 @@ class PublishingPipelineTest {
     }
 
     private fun pipeline(vararg operations: PipelineOperation) =
-
             PublishingPipeline(setOf(sampleLibrary), operations.toList())
 }

@@ -18,7 +18,7 @@ object PipelineTestEnv {
     /**
      * An operation that always throws an exception.
      */
-    object ThrowingOperation : PipelineOperation {
+    object ThrowingOperation : PipelineOperation() {
         override fun perform(libraries: Set<Library>): OperationResult =
                 throw IllegalStateException()
 
@@ -27,12 +27,12 @@ object PipelineTestEnv {
     /**
      * An operation that always returns an [io.spine.publishing.Error]
      */
-    object ErroringOperation : PipelineOperation {
+    object ErroneousOperation : PipelineOperation() {
         override fun perform(libraries: Set<Library>): OperationResult =
-                Error()
+                Error("An erroneous operation always errors.")
     }
 
-    class CollectingOperation : PipelineOperation {
+    class CollectingOperation : PipelineOperation() {
 
         private val seenLibraries: MutableList<Library> = mutableListOf()
 

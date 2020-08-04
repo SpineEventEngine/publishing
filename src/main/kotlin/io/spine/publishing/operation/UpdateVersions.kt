@@ -7,20 +7,19 @@ import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.Version
 
 /**
- * Updates the `version.gradle.kts` files for every library. As a result, every library will have
- * its version and the version of its dependencies set to the maximum version among the specified
- * dependencies.
+ * Updates the version files for every library, so that all of the versions are most recent.
+ *
+ * The most recent version is the maximum version among the specified library.
  */
-class UpdateVersions : PipelineOperation {
+class UpdateVersions : PipelineOperation() {
 
     override fun perform(libraries: Set<Library>): OperationResult {
         // The collection is non-empty as per the pipeline contract - non-null assertion is safe.
-        val maxVersion = libraries.maxBy { it.version() }!!.version()
+        val maxVersion = libraries.maxBy { it.version() }!!
+                .version()
         libraries
                 .filter { needsUpdate(it, maxVersion) }
-                .forEach { library ->
-            library.update(maxVersion)
-        }
+                .forEach { library -> library.update(maxVersion) }
 
         return Ok
     }

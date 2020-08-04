@@ -14,7 +14,7 @@ import io.spine.publishing.gradle.Ordering
  * This includes making sure that for every library, its dependencies are built and checked
  * before building the library.
  */
-class EnsureBuilds : PipelineOperation {
+class EnsureBuilds : PipelineOperation() {
 
     /**
      * Goes through each library, building them to ensure that the dependencies are consistent.
@@ -34,7 +34,6 @@ class EnsureBuilds : PipelineOperation {
      * 5) A is built;
      * 6) A is published to the local Maven repo;
      *
-     *
      * @param libraries a collection of interdependent libraries to check
      *
      * @see Ordering for a dependency-safe way to order libraries
@@ -45,13 +44,24 @@ class EnsureBuilds : PipelineOperation {
             val gradleProject = GradleProject(library.rootDir)
             val builds = gradleProject.build()
             if (!builds) {
-                return Error()
+                return Error(cannotBuild(library, libraries))
             }
             val published = gradleProject.publishToMavenLocal()
             if (!published) {
-                return Error()
+                return Error(cannotPublish(library))
             }
         }
         return Ok
     }
+
+    private fun cannotBuild(library: Library, allLibraries: Set<Library>): String {
+        val versions = allLibraries.map { it.version() }
+                .joinToString { it.toString() }
+        return """Cannot build library `${library.name}`. Versions of all libraries: `$versions`."""
+    }
+
+    private fun cannotPublish(library: Library): String =
+            """Cannot publish library `${library.name}`. 
+                |Check logs for details of the Gradle task.""".trimMargin()
+
 }

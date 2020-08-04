@@ -11,7 +11,7 @@ import io.spine.publishing.gradle.Library
  *
  * The artifact repository to use is defined by the libraries `publish` task.
  */
-class Publish: PipelineOperation {
+class Publish: PipelineOperation() {
 
     override fun perform(libraries: Set<Library>): OperationResult {
         libraries.map { GradleProject(it.rootDir) }

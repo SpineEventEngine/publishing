@@ -31,6 +31,7 @@ import io.spine.publishing.git.StageFiles
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.given.TestEnv
+import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.CredentialsProvider
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
@@ -40,7 +41,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@DisplayName("`VersionUpdate` should")
+@DisplayName("`UpdateRemote` should")
 class VersionUpdateTest {
 
     @Test

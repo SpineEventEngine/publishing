@@ -53,10 +53,20 @@ class PublishingPipeline(val libraries: Set<Library>,
      * If every operation finishes successfully, [Ok] is returned.
      */
     fun eval(): OperationResult {
-        return operations
-                .map { it.doPerform(libraries) }
-                .firstOrNull { it is Error }
-                ?: Ok
+        var pipelineResult: OperationResult = Ok
+        for (operation in operations) {
+            pipelineResult = operation.doPerform(libraries)
+            if (pipelineResult is Error) {
+                return logAndReturn(pipelineResult)
+            }
+        }
+        return pipelineResult
+    }
+
+    private fun logAndReturn(pipelineResult: Error): OperationResult {
+        System.err.println(pipelineResult.description)
+        pipelineResult.exception?.printStackTrace(System.err)
+        return pipelineResult
     }
 }
 
@@ -84,7 +94,8 @@ abstract class PipelineOperation {
         return try {
             perform(libraries)
         } catch (e: Exception) {
-            Error(e)
+            Error("An unexpected error occurred when performing operation `$javaClass`.",
+                    e)
         }
     }
 }
@@ -104,7 +115,7 @@ object Ok : OperationResult()
 /**
  * Signifies that the pipeline operation has finished with an error.
  */
-class Error(val exception: Exception?) : OperationResult() {
+class Error(val description: String, val exception: Exception?) : OperationResult() {
 
-    constructor() : this(null)
+    constructor(description: String) : this(description, null)
 }
