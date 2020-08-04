@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-@DisplayName("`VersionAssigningExpression` should")
+@DisplayName("`AssignVersion` should")
 class AssignVersionTest {
 
     @Test
@@ -76,7 +76,7 @@ class AssignVersionTest {
     }
 
     @Test
-    @DisplayName("return a parsable expression with toString()")
+    @DisplayName("return a parsable expression with `toString()`")
     fun toStringTest() {
         val version = Version(3, 0, 23)
         val expression = AssignVersion("base", version)

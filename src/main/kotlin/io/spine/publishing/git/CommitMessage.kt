@@ -41,5 +41,5 @@ class VersionBumpMessage(val library: Library) : CommitMessage {
 
     override fun repository(): Repository = library.repository.localGitRepository()
 
-    override fun message(): String = "Bump version to `${library.version()}`"
+    override fun message(): String = "Bump version to `${library.version()}`."
 }

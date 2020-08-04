@@ -24,19 +24,19 @@ import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
 
 /**
- * Specifies the name of the local branch to `git checkout`.
+ * Specifies the name of the local branch.
  */
 interface Branch : GitCommandOptions {
 
-    /** Name of the branch to checkout. Must refer to an existing branch. */
+    /** Name of the branch. Must refer to an existing branch. */
     fun name(): BranchName
 }
 
 /**
- * Specifies that the `master` branch must be checked out.
+ * The `master` branch.
  *
- * @param library the library that hosts a [repository][GitRepository.localGitRepository] for which
- * to checkout the `master` branch
+ * @param library the library that hosts a [repository][GitRepository.localGitRepository] that
+ * this branch refers to
  */
 class Master(val library: Library) : Branch {
 

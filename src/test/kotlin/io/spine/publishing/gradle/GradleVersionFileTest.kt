@@ -53,7 +53,7 @@ class GradleVersionFileTest {
     }
 
     @Test
-    @DisplayName("not to do anything if the library is missing")
+    @DisplayName("do nothing on an attempt to override a non-existing library version")
     fun doNothing(@TempDir dir: Path) {
         val versionFile = gradleVersionFile(dir)
         versionFile.overrideVersion("nonExistingLibrary",
@@ -62,7 +62,7 @@ class GradleVersionFileTest {
     }
 
     @Test
-    @DisplayName("return null when asking for a non-existent library version")
+    @DisplayName("return `null` when asking for a non-existent library version")
     fun returnNull(@TempDir tempDir: Path) {
         val versionFile = gradleVersionFile(tempDir)
         assertThat(versionFile.version("nonExistingLibrary"))
@@ -111,8 +111,7 @@ class GradleVersionFileTest {
     private fun gradleVersionFile(dir: Path): GradleVersionFile {
         val projectDir = moveResourceTo(dir)
         val projectName = "library"
-        val versionFile = GradleVersionFile(projectName, projectDir)
-        return versionFile
+        return GradleVersionFile(projectName, projectDir)
     }
 
     private fun moveResourceTo(tempDir: Path): Path {

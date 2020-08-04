@@ -18,13 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.gradle
+package io.spine.publishing
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.Library
 import io.spine.publishing.git.GitHubRepoUrl
 import io.spine.publishing.git.GitRepository
+import io.spine.publishing.gradle.Version
 import io.spine.publishing.gradle.given.TestEnv.copyDirectory
 import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.junit.jupiter.api.DisplayName

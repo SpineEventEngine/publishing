@@ -1,18 +1,15 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.Error
-import io.spine.publishing.Ok
-import io.spine.publishing.OperationResult
-import io.spine.publishing.PipelineOperation
+import io.spine.publishing.*
 import io.spine.publishing.gradle.GradleProject
-import io.spine.publishing.Library
 import io.spine.publishing.gradle.Ordering
 
 /**
  * Makes sure that each of the libraries can be built.
  *
- * This includes making sure that for every library, its dependencies are built and checked
- * before building the library.
+ * For every library, its dependencies are built and checked before building the library.
+ *
+ * If at least one build is unsuccessful, [errors out][Error].
  */
 class EnsureBuilds : PipelineOperation() {
 
