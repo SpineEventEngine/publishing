@@ -91,8 +91,8 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` leads
      * to an `IllegalStateException`.
      *
-     * Note that this is a low-level API. When updating the version of a
-     * library, use [io.spine.publishing.Library.update].
+     * Note that this is a low-level API. When updating the version of a library,
+     * use [io.spine.publishing.Library.update].
      *
      * @param versions a mapping of names to versions. The keys are libraries to have their versions
      * assigned, the values are the versions to assign to libraries
