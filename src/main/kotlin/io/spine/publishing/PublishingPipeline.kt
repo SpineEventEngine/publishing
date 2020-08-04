@@ -8,6 +8,14 @@ import io.spine.publishing.operation.*
  * A series of operations to perform over a set of libraries in order to update them and
  * publish new versions.
  *
+ * To publish libraries, a set of predefined operations is performed.
+ *
+ * 1) [Libraries are ensured to match their remote versions][UpdateToRecent].
+ * 2) [The versions are changed locally][UpdateVersions].
+ * 3) [The libraries are built to verify that the version updated went correctly][EnsureBuilds].
+ * 4) [The updated libraries are published to the remote artifact library][Publish].
+ * 5) [The version changes are propagated to the libraries' remote repositories][UpdateRemote].
+ *
  * @param libraries libraries to update and publish
  * @param operations operations to perform over the libraries in order to update and publish them
  */
@@ -21,13 +29,9 @@ class PublishingPipeline(val libraries: Set<Library>,
     }
 
     /**
-     * Constructs a publishing pipeline for the specified libraries using the following operations:
+     * Constructs a pipeline that publishes the library.
      *
-     * 1) [ensure that the libraries match their remote versions][UpdateToRecent];
-     * 2) [change their versions locally][UpdateVersions];
-     * 3) [verify that the version update went successfully by building the libraries][EnsureBuilds];
-     * 4) [publish the updated libraries to a remote artifact repository][Publish];
-     * 5) [update the libraries in the respective remote repositories][UpdateRemote].
+     * See class level documentation for the exact steps.
      *
      * @param libraries libraries to update and publish
      */
@@ -50,17 +54,9 @@ class PublishingPipeline(val libraries: Set<Library>,
      */
     fun eval(): OperationResult {
         return operations
-                .map { operationResult(it, libraries) }
+                .map { it.doPerform(libraries) }
                 .firstOrNull { it is Error }
                 ?: Ok
-    }
-
-    private fun operationResult(ops: PipelineOperation, libs: Set<Library>): OperationResult {
-        return try {
-            ops.perform(libs)
-        } catch (e: Exception) {
-            Error(e)
-        }
     }
 }
 
@@ -69,15 +65,45 @@ class PublishingPipeline(val libraries: Set<Library>,
  *
  * Either [finishes successfully][Ok], or returns an [error with a description][Error].
  */
-interface PipelineOperation {
+abstract class PipelineOperation {
 
-    fun perform(libraries: Set<Library>): OperationResult
+    /**
+     * Perform this operation over the specified set of libraries.
+     *
+     * Returns [Ok] if the operation has finished successfully, and [Error] otherwise.
+     */
+    abstract fun perform(libraries: Set<Library>): OperationResult
+
+    /**
+     * Tries to perform this operation over a set of libraries.
+     *
+     * If it finishes normally, returns the result of [perform]. If an exception is thrown,
+     * returns an [Error].
+     */
+    fun doPerform(libraries: Set<Library>): OperationResult {
+        return try {
+            perform(libraries)
+        } catch (e: Exception) {
+            Error(e)
+        }
+    }
 }
 
+/**
+ * A result of a pipeline operation.
+ *
+ * An operation can either finish [successfully][Ok] or with an [Error].
+ */
 sealed class OperationResult
 
+/**
+ * Signifies that the pipeline operation has finished successfully.
+ */
 object Ok : OperationResult()
 
+/**
+ * Signifies that the pipeline operation has finished with an error.
+ */
 class Error(val exception: Exception?) : OperationResult() {
 
     constructor() : this(null)
