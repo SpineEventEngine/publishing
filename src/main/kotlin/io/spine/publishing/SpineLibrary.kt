@@ -37,14 +37,17 @@ enum class SpineLibrary(val library: Library) {
     CORE_JAVA(coreJava);
 }
 
-private val baseRepo = GitRepository(Paths.get("base"), spineGitHubRepo("base"))
-private val timeRepo = GitRepository(Paths.get("time"), spineGitHubRepo("time"))
-private val coreJavaRepo =
-        GitRepository(Paths.get("core-java"), spineGitHubRepo("core-java"))
+/**
+ * A GitHub organization that contains the Spine libraries.
+ */
+private const val ORGANIZATION = "SpineEventEngine"
+
+private val baseRepo = GitRepository(Paths.get("base"), remoteRepo("base"))
+private val timeRepo = GitRepository(Paths.get("time"), remoteRepo("time"))
+private val coreJavaRepo = GitRepository(Paths.get("core-java"), remoteRepo("core-java"))
 
 private val base = Library("base", listOf(), baseRepo)
 private val time = Library("time", listOf(base), timeRepo)
 private val coreJava = Library("coreJava", listOf(base, time), coreJavaRepo)
 
-private fun spineGitHubRepo(name: RepositoryName) = GitHubRepoUrl(ORGANIZATION, name)
-private const val ORGANIZATION = "SpineEventEngine"
+private fun remoteRepo(name: RepositoryName) = GitHubRepoUrl(ORGANIZATION, name)

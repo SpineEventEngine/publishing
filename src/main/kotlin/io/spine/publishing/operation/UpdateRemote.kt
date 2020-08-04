@@ -12,7 +12,7 @@ import org.eclipse.jgit.transport.CredentialsProvider
  *
  * @param credentials the credentials to authorize the remote repository update
  */
-class UpdateRemote(private val credentials: CredentialsProvider) : PipelineOperation() {
+class UpdateRemote(private val credentials: Credentials) : PipelineOperation() {
 
     companion object {
 
@@ -44,7 +44,7 @@ class UpdateRemote(private val credentials: CredentialsProvider) : PipelineOpera
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val commands = updateVersion(library, credentials)
+            val commands = updateVersion(library, credentials.provider())
             commands.forEach { it.execute() }
         }
         return Ok
