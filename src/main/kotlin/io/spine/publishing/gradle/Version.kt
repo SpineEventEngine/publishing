@@ -23,6 +23,9 @@ package io.spine.publishing.gradle
 /**
  * A version of a Spine library.
  *
+ * All of the parts must be non-negative. Otherwise, an `IllegalArgumentException` is thrown
+ * upon a constructor invocation.
+ *
  * @see <a href=https://spine.io/versioning/>Spine versioning policy</a>
  *
  * @param major the most significant version part
@@ -30,6 +33,14 @@ package io.spine.publishing.gradle
  * @param patch the least significant version part
  */
 data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Version> {
+
+    init {
+        if (major < 0 || minor < 0 || patch < 0) {
+            throw IllegalArgumentException(
+                    "Major, minor, and patch parts `Version` parts must all be positive. " +
+                            "Provided values: major: $major, minor: $minor, patch: $patch.")
+        }
+    }
 
     companion object {
         private val COMPARATOR: Comparator<Version> = Comparator

@@ -106,6 +106,35 @@ class VersionTest {
         }
     }
 
+    @Nested
+    @DisplayName("creating")
+    inner class Creating {
+
+        @Test
+        @DisplayName("reject a version with a negative major part")
+        fun rejectNegativeMajor() {
+            assertThrows<IllegalArgumentException> {
+                Version(-1, 3, 5)
+            }
+        }
+
+        @Test
+        @DisplayName("reject a version with a negative minor part")
+        fun rejectNegativeMinor() {
+            assertThrows<IllegalArgumentException> {
+                Version(30, -2, 3)
+            }
+        }
+
+        @Test
+        @DisplayName("reject a version with a negative patch part")
+        fun rejectNegativePatch() {
+            assertThrows<IllegalArgumentException> {
+                Version(5, 0, -51)
+            }
+        }
+    }
+
     private enum class ComparisonResult(val number: Int) {
         LARGER(1), EQUAL(0)
     }
