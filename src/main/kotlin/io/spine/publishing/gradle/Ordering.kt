@@ -20,6 +20,8 @@
 
 package io.spine.publishing.gradle
 
+import io.spine.publishing.Library
+
 /**
  * A collection of libraries that can be traversed in the order based on dependencies between
  * the libraries.

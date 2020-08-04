@@ -1,7 +1,6 @@
 package io.spine.publishing
 
 import io.spine.publishing.git.Token
-import io.spine.publishing.gradle.Library
 import io.spine.publishing.operation.*
 
 /**
@@ -22,12 +21,6 @@ import io.spine.publishing.operation.*
 class PublishingPipeline(val libraries: Set<Library>,
                          private val operations: List<PipelineOperation>) {
 
-    companion object {
-        private fun toLocalLibs(libraries: Set<LibraryToUpdate>) =
-                libraries.map { it.local }
-                        .toSet()
-    }
-
     /**
      * Constructs a pipeline that publishes the library.
      *
@@ -35,13 +28,13 @@ class PublishingPipeline(val libraries: Set<Library>,
      *
      * @param libraries libraries to update and publish
      */
-    constructor(libraries: Set<LibraryToUpdate>) :
-            this(toLocalLibs(libraries), listOf(
+    constructor(libraries: Set<Library>) :
+            this(libraries, listOf(
                     UpdateToRecent(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),
-                    UpdateRemote(libraries.toList(), Token("").provider())
+                    UpdateRemote(Token("").provider())
             ))
 
     /**

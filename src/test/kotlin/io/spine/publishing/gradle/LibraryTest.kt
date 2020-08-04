@@ -22,8 +22,9 @@ package io.spine.publishing.gradle
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import io.spine.publishing.GitHubRepoUrl
+import io.spine.publishing.Library
 import io.spine.publishing.gradle.given.TestEnv.copyDirectory
-import io.spine.publishing.localGitRepository
 import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -37,14 +38,15 @@ class LibraryTest {
     companion object {
         private const val DEPENDENCY = "dependency"
         private const val DEPENDANT = "dependant"
+        private val REMOTE_DEPENDENCY = GitHubRepoUrl("mockOrg", DEPENDENCY)
+        private val REMOTE_DEPENDANT = GitHubRepoUrl("mockOrg", DEPENDANT)
 
         private fun dependencyLibrary(directory: Path): Library =
-                Library(DEPENDENCY, arrayListOf(), directory)
-
+                Library(DEPENDENCY, arrayListOf(), directory, REMOTE_DEPENDENCY)
 
         private fun dependantLibrary(directory: Path,
                                      dependency: Library): Library {
-            return Library(DEPENDANT, arrayListOf(dependency), directory)
+            return Library(DEPENDANT, arrayListOf(dependency), directory, REMOTE_DEPENDANT)
         }
     }
 
@@ -100,6 +102,9 @@ class LibraryTest {
     @DisplayName("throw an exception if the library doesn't contain a Git repository")
     fun noGitRepo(@TempDir tempDir: Path) {
         assertThrows<RepositoryNotFoundException>
-        { Library("no_git_repo_library", listOf(), tempDir).localGitRepository() }
+        {
+            Library("no_git_repo_library", listOf(), tempDir, REMOTE_DEPENDENCY)
+                    .localGitRepository()
+        }
     }
 }

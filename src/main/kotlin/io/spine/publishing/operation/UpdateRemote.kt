@@ -1,26 +1,22 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.LibraryToUpdate
+import io.spine.publishing.Library
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.git.*
-import io.spine.publishing.gradle.Library
+import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
  * Updates the remote library repositories.
  *
  * This operation assumes that the libraries have initialised Git repositories.
- *
- * @param libraries the local libraries associated with their remote repositories. The libraries
- * that are being updated must exist in this list
  * @param credentials the credentials to authorize the remote repository update
  *
  * @see updateVersion
  */
-class UpdateRemote(private val libraries: List<LibraryToUpdate>,
-                   private val credentials: CredentialsProvider) : PipelineOperation() {
+class UpdateRemote(private val credentials: CredentialsProvider) : PipelineOperation() {
 
     companion object {
 
@@ -41,24 +37,20 @@ class UpdateRemote(private val libraries: List<LibraryToUpdate>,
          * @param library the library that has its version updated
          * @param provider the provider of the credentials to use to authorize the version update
          */
-        fun updateVersion(library: LibraryToUpdate,
+        fun updateVersion(library: Library,
                           provider: CredentialsProvider): List<GitCommand> = listOf(
-                Checkout(Master(library.local)),
-                StageFiles(VersionFile(library.local)),
-                Commit(VersionBumpMessage(library.local)),
+                Checkout(Master(library)),
+                StageFiles(VersionFile(library)),
+                Commit(VersionBumpMessage(library)),
                 PushToRemote(PushDestination(library, provider))
         )
     }
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val commands = updateVersion(remoteLibrary(library), credentials)
+            val commands = updateVersion(library, credentials)
             commands.forEach { it.execute() }
         }
         return Ok
-    }
-
-    private fun remoteLibrary(localLibrary: Library): LibraryToUpdate {
-        return libraries.find { it.local == localLibrary }!!
     }
 }

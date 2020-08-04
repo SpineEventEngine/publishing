@@ -37,7 +37,6 @@ object Application {
  * Local Spine libraries associated with their remote repositories.
  */
 @Suppress("RemoveRedundantQualifierName" /* `values()` is not clear enough. */)
-private val remoteLibs: Set<LibraryToUpdate> =
-        SpineLibrary.values()
-                .map { LibraryToUpdate(it.local, it.remote) }
-                .toSet()
+private val remoteLibs: Set<Library> = SpineLibrary.values()
+        .map { it.library }
+        .toSet()

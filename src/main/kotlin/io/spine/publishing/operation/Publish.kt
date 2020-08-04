@@ -4,7 +4,7 @@ import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.gradle.GradleProject
-import io.spine.publishing.gradle.Library
+import io.spine.publishing.Library
 
 /**
  * Publishes the libraries to the remote artifact repository.

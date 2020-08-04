@@ -20,8 +20,7 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.gradle.Library
-import io.spine.publishing.localGitRepository
+import io.spine.publishing.Library
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType.HARD
 import org.eclipse.jgit.lib.Repository
@@ -148,7 +147,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
 
     override fun execute() {
         git().push()
-                .setRemote(destination.library.remoteUrl.value())
+                .setRemote(destination.library.remote.value())
                 .setCredentialsProvider(destination.credentials)
                 .call()
     }

@@ -20,6 +20,8 @@
 
 package io.spine.publishing.gradle
 
+import io.spine.publishing.LibraryName
+
 /**
  * A Kotlin expression that defines a version of a library.
  *

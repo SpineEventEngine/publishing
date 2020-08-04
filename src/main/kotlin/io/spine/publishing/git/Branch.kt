@@ -20,8 +20,7 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.gradle.Library
-import io.spine.publishing.localGitRepository
+import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
 
 /**

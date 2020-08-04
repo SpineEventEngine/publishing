@@ -20,21 +20,17 @@
 
 package io.spine.publishing.git
 
-import io.spine.publishing.LibraryToUpdate
-import io.spine.publishing.localGitRepository
+import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
  * Specifies the remote repository to push as well as the credentials to use while pushing.
  *
- * @param library the library that is being pushed. It is associated with a
- * [local][io.spine.publishing.gradle.Library.localGitRepository] and a
- * [remote][LibraryToUpdate.remoteUrl] Git repositories
  * @param credentials credentials to authorize a push
  */
-class PushDestination(val library: LibraryToUpdate,
+class PushDestination(val library: Library,
                       val credentials: CredentialsProvider) : GitCommandOptions {
 
-    override fun repository(): Repository = library.local.localGitRepository()
+    override fun repository(): Repository = library.localGitRepository()
 }

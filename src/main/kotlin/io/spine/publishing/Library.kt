@@ -18,21 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.gradle
+package io.spine.publishing
 
+import io.spine.publishing.gradle.GradleVersionFile
+import io.spine.publishing.gradle.Version
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.RepositoryBuilder
 import java.nio.file.Path
 
 /**
- * A local project that contains the source files of a library.
+ * A collection of files from a remote repository.
  *
  * The project uses Gradle and declares its dependencies using a `version.gradle.kts` with a
  * Spine-specific formatting.
+ *
+ * The library may depend on other libraries. Such dependencies are declared in the version file.
+ *
+ * The library contains a Git repository with a configured remote.
  *
  * @param name the name of the library
  * @param dependencies the libraries that this library depends on
  * @param rootDir the directory that contains the library
  */
-data class Library(val name: LibraryName, val dependencies: List<Library>, val rootDir: Path) {
+data class Library(val name: LibraryName,
+                   val dependencies: List<Library>,
+                   val rootDir: Path,
+                   val remote: GitHubRepoUrl) {
 
     /**
      * Updates the version of this library to the specified one.
@@ -64,6 +75,21 @@ data class Library(val name: LibraryName, val dependencies: List<Library>, val r
         return versionFile.version(libraryName)!!
     }
 
+    /**
+     * Returns a Git repository that tracks this library.
+     *
+     * If the library does not contain a Git repo, a `RepositoryNotFoundException` is thrown.
+     */
+    fun localGitRepository(): Repository {
+        val repoPath = this.rootDir.toAbsolutePath()
+                .toFile()
+        return RepositoryBuilder()
+                .readEnvironment()
+                .setMustExist(true)
+                .setWorkTree(repoPath)
+                .build()
+    }
+
     private fun updateVersions(libraries: Map<LibraryName, Version>,
                                newVersion: Version) {
         val toUpdate = libraries.filter { it.value < newVersion }
@@ -78,3 +104,20 @@ data class Library(val name: LibraryName, val dependencies: List<Library>, val r
 }
 
 typealias LibraryName = String
+
+/**
+ * A location of a GitHub repository.
+ *
+ * @param organization the name of the organization that this repository belongs to
+ * @param name the name of the repository
+ */
+data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName) {
+
+    /**
+     * Returns a URL to access the GitHub repository.
+     */
+    fun value(): String = "https://github.com/$organization/$name.git"
+}
+
+typealias Organization = String
+typealias RepositoryName = String

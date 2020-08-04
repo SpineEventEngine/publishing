@@ -7,7 +7,7 @@ import io.spine.publishing.git.Fetch
 import io.spine.publishing.git.GitCommand
 import io.spine.publishing.git.Reset
 import io.spine.publishing.git.ToOriginMaster
-import io.spine.publishing.gradle.Library
+import io.spine.publishing.Library
 
 /**
  * Sets the state of the libraries to the current state of their remote GitHub counterpart.

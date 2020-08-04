@@ -20,6 +20,7 @@
 
 package io.spine.publishing.gradle
 
+import io.spine.publishing.LibraryName
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter

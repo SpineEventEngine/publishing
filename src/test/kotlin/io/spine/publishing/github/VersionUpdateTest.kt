@@ -23,13 +23,12 @@ package io.spine.publishing.github
 import assertk.assertThat
 import assertk.assertions.*
 import io.spine.publishing.GitHubRepoUrl
-import io.spine.publishing.LibraryToUpdate
+import io.spine.publishing.Library
 import io.spine.publishing.git.Checkout
 import io.spine.publishing.git.Commit
 import io.spine.publishing.git.PushToRemote
 import io.spine.publishing.git.StageFiles
 import io.spine.publishing.gradle.GradleVersionFile
-import io.spine.publishing.gradle.Library
 import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.api.Git
@@ -41,7 +40,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@DisplayName("`UpdateRemote` should")
+@DisplayName("`VersionUpdate` should")
 class VersionUpdateTest {
 
     @Test
@@ -51,13 +50,12 @@ class VersionUpdateTest {
         Git.init()
                 .setDirectory(baseDirectory.toFile())
                 .call()
-        val library = Library("base", listOf(), baseDirectory)
         val orgName = "TestOrganization"
         val repo = "base"
-        val remote = GitHubRepoUrl(orgName, repo)
 
-        val commands =
-                updateVersion(LibraryToUpdate(library, remote), mockCredentials)
+        val remote = GitHubRepoUrl(orgName, repo)
+        val library = Library("base", listOf(), baseDirectory, remote)
+        val commands = updateVersion(library, mockCredentials)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -70,7 +68,7 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.library.remoteUrl)
+        assertThat((commands[3] as PushToRemote).destination.library.remote)
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 

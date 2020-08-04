@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
+import io.spine.publishing.LibraryName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
