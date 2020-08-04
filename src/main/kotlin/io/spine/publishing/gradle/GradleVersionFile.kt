@@ -78,18 +78,6 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
     }
 
     /**
-     * Overrides the version of the specified library to the specified one.
-     *
-     * If the specified library is not found in the file, no action is performed.
-     *
-     * @param library the name of the library to assign a new version to
-     * @param newVersion the version to assign to the library with the specified name
-     */
-    fun overrideVersion(library: LibraryName, newVersion: Version) {
-        updateVersions(mapOf(library to newVersion))
-    }
-
-    /**
      * Sets the versions of the specified libraries to new versions.
      *
      * If the specified library is not found in the file, an error is thrown.
@@ -103,10 +91,13 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * `file.overrideVersions(mapOf("coreJava" to Version(1, 5, 3)))` leads
      * to an `IllegalStateException`.
      *
+     * Note that this is a low-level API. When updating the version of a library, use
+     * [io.spine.publishing.Library.update].
+     *
      * @param versions a mapping of names to versions. The keys are libraries to have their versions
      * assigned, the values are the versions to assign to libraries
      */
-    fun updateVersions(versions: Map<LibraryName, Version>) {
+    internal fun updateVersions(versions: Map<LibraryName, Version>) {
         checkContainsAll(versions.keys)
         var atLeastOneOverridden = false
         val lines = file

@@ -57,9 +57,9 @@ class GradleVersionFileTest {
     @DisplayName("throw an ISE upon an attempt to override a non-existing library version")
     fun doNothing(@TempDir dir: Path) {
         val versionFile = gradleVersionFile(dir)
+        val newVersion = Version(1, 5, 6)
         assertThrows<IllegalStateException> {
-            versionFile.overrideVersion("nonExistingLibrary",
-                    Version(1, 5, 6))
+            versionFile.updateVersions(mapOf("nonExistingLibrary" to newVersion))
         }
     }
 
@@ -78,7 +78,7 @@ class GradleVersionFileTest {
 
         val base = "base"
         val newBaseVersion = Version(2, 4, 6)
-        versionFile.overrideVersion(base, newBaseVersion)
+        versionFile.updateVersions(mapOf(base to newBaseVersion))
 
         val expectedValues = mapOf(
                 base to newBaseVersion,
@@ -97,7 +97,7 @@ class GradleVersionFileTest {
         val versionFile = GradleVersionFile(projectName, projectDir)
 
         val newVersion = Version(1, 3, 3)
-        versionFile.overrideVersion(projectName, newVersion)
+        versionFile.updateVersions(mapOf(projectName to newVersion))
         assertThat(versionFile.version()).isEqualTo(newVersion)
     }
 
