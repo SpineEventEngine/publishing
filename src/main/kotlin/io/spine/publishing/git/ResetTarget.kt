@@ -25,7 +25,7 @@ interface ResetTarget : GitCommandOptions {
  * Specifies that the repository must match the current `master` in the `origin` remote.
  *
  * `ToOriginMaster` ensures that the repository is going to contain exactly the pulled
- * master branch of the remote repository. Running a [Reset] with `ToOriginMaster` is akin
+ * `master` branch of the remote repository. Running a [Reset] with `ToOriginMaster` is akin
  * to running `git reset --hard origin/master`.
  *
  * @param library the library to bring back to the state of the remote `master` branch
