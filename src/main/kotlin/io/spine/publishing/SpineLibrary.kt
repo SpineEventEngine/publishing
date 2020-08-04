@@ -44,8 +44,7 @@ private val coreJavaRepo =
 
 private val base = Library("base", listOf(), baseRepo)
 private val time = Library("time", listOf(base), timeRepo)
-private val coreJava =
-        Library("coreJava", listOf(base, time), coreJavaRepo)
+private val coreJava = Library("coreJava", listOf(base, time), coreJavaRepo)
 
 private fun spineGitHubRepo(name: RepositoryName) = GitHubRepoUrl(ORGANIZATION, name)
 private const val ORGANIZATION = "SpineEventEngine"
