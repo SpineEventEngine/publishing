@@ -58,7 +58,8 @@ class EnsureBuilds : PipelineOperation() {
     private fun cannotBuild(library: Library, allLibraries: Set<Library>): String {
         val versions = allLibraries.map { it.version() }
                 .joinToString { it.toString() }
-        return """Cannot build library `${library.name}`. Versions of all libraries: `$versions`."""
+        return """Cannot build library `${library.name}`. Versions of all
+            | libraries: `$versions`.""".trimMargin()
     }
 
     private fun cannotPublish(library: Library): String =

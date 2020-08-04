@@ -40,8 +40,8 @@ class PublishingPipeline(val libraries: Set<Library>,
     /**
      * Passes the libraries through all of the operations, terminating early on the first [Error].
      *
-     * Each operation may [error out][Error], in which case the execution is stopped and the error
-     * is returned.
+     * Each operation may [error out][Error], in which case the execution is stopped
+     * and the error is returned.
      *
      * If every operation finishes successfully, [Ok] is returned.
      */
