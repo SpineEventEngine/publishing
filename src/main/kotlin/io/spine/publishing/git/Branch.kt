@@ -35,12 +35,12 @@ interface Branch : GitCommandOptions {
 /**
  * Specifies that the `master` branch must be checked out.
  *
- * @param library the library that hosts a [repository][Library.localGitRepository] for which to
- * checkout the `master` branch
+ * @param library the library that hosts a [repository][GitRepository.localGitRepository] for which
+ * to checkout the `master` branch
  */
 class Master(val library: Library) : Branch {
 
-    override fun repository(): Repository = library.localGitRepository()
+    override fun repository(): Repository = library.repository.localGitRepository()
 
     override fun name(): BranchName = "master"
 }

@@ -23,6 +23,7 @@ package io.spine.publishing.operation
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.spine.publishing.Library
+import io.spine.publishing.git.GitRepository
 import io.spine.publishing.given.PipelineTestEnv.sampleRemote
 import io.spine.publishing.gradle.Version
 import io.spine.publishing.gradle.given.TestEnv
@@ -43,9 +44,15 @@ class UpdateVersionsTest {
         val movedTime = TestEnv.copyDirectory("time", timeDir)
         val movedCoreJava = TestEnv.copyDirectory("core-java", coreJavaDir)
 
-        val base = Library("base", listOf(), movedBase, sampleRemote)
-        val time = Library("time", listOf(base), movedTime, sampleRemote)
-        val coreJava = Library("coreJava", listOf(time, base), movedCoreJava, sampleRemote)
+        val base = Library("base",
+                listOf(),
+                GitRepository(movedBase, sampleRemote))
+        val time = Library("time",
+                listOf(base),
+                GitRepository(movedTime, sampleRemote))
+        val coreJava = Library("coreJava",
+                listOf(time, base),
+                GitRepository(movedCoreJava, sampleRemote))
 
         UpdateVersions().perform(setOf(base, time, coreJava))
 
@@ -68,8 +75,12 @@ class UpdateVersionsTest {
 
         val newVersion = Version(1, 3, 0)
 
-        val subLibrary = Library("subLibrary", listOf(), subLibraryDir, sampleRemote)
-        val library = Library("library", listOf(subLibrary), libraryDir, sampleRemote)
+        val subLibrary = Library("subLibrary",
+                listOf(),
+                GitRepository(subLibraryDir, sampleRemote))
+        val library = Library("library",
+                listOf(subLibrary),
+                GitRepository(libraryDir, sampleRemote))
 
         UpdateVersions().perform(setOf(library, subLibrary))
 

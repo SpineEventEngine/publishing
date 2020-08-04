@@ -1,6 +1,8 @@
 package io.spine.publishing.given
 
 import io.spine.publishing.*
+import io.spine.publishing.git.GitHubRepoUrl
+import io.spine.publishing.git.GitRepository
 import java.nio.file.Paths
 
 /**
@@ -11,7 +13,10 @@ object PipelineTestEnv {
     val sampleRemote = GitHubRepoUrl("sample_org", "sample_library")
 
     // The paths is not required for tests, so a mock path is OK.
-    val sampleLibrary = Library("sample_library", listOf(), Paths.get(""), sampleRemote)
+    val sampleLibrary =
+            Library("sample_library",
+                    listOf(),
+                    GitRepository(Paths.get(""), sampleRemote))
 
     /**
      * An operation that always throws an exception.

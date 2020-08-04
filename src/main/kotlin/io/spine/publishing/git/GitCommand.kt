@@ -80,7 +80,7 @@ class Reset(private val target: ResetTarget) : GitCommand(target) {
  * @param library the library to fetch the remote master version of
  */
 class Fetch(library: Library) : GitCommand(object : GitCommandOptions {
-    override fun repository() = library.localGitRepository()
+    override fun repository() = library.repository.localGitRepository()
 }) {
 
     override fun execute() {
@@ -147,7 +147,7 @@ class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
 
     override fun execute() {
         git().push()
-                .setRemote(destination.library.remote.value())
+                .setRemote(destination.library.repository.remote.value())
                 .setCredentialsProvider(destination.credentials)
                 .call()
     }

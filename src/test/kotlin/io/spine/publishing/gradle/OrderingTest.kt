@@ -24,9 +24,10 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
-import io.spine.publishing.GitHubRepoUrl
 import io.spine.publishing.Library
-import io.spine.publishing.RepositoryName
+import io.spine.publishing.git.GitHubRepoUrl
+import io.spine.publishing.git.GitRepository
+import io.spine.publishing.git.RepositoryName
 import io.spine.publishing.gradle.given.TestEnv.copyDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -85,9 +86,15 @@ class OrderingTest {
         val movedTime = copyDirectory("time", timeDir)
         val movedCoreJava = copyDirectory("core-java", coreJavaDir)
 
-        val base = Library("base", listOf(), movedBase, mockRemote("base"))
-        val time = Library("time", listOf(base), movedTime, mockRemote("time"))
-        val coreJava = Library("coreJava", listOf(time, base), movedCoreJava, mockRemote("core-java"))
+        val base = Library("base",
+                listOf(),
+                GitRepository(movedBase, mockRemote("base")))
+        val time = Library("time",
+                listOf(base),
+                GitRepository(movedTime, mockRemote("time")))
+        val coreJava = Library("coreJava",
+                listOf(time, base),
+                GitRepository(movedCoreJava, mockRemote("core-java")))
 
         val mostRecentVersion = Ordering(setOf(base, time, coreJava)).mostRecentVersion()
         assertThat(mostRecentVersion).isEqualTo(Version(1, 9, 9))
@@ -96,7 +103,7 @@ class OrderingTest {
     private fun mockLibrary(name: String, vararg dependencies: Library): Library {
         val path = Paths.get("") // A mock path doesn't matter as files aren't accessed.
         val deps: List<Library> = dependencies.toList()
-        return Library(name, deps, path, mockRemote(name))
+        return Library(name, deps, GitRepository(path, mockRemote(name)))
     }
 
     private fun mockRemote(name: RepositoryName) = GitHubRepoUrl("test-org", name)

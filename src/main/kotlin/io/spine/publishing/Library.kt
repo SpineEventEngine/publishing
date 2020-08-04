@@ -20,11 +20,9 @@
 
 package io.spine.publishing
 
+import io.spine.publishing.git.GitRepository
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Version
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.lib.RepositoryBuilder
-import java.nio.file.Path
 
 /**
  * A collection of files from a remote repository.
@@ -38,12 +36,11 @@ import java.nio.file.Path
  *
  * @param name the name of the library
  * @param dependencies the libraries that this library depends on
- * @param rootDir the directory that contains the library
+ * @param repository the repository that tracks this library
  */
 data class Library(val name: LibraryName,
                    val dependencies: List<Library>,
-                   val rootDir: Path,
-                   val remote: GitHubRepoUrl) {
+                   val repository: GitRepository) {
 
     /**
      * Updates the version of this library to the specified one.
@@ -75,21 +72,6 @@ data class Library(val name: LibraryName,
         return versionFile.version(libraryName)!!
     }
 
-    /**
-     * Returns a Git repository that tracks this library.
-     *
-     * If the library does not contain a Git repo, a `RepositoryNotFoundException` is thrown.
-     */
-    fun localGitRepository(): Repository {
-        val repoPath = this.rootDir.toAbsolutePath()
-                .toFile()
-        return RepositoryBuilder()
-                .readEnvironment()
-                .setMustExist(true)
-                .setWorkTree(repoPath)
-                .build()
-    }
-
     private fun updateVersions(libraries: Map<LibraryName, Version>,
                                newVersion: Version) {
         val toUpdate = libraries.filter { it.value < newVersion }
@@ -99,25 +81,8 @@ data class Library(val name: LibraryName,
     }
 
     internal val versionFile: GradleVersionFile by lazy {
-        GradleVersionFile(name, rootDir)
+        GradleVersionFile(name, repository.localRootPath)
     }
 }
 
 typealias LibraryName = String
-
-/**
- * A location of a GitHub repository.
- *
- * @param organization the name of the organization that this repository belongs to
- * @param name the name of the repository
- */
-data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName) {
-
-    /**
-     * Returns a URL to access the GitHub repository.
-     */
-    fun value(): String = "https://github.com/$organization/$name.git"
-}
-
-typealias Organization = String
-typealias RepositoryName = String

@@ -41,7 +41,7 @@ class EnsureBuilds : PipelineOperation() {
     override fun perform(libraries: Set<Library>): OperationResult {
         val ordered = Ordering(libraries).byDependencies
         for (library in ordered) {
-            val gradleProject = GradleProject(library.rootDir)
+            val gradleProject = GradleProject(library.repository.localRootPath)
             val builds = gradleProject.build()
             if (!builds) {
                 return Error(cannotBuild(library, libraries))

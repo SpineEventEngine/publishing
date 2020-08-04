@@ -32,5 +32,5 @@ import org.eclipse.jgit.transport.CredentialsProvider
 class PushDestination(val library: Library,
                       val credentials: CredentialsProvider) : GitCommandOptions {
 
-    override fun repository(): Repository = library.localGitRepository()
+    override fun repository(): Repository = library.repository.localGitRepository()
 }

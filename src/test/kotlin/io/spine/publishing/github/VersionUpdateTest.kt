@@ -22,12 +22,8 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.*
-import io.spine.publishing.GitHubRepoUrl
 import io.spine.publishing.Library
-import io.spine.publishing.git.Checkout
-import io.spine.publishing.git.Commit
-import io.spine.publishing.git.PushToRemote
-import io.spine.publishing.git.StageFiles
+import io.spine.publishing.git.*
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
@@ -54,7 +50,8 @@ class VersionUpdateTest {
         val repo = "base"
 
         val remote = GitHubRepoUrl(orgName, repo)
-        val library = Library("base", listOf(), baseDirectory, remote)
+        val gitRepo = GitRepository(baseDirectory, remote)
+        val library = Library("base", listOf(), gitRepo)
         val commands = updateVersion(library, mockCredentials)
 
         assertThat(commands).hasSize(4)
@@ -68,7 +65,7 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.library.remote)
+        assertThat((commands[3] as PushToRemote).destination.library.repository.remote)
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 

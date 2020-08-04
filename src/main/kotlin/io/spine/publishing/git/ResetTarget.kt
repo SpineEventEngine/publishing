@@ -36,5 +36,5 @@ class ToOriginMaster(val library: Library) : ResetTarget {
 
     override fun isHard(): Boolean = true
 
-    override fun repository(): Repository = library.localGitRepository()
+    override fun repository(): Repository = library.repository.localGitRepository()
 }

@@ -45,10 +45,10 @@ class VersionFile(val library: Library) : FilesToStage {
 
     override fun paths(): Set<Path> = setOf(relativeVersionPath())
 
-    override fun repository(): Repository = library.localGitRepository()
+    override fun repository(): Repository = library.repository.localGitRepository()
 
     private fun relativeVersionPath(): Path {
         val versionFilePath = library.versionFile.file.toPath()
-        return library.rootDir.relativize(versionFilePath)
+        return library.repository.localRootPath.relativize(versionFilePath)
     }
 }
