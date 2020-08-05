@@ -18,24 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import io.spine.publishing.Library
+import org.eclipse.jgit.lib.Repository
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] for the description of the publishing process.
+ * A name of an existing local Git branch.
  */
-object Application {
+interface Branch : GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /** Name of the branch. Must refer to an existing branch. */
+    fun name(): BranchName
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * The `master` branch.
+ *
+ * @param library the library that hosts a [repository][GitRepository.localGitRepository] that
+ * this branch is contained in
  */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()
+class Master(val library: Library) : Branch {
+
+    override fun repository(): Repository = library.repository.localGitRepository()
+
+    override fun name(): BranchName = "master"
+}
+
+typealias BranchName = String

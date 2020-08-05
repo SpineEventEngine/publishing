@@ -18,24 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import org.eclipse.jgit.lib.Repository
 
 /**
- * The publishing application.
- *
- * See [PublishingPipeline] for the description of the publishing process.
+ * Options associated with a Git command that specify its behavior.
  */
-object Application {
+interface GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /**
+     * Returns a local repository that the respective command is associated with.
+     */
+    fun repository(): Repository
 }
-
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()

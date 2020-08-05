@@ -23,16 +23,16 @@ package io.spine.publishing.gradle
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import io.spine.publishing.gradle.VersionTest.ComparisonResult.EQUAL
 import io.spine.publishing.gradle.VersionTest.ComparisonResult.LARGER
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-@DisplayName("`Version` shuld when")
+@DisplayName("`Version` should when")
 class VersionTest {
 
     @Nested
@@ -60,7 +60,7 @@ class VersionTest {
         @DisplayName("not parse a semver-compatible version")
         @CsvSource("1.0.0-alpha", "1.0.0-alpha+1.2", "1.8.2-beta.1.13")
         fun notParseSemver(version: String) {
-            assertThat(Version.parseFrom(version)).isNull()
+            assertThrows<IllegalStateException> { Version.parseFrom(version) }
         }
     }
 
@@ -103,6 +103,35 @@ class VersionTest {
         private fun compare(v1: Version, v2: Version, res: ComparisonResult) {
             val actualResult = v1.compareTo(v2)
             assertThat(actualResult).isEqualTo(res.number)
+        }
+    }
+
+    @Nested
+    @DisplayName("creating")
+    inner class Creating {
+
+        @Test
+        @DisplayName("reject a version with a negative major part")
+        fun rejectNegativeMajor() {
+            assertThrows<IllegalArgumentException> {
+                Version(-1, 3, 5)
+            }
+        }
+
+        @Test
+        @DisplayName("reject a version with a negative minor part")
+        fun rejectNegativeMinor() {
+            assertThrows<IllegalArgumentException> {
+                Version(30, -2, 3)
+            }
+        }
+
+        @Test
+        @DisplayName("reject a version with a negative patch part")
+        fun rejectNegativePatch() {
+            assertThrows<IllegalArgumentException> {
+                Version(5, 0, -51)
+            }
         }
     }
 

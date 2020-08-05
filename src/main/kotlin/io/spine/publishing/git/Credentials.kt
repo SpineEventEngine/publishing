@@ -18,35 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.gradle.LibraryName
-import io.spine.publishing.gradle.Version
+import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 
 /**
- * A pull request that updates the version of the library and the version of Spine libraries
- * that the project depends on.
+ * Credentials to authorize an operation with a remote repository.
  */
-class VersionBumpPullRequest(private val branchName: BranchName,
-                             private val libraryName: LibraryName,
-                             private val newVersion: Version) {
-
-    override fun toString(): String {
-        return """Bump version to `$newVersion`"""
-    }
+sealed class Credentials {
 
     /**
-     * Creates this pull request. The branch must already be present in the
-     * remote repository.
+     * Returns a JGit credentials object that is used to authorize operations like
+     * [org.eclipse.jgit.api.PushCommand].
      */
-    fun create() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    abstract fun provider(): CredentialsProvider
+}
 
-    /**
-     * Merges this pull request to the `master` remote branch.
-     */
-    fun merge() {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+// TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
+class Token(private val token: String) : Credentials() {
+
+    override fun provider() = UsernamePasswordCredentialsProvider(token, "")
 }

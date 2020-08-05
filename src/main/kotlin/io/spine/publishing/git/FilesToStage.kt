@@ -18,24 +18,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import io.spine.publishing.Library
+import org.eclipse.jgit.lib.Repository
+import java.nio.file.Path
 
 /**
- * The publishing application.
+ * Files to stage for commit using the `git add` command.
  *
- * See [PublishingPipeline] for the description of the publishing process.
+ * The `--patch` option is not supported, i.e. for each file, all of its changes are
+ * staged for commit.
  */
-object Application {
+interface FilesToStage : GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    /** Paths to the files staged for commit. */
+    fun paths(): Set<Path>
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * Specifies to only stage the `version.gradle.kts` of a particular library.
+ *
+ * @param library the library that has its version file staged for commit
  */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()
+class VersionFile(val library: Library) : FilesToStage {
+
+    override fun paths(): Set<Path> = setOf(relativeVersionPath())
+
+    override fun repository(): Repository = library.repository.localGitRepository()
+
+    private fun relativeVersionPath(): Path {
+        val versionFilePath = library.versionFile.file.toPath()
+        return library.repository.localRootPath.relativize(versionFilePath)
+    }
+}

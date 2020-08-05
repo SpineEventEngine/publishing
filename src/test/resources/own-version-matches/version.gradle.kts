@@ -18,24 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
-
-/**
- * The publishing application.
- *
- * See [PublishingPipeline] for the description of the publishing process.
+/*
+ * Version specification for a dummy project.
  */
-object Application {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
-}
-
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()
+val library = "1.3.0"
+val subLibrary = "1.2.0"

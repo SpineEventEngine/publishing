@@ -20,39 +20,31 @@
 
 package io.spine.publishing.gradle
 
+import io.spine.publishing.Library
+
 /**
  * A collection of libraries that can be traversed in the order based on dependencies between
  * the libraries.
  *
- * Such an order is the order in which the library is reached only when all of its dependencies
- * have been previously reached.
+ * Such an order is the order in which the library is reached only if all of its dependencies
+ * have already been reached.
+ *
+ * @param libraries libraries to order
  */
-class DependencyBasedOrder(private val libraries: Set<Library>) {
+class Ordering(private val libraries: Set<Library>) {
 
     /**
-     * Finds the most recent version among the libraries, then updates all of the libraries in
-     * this graph to the most recent one.
+     * Returns the largest version seen among these libraries.
      *
-     * @see Library.update
+     * @see Version.compareTo
      */
-    fun updateToTheMostRecent() {
-        updateAll(mostRecentVersion())
-    }
+    fun mostRecentVersion() = byDependencies.maxBy { it.version() }!!.version()
 
     /**
-     * Returns the maximum found seen in this library graph.
+     * A sequence of libraries ordered in a way that dependency-libraries come before the libraries
+     * that depend on them.
      */
-    fun mostRecentVersion() = ordered.maxBy { it.version() }!!.version()
-
-    private fun updateAll(newVersion: Version) {
-        val projects = ordered
-        projects.forEach { it.update(newVersion) }
-    }
-
-    /**
-     * Returns the libraries ordered in a way that allows a dependency-safe build.
-     */
-    val ordered: List<Library> by lazy {
+    val byDependencies: List<Library> by lazy {
         val visited = HashSet<Library>()
         val result = ArrayList<Library>()
         val toTraverse = libraries.toMutableList()

@@ -20,22 +20,34 @@
 
 package io.spine.publishing
 
-/**
- * The publishing application.
- *
- * See [PublishingPipeline] for the description of the publishing process.
- */
-object Application {
+import io.spine.publishing.git.GitHubRepoUrl
+import io.spine.publishing.git.GitRepository
+import io.spine.publishing.git.RepositoryName
+import java.nio.file.Paths
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+/**
+ * A Spine library to publish.
+ *
+ * Each Spine library has an initialised Git repository and an upstream remote repository.
+ */
+enum class SpineLibrary(val library: Library) {
+
+    BASE(base),
+    TIME(time),
+    CORE_JAVA(coreJava);
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * A GitHub organization that contains the Spine libraries.
  */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()
+private const val ORGANIZATION = "SpineEventEngine"
+
+private val baseRepo = GitRepository(Paths.get("base"), remoteRepo("base"))
+private val timeRepo = GitRepository(Paths.get("time"), remoteRepo("time"))
+private val coreJavaRepo = GitRepository(Paths.get("core-java"), remoteRepo("core-java"))
+
+private val base = Library("base", listOf(), baseRepo)
+private val time = Library("time", listOf(base), timeRepo)
+private val coreJava = Library("coreJava", listOf(base, time), coreJavaRepo)
+
+private fun remoteRepo(name: RepositoryName) = GitHubRepoUrl(ORGANIZATION, name)

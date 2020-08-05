@@ -18,24 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing
+package io.spine.publishing.git
+
+import io.spine.publishing.Library
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
- * The publishing application.
+ * Specifies the remote repository to push as well as the credentials to use while pushing.
  *
- * See [PublishingPipeline] for the description of the publishing process.
+ * @param credentials credentials to authorize a push
  */
-object Application {
+class PushDestination(val library: Library,
+                      val credentials: CredentialsProvider) : GitCommandOptions {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
-    }
+    override fun repository(): Repository = library.repository.localGitRepository()
 }
-
-/**
- * Local Spine libraries associated with their remote repositories.
- */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()

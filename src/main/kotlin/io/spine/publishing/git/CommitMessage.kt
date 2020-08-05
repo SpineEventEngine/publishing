@@ -18,25 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.github
+package io.spine.publishing.git
 
-import io.spine.publishing.gradle.GradleProject
-import java.net.URL
+import io.spine.publishing.Library
+import org.eclipse.jgit.lib.Repository
 
 /**
- * A local git repository connected with a Gradle project to update and publish.
+ * A message that accompanies a commit.
  */
-class LocalGitRepository(private val gradleProject: GradleProject,
-                         val remote: RemoteGitHubRepository) {
+interface CommitMessage : GitCommandOptions {
 
-    /**
-     * Pushes the changes to the remote repository under a new branch with the specified name.
-     */
-    fun pushNewBranch(name: BranchName) {
-        // TODO:2020-07-21:serhii.lekariev: implement
-    }
+    /** The text of the commit message. */
+    fun message(): String
 }
 
-data class RemoteGitHubRepository(val address: URL, val name: String)
+/**
+ * A message that accompanies a commit that contains only a Spine library version update.
+ *
+ * @param library library that has its version bumped
+ */
+class VersionBumpMessage(val library: Library) : CommitMessage {
 
-data class BranchName(val name: String = "bump-version")
+    override fun repository(): Repository = library.repository.localGitRepository()
+
+    override fun message(): String = "Bump version to `${library.version()}`."
+}
