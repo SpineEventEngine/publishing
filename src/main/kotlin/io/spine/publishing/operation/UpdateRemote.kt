@@ -5,14 +5,11 @@ import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.git.*
-import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
  * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
- *
- * @param credentials the credentials to authorize the remote repository update
  */
-class UpdateRemote(private val credentials: Credentials) : PipelineOperation() {
+class UpdateRemote(private val token: Token) : PipelineOperation() {
 
     companion object {
 
@@ -31,20 +28,19 @@ class UpdateRemote(private val credentials: Credentials) : PipelineOperation() {
          * Visible for testing.
          *
          * @param library the library that has its version updated
-         * @param provider the provider of the credentials to use to authorize the version update
          */
         fun updateVersion(library: Library,
-                          provider: CredentialsProvider): List<GitCommand> = listOf(
+                          token: Token): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
-                PushToRemote(PushDestination(library, provider))
+                PushToRemote(PushDestination(library, token))
         )
     }
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val commands = updateVersion(library, credentials.provider())
+            val commands = updateVersion(library, token)
             commands.forEach { it.execute() }
         }
         return Ok

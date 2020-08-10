@@ -35,13 +35,7 @@ data class GitRepository(val localRootPath: Path, val remote: GitHubRepoUrl) {
  * @param organization the name of the organization that this repository belongs to
  * @param name the name of the repository
  */
-data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName) {
-
-    /**
-     * Returns a URL to access the GitHub repository.
-     */
-    fun value(): String = "https://github.com/$organization/$name.git"
-}
+data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName)
 
 typealias Organization = String
 typealias RepositoryName = String

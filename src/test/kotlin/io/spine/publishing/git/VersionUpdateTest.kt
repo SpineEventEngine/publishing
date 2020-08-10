@@ -23,13 +23,10 @@ package io.spine.publishing.git
 import assertk.assertThat
 import assertk.assertions.*
 import io.spine.publishing.Library
-import io.spine.publishing.git.*
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.CredentialsProvider
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -52,7 +49,7 @@ class VersionUpdateTest {
         val remote = GitHubRepoUrl(orgName, repo)
         val gitRepo = GitRepository(baseDirectory, remote)
         val library = Library("base", listOf(), gitRepo)
-        val commands = updateVersion(library, mockCredentials)
+        val commands = updateVersion(library, mockToken)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -69,6 +66,5 @@ class VersionUpdateTest {
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 
-    private val mockCredentials: CredentialsProvider =
-            UsernamePasswordCredentialsProvider("username", "password")
+    private val mockToken = Token("mock_token")
 }

@@ -22,15 +22,31 @@ package io.spine.publishing.git
 
 import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.transport.CredentialsProvider
 
 /**
  * Specifies the remote repository to push as well as the credentials to use while pushing.
  *
- * @param credentials credentials to authorize a push
+ * @param token token that authorizes the push
  */
 class PushDestination(val library: Library,
-                      val credentials: CredentialsProvider) : GitCommandOptions {
+                      private val token: Token) : GitCommandOptions {
 
     override fun repository(): Repository = library.repository.localGitRepository()
+
+    /**
+     * Returns a URL to access the GitHub repository.
+     */
+    fun remoteUrl(): String {
+        val token = token.value
+        val org = library.repository.remote.organization
+        val repoName = library.repository.remote.name
+        return "https://x-access-token:$token@github.com/$org/$repoName.git"
+    }
 }
+
+/**
+ * A string value used to authorize a remote Git operation.
+ *
+ * @param value the value of the token
+ */
+data class Token(val value: String)
