@@ -20,6 +20,17 @@
 
 package io.spine.publishing
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.KlaxonJson
+import com.beust.klaxon.Parser
+import io.spine.publishing.git.GitHubRepoUrl
+import io.spine.publishing.git.GitRepository
+import io.spine.publishing.git.Token
+import io.spine.publishing.operation.UpdateRemote
+import io.spine.publishing.operation.UpdateVersions
+import java.nio.file.Paths
+
 /**
  * The publishing application.
  *
@@ -29,7 +40,19 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        PublishingPipeline(remoteLibs).eval()
+
+//        val token = Token("v1.6f359a16d709c49e2441d3ccaa09a30c1820d6ec")
+
+//        val secondRepo = GitRepository(Paths.get("/Users/serhiilekariev/second"),
+//                GitHubRepoUrl("deadby25", "second"))
+//        val twoCbRepo = GitRepository(Paths.get("/Users/serhiilekariev/2cb"),
+//                GitHubRepoUrl("deadby25", "2cb"))
+//        val second = Library("second", listOf(), secondRepo)
+//        val twoCb = Library("twoCb", listOf(second), twoCbRepo)
+//
+//        UpdateVersions()
+//                .perform(setOf(second, twoCb))
+//        UpdateRemote(token).perform(setOf(second, twoCb))
     }
 }
 
