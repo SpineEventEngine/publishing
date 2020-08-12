@@ -7,26 +7,28 @@ import java.util.stream.Collectors.joining
 /**
  * An HTTP request to the GitHub REST API.
  *
- * Requires authorization using a [JWT token][GitHubJwt].
+ * Requires authorization using a [JWT][GitHubJwt].
  *
- * [Parses responses][parseResponse] into `T` objects.
+ * [Parses successful responses][parseResponse] into `T` objects.
+ *
+ * @param T the type of objects extracted from the HTTP responses
  *
  * @param jwt a JWT that is used for authorization with GitHub
  * @param url a URL that the request is made to
  * @param method an HTTP method used for the request; defaults to "GET"
- * @param T the type of object extracted from HTTP responses
  */
-abstract class GitHubApiRequest<T>(protected val jwt: GitHubJwt,
+abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
                                    private val url: String,
                                    private val method: RequestMethod = RequestMethod.GET) {
 
     /**
-     * Performs the HTTP request to the [url] using the [method] and setting and authorization
-     * header to use the [jwt].
+     * Performs the HTTP request to the [url] using the specified [method] and
+     * setting and authorization header to use the [JWT][jwt].
      *
-     * If the response has a non-error status code, a response text is parsed into a `T`.
+     * If the response has a non-error status code, a response text is
+     * [parsed into a typed response][parseResponse].
      *
-     * If the response has an erroneous status code, an [IllegalStateException] is thrown.
+     * Otherwise, an [IllegalStateException] is thrown.
      */
     fun perform(): T {
         with(URL(url).openConnection() as HttpURLConnection) {
@@ -49,9 +51,11 @@ abstract class GitHubApiRequest<T>(protected val jwt: GitHubJwt,
     /**
      * Parses the `T` from a raw HTTP response string.
      *
-     * The responses are guaranteed to have a non-error status code.
+     * The [responses][responseText] are guaranteed to have a non-error status code.
      *
      * Throws an exception if `T` could not be parsed.
+     *
+     * @param responseText text of a successful GitHub REST API response
      */
     protected abstract fun parseResponse(responseText: String): T
 }

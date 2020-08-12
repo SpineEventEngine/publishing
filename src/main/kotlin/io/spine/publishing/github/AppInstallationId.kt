@@ -10,6 +10,11 @@ import java.io.StringReader
  *
  * GitHub Apps can be installed for an organization or for a repository.
  *
+ * Each distinct installation has a different ID.
+ *
+ * [See here](https://docs.github.com/en/developers/apps/installing-github-apps) for GitHub App
+ * installation information.
+ *
  * @param value the string value of the installation ID
  */
 data class AppInstallationId(val value: String)

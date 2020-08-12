@@ -29,9 +29,10 @@ data class GitHubJwt(val value: String) {
     companion object {
 
         /**
-         * Generates a GitHub JWT, signing it using a `.pem` file by the specified path.
+         * Generates a GitHub JWT, signing it using a private key from  a `.pem` file
+         * located by the specified path.
          *
-         * The JWT created by this minutes expires in 10 minutes. After expiration, no longer
+         * The JWT created by this method expires in 10 minutes. After expiration, it no longer
          * can authorize [GitHubApiRequest]s.
          */
         fun generate(privateKeyPath: Path, gitHubAppId: AppId): GitHubJwt {

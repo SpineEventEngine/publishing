@@ -10,6 +10,9 @@ class TokenFactory(private val privateKeyPath: Path, private val appId: AppId) {
 
     /**
      * Creates a new GitHub App token.
+     *
+     * Tokens have a lifetime of 1 hour. After 1 hour, a new token has to be created.
+     * When doing so, note the JWT lifetime, described in the [GitHubJwt] documentation.
      */
     fun newToken(): Token {
         val jwt = GitHubJwt.generate(privateKeyPath, appId)

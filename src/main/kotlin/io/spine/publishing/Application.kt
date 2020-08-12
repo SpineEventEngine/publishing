@@ -23,6 +23,7 @@ package io.spine.publishing
 import io.spine.publishing.github.AppId
 import io.spine.publishing.github.TokenFactory
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * The publishing application.
@@ -31,8 +32,9 @@ import java.nio.file.Path
  */
 object Application {
 
-    private val privateKeyPath: Path = TODO()
-    private val appId: AppId = TODO()
+    // TODO: 2020-08-12:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/9
+    private val privateKeyPath: Path = Paths.get(System.getProperty("pem_path"))
+    private val appId: AppId = System.getProperty("github_app_id")
 
     @JvmStatic
     fun main(args: Array<String>) {

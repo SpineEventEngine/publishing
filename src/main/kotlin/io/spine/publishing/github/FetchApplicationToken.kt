@@ -5,11 +5,19 @@ import io.spine.publishing.git.Token
 import io.spine.publishing.github.RequestMethod.POST
 import java.io.StringReader
 
+/**
+ * A request to fetch the installation access token for a GitHub App installation.
+ *
+ * The token may be used to authorize operations permitted to the App installation with
+ * the specified ID.
+ *
+ * Tokens fetched by this request expire in an hour after being fetched.
+ */
 class FetchApplicationToken(jwt: GitHubJwt, installationId: AppInstallationId) :
         GitHubApiRequest<Token>(jwt, url(installationId), POST) {
 
     companion object {
-        fun url(installationId: AppInstallationId): String =
+        private fun url(installationId: AppInstallationId): String =
                 "https://api.github.com/app/installations/${installationId.value}/access_tokens"
     }
 
