@@ -34,22 +34,27 @@ data class GitHubJwt(val value: String) {
          * The JWT created by this minutes expires in 10 minutes. After expiration, no longer
          * can authorize [GitHubApiRequest]s.
          */
-        fun generate(privateKeyPath: Path, gitHubAppId: String): GitHubJwt {
+        fun generate(privateKeyPath: Path, gitHubAppId: AppId): GitHubJwt {
             Security.addProvider(BouncyCastleProvider())
             val pemParser = PEMParser(FileReader(privateKeyPath.toFile()))
             val converter = JcaPEMKeyConverter().setProvider("BC")
 
-            val obj: Any = pemParser.readObject()
-            val kp: KeyPair = converter.getKeyPair(obj as PEMKeyPair)
-            val privateKey: PrivateKey = kp.getPrivate()
+            val pemObject: Any = pemParser.readObject()
+            val keyPair: KeyPair = converter.getKeyPair(pemObject as PEMKeyPair)
+            val privateKey: PrivateKey = keyPair.private
 
             val now = Instant.now()
             val jwt = JWT.create()
                     .withIssuer(gitHubAppId)
                     .withIssuedAt(Date.from(now))
+                    // GitHub token lifetime cannot exceed 10 minutes.
                     .withExpiresAt(Date.from(now.plus(10, MINUTES)))
+                    // We only have the private key from the GitHub App.
                     .sign(Algorithm.RSA256(null, privateKey as RSAPrivateKey))
             return GitHubJwt(jwt)
         }
     }
 }
+
+/** The ID of the GitHub App. */
+typealias AppId = String

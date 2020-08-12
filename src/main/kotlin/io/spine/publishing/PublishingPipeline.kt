@@ -27,14 +27,15 @@ class PublishingPipeline(val libraries: Set<Library>,
      * See class level documentation for the exact steps.
      *
      * @param libraries libraries to update and publish
+     * @param token token to authorize the push to remote
      */
-    constructor(libraries: Set<Library>) :
+    constructor(libraries: Set<Library>, token: Token) :
             this(libraries, listOf(
                     SetToCurrentRemote(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),
-                    UpdateRemote(Token(""))
+                    UpdateRemote(token)
             ))
 
     /**

@@ -16,7 +16,7 @@ import java.util.stream.Collectors.joining
  * @param method an HTTP method used for the request; defaults to "GET"
  * @param T the type of object extracted from HTTP responses
  */
-abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
+abstract class GitHubApiRequest<T>(protected val jwt: GitHubJwt,
                                    private val url: String,
                                    private val method: RequestMethod = RequestMethod.GET) {
 
