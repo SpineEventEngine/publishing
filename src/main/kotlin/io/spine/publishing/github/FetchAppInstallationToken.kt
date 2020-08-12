@@ -13,7 +13,7 @@ import java.io.StringReader
  *
  * Tokens fetched by this request expire in an hour after being fetched.
  */
-class FetchApplicationToken(jwt: GitHubJwt, installationId: AppInstallationId) :
+class FetchAppInstallationToken(jwt: GitHubJwt, installationId: AppInstallationId) :
         GitHubApiRequest<Token>(jwt, url(installationId), POST) {
 
     companion object {

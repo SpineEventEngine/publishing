@@ -28,16 +28,15 @@ data class AppInstallationId(val value: String)
  * @param jwt JWT to authorize the request
  * @param pickInstallationFn a function to select the necessary installation
  */
-class FetchAppInstallationId
-private constructor(jwt: GitHubJwt,
-                    private val pickInstallationFn: (JsonArray<JsonObject>) -> JsonObject)
+class FetchAppInstallationId private constructor(jwt: GitHubJwt,
+                                                 private val pickInstallationFn: PickInstallation)
     : GitHubApiRequest<AppInstallationId>(jwt, URL) {
 
     companion object {
 
         private const val URL: String = "https://api.github.com/app/installations"
 
-        private val pickFirst: (JsonArray<JsonObject>) -> JsonObject = {
+        private val pickFirst: PickInstallation = {
             when (it.size) {
                 0 -> throw IllegalStateException("The app has zero installations.")
                 1 -> it[0]
@@ -60,7 +59,8 @@ private constructor(jwt: GitHubJwt,
     override fun parseResponse(responseText: String): AppInstallationId {
         val reader = StringReader(responseText)
 
-        @Suppress("UNCHECKED_CAST" /* Successful responses from the
+        @Suppress("UNCHECKED_CAST" /*
+                                    * Successful responses from the
                                     * `installations` endpoint are known to return
                                     * an array of JSONs.
                                     */)
@@ -70,3 +70,5 @@ private constructor(jwt: GitHubJwt,
         return AppInstallationId(installationId.toString())
     }
 }
+
+private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject

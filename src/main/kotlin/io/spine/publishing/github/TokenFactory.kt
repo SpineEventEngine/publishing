@@ -17,7 +17,7 @@ class TokenFactory(private val privateKeyPath: Path, private val appId: AppId) {
     fun newToken(): Token {
         val jwt = GitHubJwt.generate(privateKeyPath, appId)
         val installationId = installationId(jwt)
-        return FetchApplicationToken(jwt, installationId).perform()
+        return FetchAppInstallationToken(jwt, installationId).perform()
     }
 
     /**
