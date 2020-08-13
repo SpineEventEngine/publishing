@@ -45,7 +45,7 @@ class PushDestination(val library: Library,
 }
 
 /**
- * A string value used to authorize a remote Git operation.
+ * A string value used to authorize remote Git operations.
  *
  * @param value the value of the token
  */

@@ -17,9 +17,26 @@ import java.io.StringReader
  */
 class FetchAppInstallationToken: GitHubApiRequest<Token> {
 
+    /**
+     * Creates a new request to fetch the GitHub App installation token.
+     *
+     * This constructor should be used for tests to mock the HTTP transport.
+     *
+     * @param jwt JWT to authorize the token fetch
+     * @param installationId the installation ID of the GitHub App to fetch a token for
+     * @param httpTransport the HTTP transport to use
+     */
     constructor(jwt: GitHubJwt, installationId: AppInstallationId, httpTransport: HttpTransport) :
             super(jwt, url(installationId), httpTransport = httpTransport)
 
+    /**
+     * Creates a new request to fetch the GitHub App installation token.
+     *
+     * The fetched token can be used to authorize operations with GitHub, see [Token].
+     *
+     * @param jwt JWT to authorize the token fetch
+     * @param installationId the installation ID of the GitHub App to fetch a token for
+     */
     constructor(jwt: GitHubJwt, installationId: AppInstallationId):
             super(jwt, url(installationId))
 

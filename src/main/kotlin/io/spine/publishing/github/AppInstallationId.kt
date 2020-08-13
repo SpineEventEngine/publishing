@@ -50,13 +50,14 @@ class FetchAppInstallationId private constructor(jwt: GitHubJwt,
         }
 
         /**
-         * Returns a request that upon success returns the ID of the first installation returned
-         * by GitHub.
+         * Returns a request that upon success returns the ID of the first
+         * installation returned by the GitHub REST API.
          *
          * This is useful if the app is known to be installed only once. For other apps a more
          * robust choice mechanism is required.
          *
          * @param jwt a JWT that authorizes the fetching of the App installation ID
+         * @param httpTransport an HTTP transport to use; may be overridden for tests
          */
         fun useFirstInstallation(jwt: GitHubJwt, httpTransport: HttpTransport = NetHttpTransport())
                 : FetchAppInstallationId = FetchAppInstallationId(jwt, pickFirst, httpTransport)

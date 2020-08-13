@@ -21,7 +21,7 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  * @param url a URL that the request is made to
  * @param method an HTTP method used for the request; defaults to "GET";
  * use [com.google.api.client.http.HttpMethods] when passing a method
- * @param httpTransport a transport to use when making the request
+ * @param httpTransport a transport to use when making the request; can be overridden for tests
  */
 abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
                                    private val url: String,
@@ -31,7 +31,7 @@ abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
     private val requestFactory = httpTransport.createRequestFactory()
 
     /**
-     * Performs the HTTP request to the [url] using the specified [method] and
+     * Performs the HTTP request to the [URL][url] using the specified [method] and
      * setting and authorization header to use the [JWT][jwt].
      *
      * If the response has a non-error status code, a response text is
@@ -61,7 +61,8 @@ abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
     /**
      * Parses the `T` from a raw HTTP response string.
      *
-     * The [responses][responseText] are guaranteed to have a non-error status code.
+     * The [responses][responseText] are guaranteed to have a non-error status code. Therefore,
+     * the extenders should expect only successful API responses.
      *
      * Throws an exception if `T` could not be parsed.
      *
