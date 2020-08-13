@@ -5,6 +5,11 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.spine.gradle.internal.Deps
+
+buildscript {
+    apply(from = "$rootDir/config/gradle/dependencies.gradle")
+}
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -37,6 +42,8 @@ dependencies {
 
     // A crypto library to help sign JWTs.
     implementation("org.bouncycastle:bcpkix-jdk15on:1.66")
+
+    implementation(Deps.build.googleHttpClient)
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

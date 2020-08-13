@@ -1,8 +1,10 @@
 package io.spine.publishing.github
 
 import com.beust.klaxon.Klaxon
+import com.google.api.client.http.HttpMethods.POST
+import com.google.api.client.http.HttpTransport
+import com.google.api.client.http.javanet.NetHttpTransport
 import io.spine.publishing.git.Token
-import io.spine.publishing.github.RequestMethod.POST
 import java.io.StringReader
 
 /**
@@ -13,8 +15,13 @@ import java.io.StringReader
  *
  * Tokens fetched by this request expire in an hour after being fetched.
  */
-class FetchAppInstallationToken(jwt: GitHubJwt, installationId: AppInstallationId) :
-        GitHubApiRequest<Token>(jwt, url(installationId), POST) {
+class FetchAppInstallationToken: GitHubApiRequest<Token> {
+
+    constructor(jwt: GitHubJwt, installationId: AppInstallationId, httpTransport: HttpTransport) :
+            super(jwt, url(installationId), httpTransport = httpTransport)
+
+    constructor(jwt: GitHubJwt, installationId: AppInstallationId):
+            super(jwt, url(installationId))
 
     companion object {
         private fun url(installationId: AppInstallationId): String =

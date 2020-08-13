@@ -3,6 +3,8 @@ package io.spine.publishing.github
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
+import com.google.api.client.http.HttpTransport
+import com.google.api.client.http.javanet.NetHttpTransport
 import java.io.StringReader
 
 /**
@@ -27,10 +29,12 @@ data class AppInstallationId(val value: String)
  *
  * @param jwt JWT to authorize the request
  * @param pickInstallationFn a function to select the necessary installation
+ * @param httpTransport an HTTP transport to use
  */
 class FetchAppInstallationId private constructor(jwt: GitHubJwt,
-                                                 private val pickInstallationFn: PickInstallation)
-    : GitHubApiRequest<AppInstallationId>(jwt, URL) {
+                                                 private val pickInstallationFn: PickInstallation,
+                                                 httpTransport: HttpTransport)
+    : GitHubApiRequest<AppInstallationId>(jwt, URL, httpTransport = httpTransport) {
 
     companion object {
 
@@ -51,9 +55,11 @@ class FetchAppInstallationId private constructor(jwt: GitHubJwt,
          *
          * This is useful if the app is known to be installed only once. For other apps a more
          * robust choice mechanism is required.
+         *
+         * @param jwt a JWT that authorizes the fetching of the App installation ID
          */
-        fun useFirstInstallation(jwt: GitHubJwt): FetchAppInstallationId =
-                FetchAppInstallationId(jwt, pickFirst)
+        fun useFirstInstallation(jwt: GitHubJwt, httpTransport: HttpTransport = NetHttpTransport())
+                : FetchAppInstallationId = FetchAppInstallationId(jwt, pickFirst, httpTransport)
     }
 
     override fun parseResponse(responseText: String): AppInstallationId {
