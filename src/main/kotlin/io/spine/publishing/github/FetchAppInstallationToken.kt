@@ -27,7 +27,7 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
      * @param httpTransport the HTTP transport to use
      */
     constructor(jwtFactory: JwtFactory, installationId: AppInstallationId, httpTransport: HttpTransport) :
-            super(jwtFactory, url(installationId), POST, httpTransport)
+            super(url(installationId), POST, jwtFactory, httpTransport)
 
     /**
      * Creates a new request to fetch the GitHub App installation token.
@@ -38,7 +38,7 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
      * @param installationId the installation ID of the GitHub App to fetch a token for
      */
     constructor(jwtFactory: JwtFactory, installationId: AppInstallationId) :
-            super(jwtFactory, url(installationId), method = POST)
+            super(url(installationId), jwtFactory = jwtFactory, method = POST)
 
     companion object {
         private fun url(installationId: AppInstallationId): String =

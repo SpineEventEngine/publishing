@@ -148,7 +148,7 @@ class Commit(val message: CommitMessage) : GitCommand(message) {
 class PushToRemote(val gitRepo: GitRepository,
                    private val tokenFactory: TokenFactory,
                    private val retryPolicy: NoExpiredTokens =
-                           NoExpiredTokens(3, gitRepo.remote, tokenFactory)) :
+                           NoExpiredTokens(gitRepo.remote, 3, tokenFactory)) :
         GitCommand(object : GitCommandOptions {
             override fun repository() = gitRepo.localGitRepository()
         }) {
@@ -166,8 +166,8 @@ class PushToRemote(val gitRepo: GitRepository,
  * @param remote a remote repository that the generated tokens authorize access to
  * @param tokenFactory a factory of tokens
  */
-class NoExpiredTokens(retries: Int,
-                      private val remote: GitHubRepoUrl,
+class NoExpiredTokens(private val remote: GitHubRepoUrl,
+                      retries: Int,
                       private val tokenFactory: TokenFactory) :
         RetryPolicy<GitHubToken>(retries) {
 

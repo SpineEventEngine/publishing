@@ -43,8 +43,8 @@ class GitHubApiRequestTest {
     fun badStatusCode(code: Int) {
         val transport = transportThatRespondsWith { response -> response.setStatusCode(code) }
         val mockRequest = object : GitHubApiRequest<Unit>(
-                mockJwtFactory,
                 "https://github.com/mock_endpoint",
+                jwtFactory = mockJwtFactory,
                 httpTransport = transport
         ) {
             override fun parseResponse(responseText: String) = Unit
@@ -69,7 +69,9 @@ class GitHubApiRequestTest {
             response.setContent("OK").setStatusCode(200)
         }
         val mockRequest =
-                object : GitHubApiRequest<Unit>(mockJwtFactory, badUrl, httpTransport = transport) {
+                object : GitHubApiRequest<Unit>(badUrl,
+                        jwtFactory = mockJwtFactory,
+                        httpTransport = transport) {
                     override fun parseResponse(responseText: String) = Unit
 
                 }
@@ -88,8 +90,8 @@ class GitHubApiRequestTest {
         }
 
         val mockRequest = object : GitHubApiRequest<String>(
-                mockJwtFactory,
                 "https://api.github.com/valid_url",
+                jwtFactory = mockJwtFactory,
                 httpTransport = transport
         ) {
             override fun parseResponse(responseText: String): String = responseText
