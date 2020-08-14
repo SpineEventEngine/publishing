@@ -12,7 +12,6 @@ import java.security.KeyPair
 import java.security.PrivateKey
 import java.security.Security
 import java.security.interfaces.RSAPrivateKey
-import java.time.Instant
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit.MINUTES
 import java.util.*
@@ -21,12 +20,8 @@ import java.util.*
  * A JWT that can be used to authorize [GitHubApiRequest]s.
  *
  * @param value the string value of the JWT
- * @param expirationTime the time after which the JWT is no longer usable
  */
-data class GitHubJwt(val value: String, val expirationTime: Instant) {
-
-    val isExpired get() = now().isAfter(expirationTime)
-}
+data class GitHubJwt(val value: String)
 
 class SignedJwts(private val privateKeyPath: Path, private val gitHubAppId: AppId) : JwtFactory {
 
@@ -55,7 +50,7 @@ class SignedJwts(private val privateKeyPath: Path, private val gitHubAppId: AppI
                 .withExpiresAt(Date.from(expirationTime))
                 // We only have the private key from the GitHub App.
                 .sign(Algorithm.RSA256(null, privateKey as RSAPrivateKey))
-        return GitHubJwt(jwt, expirationTime)
+        return GitHubJwt(jwt)
     }
 
 }

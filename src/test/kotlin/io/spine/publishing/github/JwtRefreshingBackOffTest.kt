@@ -30,7 +30,6 @@ import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPrese
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.Instant
 import java.util.*
 
 @DisplayName("`JwtRefreshingBackOff` should")
@@ -88,7 +87,7 @@ class JwtRefreshingBackOffTest {
             override fun newJwt(): GitHubJwt {
                 jwtsCreated++
                 val value = UUID.randomUUID().toString()
-                return GitHubJwt(value, Instant.now())
+                return GitHubJwt(value)
             }
         }
 

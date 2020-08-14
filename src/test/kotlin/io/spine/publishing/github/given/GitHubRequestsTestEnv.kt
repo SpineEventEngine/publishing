@@ -28,8 +28,6 @@ import com.google.api.client.testing.http.MockLowLevelHttpResponse
 import io.spine.publishing.github.AppInstallationId
 import io.spine.publishing.github.GitHubJwt
 import io.spine.publishing.github.JwtFactory
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
 
 /**
  * Utilities for testing GitHub related requests.
@@ -68,9 +66,8 @@ object GitHubRequestsTestEnv {
             }
 
     val mockJwtFactory = object : JwtFactory {
-        override fun newJwt(): GitHubJwt =
-                GitHubJwt("abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD",
-                        Instant.now().plus(1, DAYS))
+        override fun newJwt() =
+                GitHubJwt("abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD")
     }
 
 
