@@ -2,6 +2,11 @@ package io.spine.publishing.github
 
 import io.spine.publishing.git.GitHubToken
 
+/**
+ * A factory of GitHub tokens.
+ *
+ * GitHub tokens authorize Git operations.
+ */
 interface TokenFactory {
 
     /**
@@ -12,6 +17,12 @@ interface TokenFactory {
 
 /**
  * A factory for tokens that can be used to authorize GitHub API requests on behalf of a GitHub App.
+ *
+ * The tokens are fetched using the GitHub REST API.
+ *
+ * To fetch a GitHub App, a JWT is needed.
+ *
+ * @param jwtFactory a factory of JWTs to use to fetch the application tokens.
  */
 class AppInstallationTokens(private val jwtFactory: JwtFactory) : TokenFactory {
 

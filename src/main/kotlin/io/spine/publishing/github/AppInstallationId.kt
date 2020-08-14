@@ -29,7 +29,7 @@ private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject
  * The App may have many installations. [pickInstallationFn] is used to pick the installation
  * to return from [perform].
  *
- * @param jwtFactory a factory of JWTs that authroize the GitHub API requests
+ * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
  * @param pickInstallationFn a function to select the necessary installation
  * @param httpTransport an HTTP transport to use
  */
