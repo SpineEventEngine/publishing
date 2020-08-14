@@ -38,6 +38,7 @@ abstract class RetryPolicy<R>(private var retriesLeft: Int) {
      */
     fun retryUntilOk(): R {
         while (retriesLeft > 0) {
+            retriesLeft--
             val result = action()
             if (resultOk(result)) {
                 return result
@@ -55,6 +56,8 @@ abstract class RetryPolicy<R>(private var retriesLeft: Int) {
      * Returns whether the result of the action is satisfactory.
      *
      * Satisfactory results are not retried.
+     *
+     * Unsatisfactory results are retried until the retries are exhausted.
      */
     abstract fun resultOk(result: R): Boolean
 
