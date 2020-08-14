@@ -31,6 +31,9 @@ data class GitRepository(val localRootPath: Path, val remote: GitHubRepoUrl) {
     }
 }
 
+typealias Organization = String
+typealias RepositoryName = String
+
 /**
  * A location of a GitHub repository.
  *
@@ -49,9 +52,6 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
     fun value(token: GitHubToken): String =
             "https://x-access-token:${token.value}@github.com/$organization/$name.git"
 }
-
-typealias Organization = String
-typealias RepositoryName = String
 
 /**
  * A string value used to authorize GitHub operations.

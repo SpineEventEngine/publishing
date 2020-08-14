@@ -23,6 +23,8 @@ package io.spine.publishing.git
 import io.spine.publishing.Library
 import org.eclipse.jgit.lib.Repository
 
+typealias BranchName = String
+
 /**
  * A name of an existing local Git branch.
  */
@@ -45,4 +47,3 @@ class Master(val library: Library) : Branch {
     override fun name(): BranchName = "master"
 }
 
-typealias BranchName = String

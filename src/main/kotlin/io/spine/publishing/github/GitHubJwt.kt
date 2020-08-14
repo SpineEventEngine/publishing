@@ -18,10 +18,15 @@ import java.util.*
 
 /**
  * A JWT that can be used to authorize [GitHubApiRequest]s.
- *
+
  * @param value the string value of the JWT
  */
 data class GitHubJwt(val value: String)
+
+
+/** The ID of the GitHub App. */
+typealias AppId = String
+
 
 class SignedJwts(private val privateKeyPath: Path, private val gitHubAppId: AppId) : JwtFactory {
 
@@ -59,6 +64,3 @@ interface JwtFactory {
 
     fun newJwt(): GitHubJwt
 }
-
-/** The ID of the GitHub App. */
-typealias AppId = String

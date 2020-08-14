@@ -21,6 +21,8 @@ import java.io.StringReader
  */
 data class AppInstallationId(val value: String)
 
+private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject
+
 /**
  * Fetches the installation ID for the GitHub App defined by the JWT.
  *
@@ -79,5 +81,3 @@ class FetchAppInstallationId private constructor(jwtFactory: JwtFactory,
         return AppInstallationId(installationId.toString())
     }
 }
-
-private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject

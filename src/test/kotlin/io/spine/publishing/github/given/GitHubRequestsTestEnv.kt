@@ -29,6 +29,8 @@ import io.spine.publishing.github.AppInstallationId
 import io.spine.publishing.github.GitHubJwt
 import io.spine.publishing.github.JwtFactory
 
+typealias SetupMockHttpResponse = (MockLowLevelHttpResponse) -> MockLowLevelHttpResponse
+
 /**
  * Utilities for testing GitHub related requests.
  */
@@ -70,7 +72,6 @@ object GitHubRequestsTestEnv {
                 GitHubJwt("abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD")
     }
 
-
     val mockInstallationId = AppInstallationId("30235051")
 
     /**
@@ -100,5 +101,3 @@ object GitHubRequestsTestEnv {
         return stream!!.bufferedReader().readText()
     }
 }
-
-typealias SetupMockHttpResponse = (MockLowLevelHttpResponse) -> MockLowLevelHttpResponse
