@@ -48,6 +48,25 @@ object GitHubRequestsTestEnv {
                 }
             }
 
+    fun transportWithPresetResponses(responses: List<MockLowLevelHttpResponse>): MockHttpTransport =
+            object : MockHttpTransport() {
+
+                private var currentPointer = 0
+                private fun movePointer() {
+                    currentPointer = (currentPointer + 1) % responses.size
+                }
+
+                override fun buildRequest(method: String, url: String): LowLevelHttpRequest {
+                    return object : MockLowLevelHttpRequest() {
+                        override fun execute(): LowLevelHttpResponse {
+                            val response = responses[currentPointer]
+                            movePointer()
+                            return response
+                        }
+                    }
+                }
+            }
+
     val mockJwtFactory = object : JwtFactory {
         override fun newJwt(): GitHubJwt =
                 GitHubJwt("abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD",
