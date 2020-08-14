@@ -33,16 +33,20 @@ private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject
  * @param pickInstallationFn a function to select the necessary installation
  * @param httpTransport an HTTP transport to use
  */
-class FetchAppInstallationId private constructor(jwtFactory: JwtFactory,
-                                                 private val pickInstallationFn: PickInstallation,
+class FetchAppInstallationId private constructor(private val pickInstallationFn: PickInstallation,
+                                                 jwtFactory: JwtFactory,
                                                  httpTransport: HttpTransport)
-    : GitHubApiRequest<AppInstallationId>(jwtFactory, URL, httpTransport = httpTransport) {
+    : GitHubApiRequest<AppInstallationId>(
+        url = URL,
+        jwtFactory = jwtFactory,
+        httpTransport = httpTransport
+) {
 
     companion object {
 
         private const val URL: String = "https://api.github.com/app/installations"
 
-        private val pickFirst: PickInstallation = {
+        private val singleInstallation: PickInstallation = {
             when (it.size) {
                 0 -> throw IllegalStateException("The app has zero installations.")
                 1 -> it[0]
@@ -52,19 +56,19 @@ class FetchAppInstallationId private constructor(jwtFactory: JwtFactory,
         }
 
         /**
-         * Returns a request that upon success returns the ID of the first
-         * installation returned by the GitHub REST API.
+         * Returns a request that upon success returns the ID of the *only* installation returned
+         * by the GitHub API.
          *
-         * This is useful if the app is known to be installed only once. For other apps a more
-         * robust choice mechanism is required.
+         * If the GitHub App is known to be installed zero or multiple times, use another
+         * [PickInstallation] function.
          *
          * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
          * @param httpTransport an HTTP transport to use; may be overridden for tests
          */
-        fun useFirstInstallation(jwtFactory: JwtFactory,
-                                 httpTransport: HttpTransport = NetHttpTransport())
+        fun forAppWithSingleInstallation(jwtFactory: JwtFactory,
+                                         httpTransport: HttpTransport = NetHttpTransport())
                 : FetchAppInstallationId =
-                FetchAppInstallationId(jwtFactory, pickFirst, httpTransport)
+                FetchAppInstallationId(singleInstallation, jwtFactory, httpTransport)
     }
 
     override fun parseResponse(responseText: String): AppInstallationId {

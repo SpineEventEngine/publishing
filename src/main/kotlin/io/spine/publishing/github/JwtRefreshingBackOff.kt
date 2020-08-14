@@ -34,7 +34,7 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  *
  * Retries are performed only if the response is [STATUS_CODE_UNAUTHORIZED].
  *
- * @param retries the amount of times the request should be retries
+ * @param retries the amount of times the request should be retried
  * @param jwtFactory a factory of JWTs that authorize GitHub API operations
  */
 class JwtRefreshingBackOff(private var retries: Int,

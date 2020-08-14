@@ -63,5 +63,11 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
  */
 data class GitHubToken(val value: String, val expiresAt: Instant) {
 
+    /**
+     * Returns whether the GitHub token is expired.
+     *
+     * Expired tokens cannot be used to authorize Git operations. If the token has expired,
+     * a new one has to be generated.
+     */
     val isExpired get() = now().isAfter(expiresAt)
 }

@@ -40,7 +40,7 @@ class FetchAppInstallationIdTest {
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport)
+        val appId = FetchAppInstallationId.forAppWithSingleInstallation(mockJwtFactory, transport)
                 .perform()
         assertThat(appId).isEqualTo(AppInstallationId("42"))
     }
@@ -54,7 +54,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport).perform()
+            FetchAppInstallationId.forAppWithSingleInstallation(mockJwtFactory, transport).perform()
         }
     }
 
@@ -67,7 +67,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport).perform()
+            FetchAppInstallationId.forAppWithSingleInstallation(mockJwtFactory, transport).perform()
         }
     }
 }

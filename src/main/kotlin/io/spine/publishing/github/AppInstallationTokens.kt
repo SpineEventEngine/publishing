@@ -49,6 +49,6 @@ class AppInstallationTokens(private val jwtFactory: JwtFactory) : TokenFactory {
      * @param jwtFactory a factory of JWTs to authorize the fetch of the installation ID
      */
     private fun installationId(jwtFactory: JwtFactory) = FetchAppInstallationId
-            .useFirstInstallation(jwtFactory)
+            .forAppWithSingleInstallation(jwtFactory)
             .perform()
 }

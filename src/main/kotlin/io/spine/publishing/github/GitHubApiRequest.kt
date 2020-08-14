@@ -17,15 +17,15 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  *
  * @param T the type of objects extracted from the HTTP responses
  *
- * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
  * @param url a URL that the request is made to
  * @param method an HTTP method used for the request; defaults to "GET";
  * use [com.google.api.client.http.HttpMethods] when passing a method
+ * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
  * @param httpTransport a transport to use when making the request; can be overridden for tests
  */
-abstract class GitHubApiRequest<T>(private val jwtFactory: JwtFactory,
-                                   private val url: String,
+abstract class GitHubApiRequest<T>(private val url: String,
                                    private val method: String = HttpMethods.GET,
+                                   private val jwtFactory: JwtFactory,
                                    httpTransport: HttpTransport = NetHttpTransport()) {
 
     private val requestFactory = httpTransport.createRequestFactory()
