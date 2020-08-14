@@ -21,6 +21,8 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.Library
+import io.spine.publishing.github.RetryPolicy
+import io.spine.publishing.github.TokenFactory
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType.HARD
 import org.eclipse.jgit.lib.Repository
@@ -141,20 +143,48 @@ class Commit(val message: CommitMessage) : GitCommand(message) {
  * Pushes the current local branch to the remote repository.
  *
  * @param gitRepo the repository that the push is performed on
- * @param token the token to authorize the push
+ * @param tokenFactory factory of tokens to authorize requests
  */
-class PushToRemote(val gitRepo: GitRepository, val token: GitHubToken) :
+class PushToRemote(val gitRepo: GitRepository,
+                   private val tokenFactory: TokenFactory,
+                   private val retryPolicy: NoExpiredTokens =
+                           NoExpiredTokens(3, gitRepo.remote, tokenFactory)) :
         GitCommand(object : GitCommandOptions {
             override fun repository() = gitRepo.localGitRepository()
         }) {
 
     override fun execute() {
-        if (token.isExpired) {
-            throw IllegalStateException("Cannot push to ${gitRepo.remote}. The token has expired.")
-        }
-
-        git().push()
-                .setRemote(gitRepo.remote.value(token))
-                .call()
+        val token = retryPolicy.retryUntilOk()
+        push(gitRepo, token)
     }
+}
+
+/**
+ * A retry policy that ensures that only non-expired tokens are used.
+ *
+ * @param retries the amount of attempts to generate a new token
+ * @param remote a remote repository that the generated tokens authorize access to
+ * @param tokenFactory a factory of tokens
+ */
+class NoExpiredTokens(retries: Int,
+                      private val remote: GitHubRepoUrl,
+                      private val tokenFactory: TokenFactory) :
+        RetryPolicy<GitHubToken>(retries) {
+
+    override fun action(): GitHubToken = tokenFactory.newToken()
+
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override fun resultOk(token: GitHubToken): Boolean = !token.isExpired
+
+    override fun onRetriesExhausted(): Nothing {
+        val message = "Could not push to `$remote` as the token has expired."
+        throw IllegalStateException(message)
+    }
+}
+
+private fun push(gitRepo: GitRepository, token: GitHubToken) {
+    Git(gitRepo.localGitRepository())
+            .push()
+            .setRemote(gitRepo.remote.value(token))
+            .call()
 }

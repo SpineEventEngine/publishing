@@ -27,14 +27,14 @@ data class AppInstallationId(val value: String)
  * The App may have many installations. [pickInstallationFn] is used to pick the installation
  * to return from [perform].
  *
- * @param jwt JWT to authorize the request
+ * @param jwtFactory a factory of JWTs that authroize the GitHub API requests
  * @param pickInstallationFn a function to select the necessary installation
  * @param httpTransport an HTTP transport to use
  */
-class FetchAppInstallationId private constructor(jwt: GitHubJwt,
+class FetchAppInstallationId private constructor(jwtFactory: JwtFactory,
                                                  private val pickInstallationFn: PickInstallation,
                                                  httpTransport: HttpTransport)
-    : GitHubApiRequest<AppInstallationId>(jwt, URL, httpTransport = httpTransport) {
+    : GitHubApiRequest<AppInstallationId>(jwtFactory, URL, httpTransport = httpTransport) {
 
     companion object {
 
@@ -56,11 +56,13 @@ class FetchAppInstallationId private constructor(jwt: GitHubJwt,
          * This is useful if the app is known to be installed only once. For other apps a more
          * robust choice mechanism is required.
          *
-         * @param jwt a JWT that authorizes the fetching of the App installation ID
+         * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
          * @param httpTransport an HTTP transport to use; may be overridden for tests
          */
-        fun useFirstInstallation(jwt: GitHubJwt, httpTransport: HttpTransport = NetHttpTransport())
-                : FetchAppInstallationId = FetchAppInstallationId(jwt, pickFirst, httpTransport)
+        fun useFirstInstallation(jwtFactory: JwtFactory,
+                                 httpTransport: HttpTransport = NetHttpTransport())
+                : FetchAppInstallationId =
+                FetchAppInstallationId(jwtFactory, pickFirst, httpTransport)
     }
 
     override fun parseResponse(responseText: String): AppInstallationId {

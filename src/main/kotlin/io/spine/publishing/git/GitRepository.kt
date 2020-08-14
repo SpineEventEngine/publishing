@@ -63,6 +63,5 @@ typealias RepositoryName = String
  */
 data class GitHubToken(val value: String, val expiresAt: Instant) {
 
-
     val isExpired get() = now().isAfter(expiresAt)
 }

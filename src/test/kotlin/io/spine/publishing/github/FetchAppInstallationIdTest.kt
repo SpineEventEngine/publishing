@@ -23,7 +23,7 @@ package io.spine.publishing.github
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.appInstalledMoreThanOnce
-import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtFactory
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.successfulAppInstallationResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportThatRespondsWith
 import org.junit.jupiter.api.DisplayName
@@ -40,7 +40,7 @@ class FetchAppInstallationIdTest {
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallationId.useFirstInstallation(mockJwt, transport)
+        val appId = FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport)
                 .perform()
         assertThat(appId).isEqualTo(AppInstallationId("42"))
     }
@@ -54,7 +54,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.useFirstInstallation(mockJwt, transport).perform()
+            FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport).perform()
         }
     }
 
@@ -67,7 +67,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.useFirstInstallation(mockJwt, transport).perform()
+            FetchAppInstallationId.useFirstInstallation(mockJwtFactory, transport).perform()
         }
     }
 }

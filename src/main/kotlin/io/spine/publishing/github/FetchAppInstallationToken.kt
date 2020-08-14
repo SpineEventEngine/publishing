@@ -22,23 +22,23 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
      *
      * This constructor should be used for tests to mock the HTTP transport.
      *
-     * @param jwt JWT to authorize the token fetch
+     * @param jwtFactory a factory of JWTs that authorize the request
      * @param installationId the installation ID of the GitHub App to fetch a token for
      * @param httpTransport the HTTP transport to use
      */
-    constructor(jwt: GitHubJwt, installationId: AppInstallationId, httpTransport: HttpTransport) :
-            super(jwt, url(installationId), POST, httpTransport)
+    constructor(jwtFactory: JwtFactory, installationId: AppInstallationId, httpTransport: HttpTransport) :
+            super(jwtFactory, url(installationId), POST, httpTransport)
 
     /**
      * Creates a new request to fetch the GitHub App installation token.
      *
      * The fetched token can be used to authorize operations with GitHub, see [GitHubToken].
      *
-     * @param jwt JWT to authorize the token fetch
+     * @param jwtFactory a factory of JWTs that authorize the request
      * @param installationId the installation ID of the GitHub App to fetch a token for
      */
-    constructor(jwt: GitHubJwt, installationId: AppInstallationId) :
-            super(jwt, url(installationId), method = POST)
+    constructor(jwtFactory: JwtFactory, installationId: AppInstallationId) :
+            super(jwtFactory, url(installationId), method = POST)
 
     companion object {
         private fun url(installationId: AppInstallationId): String =

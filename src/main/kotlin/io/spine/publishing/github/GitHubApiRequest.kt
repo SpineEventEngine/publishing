@@ -17,22 +17,23 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  *
  * @param T the type of objects extracted from the HTTP responses
  *
- * @param jwt a JWT that is used for authorization with GitHub
+ * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
  * @param url a URL that the request is made to
  * @param method an HTTP method used for the request; defaults to "GET";
  * use [com.google.api.client.http.HttpMethods] when passing a method
  * @param httpTransport a transport to use when making the request; can be overridden for tests
  */
-abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
+abstract class GitHubApiRequest<T>(private val jwtFactory: JwtFactory,
                                    private val url: String,
                                    private val method: String = HttpMethods.GET,
                                    httpTransport: HttpTransport = NetHttpTransport()) {
 
     private val requestFactory = httpTransport.createRequestFactory()
+    private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwtFactory)
 
     /**
      * Performs the HTTP request to the [URL][url] using the specified [method] and
-     * setting and authorization header to use the [JWT][jwt].
+     * setting and authorization header to use the JWTs produced by the [jwtFactory].
      *
      * If the response has a non-error status code, a response text is
      * [parsed into a typed response][parseResponse].
@@ -41,6 +42,7 @@ abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
      */
     fun perform(): T {
         val httpHeaders = HttpHeaders()
+        val jwt = jwtFactory.newJwt()
         httpHeaders[AUTHORIZATION] = "Bearer ${jwt.value}"
         httpHeaders[ACCEPT] = "application/vnd.github.machine-man-preview+json"
 
@@ -48,6 +50,7 @@ abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
                 .buildRequest(method, GenericUrl(url), null)
                 .setHeaders(httpHeaders)
                 .setThrowExceptionOnExecuteError(false)
+                .setUnsuccessfulResponseHandler(backOff)
                 .execute()
         val responseText = response.content.bufferedReader().use { it.readText() }
         if (!response.isSuccessStatusCode) {

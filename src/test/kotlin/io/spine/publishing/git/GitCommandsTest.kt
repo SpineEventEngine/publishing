@@ -25,6 +25,7 @@ import assertk.assertions.contains
 import assertk.assertions.containsOnly
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import io.spine.publishing.github.TokenFactory
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.treewalk.TreeWalk
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.assertThrows
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 
 @DisplayName("Git commands should")
@@ -192,17 +192,6 @@ class GitCommandsTest {
                 .call()
                 .toList()
         assertThat(commitsAfterReset).hasSize(1)
-    }
-
-    @Test
-    @DisplayName("fail to push when using an expired token")
-    fun failToPush() {
-        val repo = GitRepository(repoPath, GitHubRepoUrl("fake_org", "fake_repo"))
-        val yesterday = Instant.now().minus(1, DAYS)
-        val token = GitHubToken("fake_token_value", yesterday)
-        assertThrows<IllegalStateException> {
-            PushToRemote(repo, token).execute()
-        }
     }
 
     @Test

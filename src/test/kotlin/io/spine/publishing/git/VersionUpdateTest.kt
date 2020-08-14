@@ -23,6 +23,7 @@ package io.spine.publishing.git
 import assertk.assertThat
 import assertk.assertions.*
 import io.spine.publishing.Library
+import io.spine.publishing.github.TokenFactory
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
@@ -51,7 +52,7 @@ class VersionUpdateTest {
         val remote = GitHubRepoUrl(orgName, repo)
         val gitRepo = GitRepository(baseDirectory, remote)
         val library = Library("base", listOf(), gitRepo)
-        val commands = updateVersion(library, mockToken)
+        val commands = updateVersion(library, mockTokenFactory)
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -68,5 +69,7 @@ class VersionUpdateTest {
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 
-    private val mockToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS))
+    private val mockTokenFactory = object : TokenFactory {
+        override fun newToken(): GitHubToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS))
+    }
 }
