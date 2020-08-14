@@ -140,14 +140,17 @@ class Commit(val message: CommitMessage) : GitCommand(message) {
 /**
  * Pushes the current local branch to the remote repository.
  *
- * @param destination specifies how to perform the push: the repository to use and the credentials
- * to authorize the push
+ * @param gitRepo the repository that the push is performed on
+ * @param token the token to authorize the push
  */
-class PushToRemote(val destination: PushDestination) : GitCommand(destination) {
+class PushToRemote(val gitRepo: GitRepository, val token: Token) :
+        GitCommand(object: GitCommandOptions {
+            override fun repository() = gitRepo.localGitRepository()
+        }) {
 
     override fun execute() {
         git().push()
-                .setRemote(destination.remoteUrl())
+                .setRemote(gitRepo.remote.value(token))
                 .call()
     }
 }

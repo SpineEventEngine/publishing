@@ -35,7 +35,26 @@ data class GitRepository(val localRootPath: Path, val remote: GitHubRepoUrl) {
  * @param organization the name of the organization that this repository belongs to
  * @param name the name of the repository
  */
-data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName)
+data class GitHubRepoUrl(val organization: Organization, val name: RepositoryName) {
+
+    /**
+     * A URL that can be used to access a remote GitHub repository.
+     *
+     * See [here](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#http-based-git-access-by-an-installation).
+     *
+     * @param token token to authorize the access to the remote repository
+     */
+    fun value(token: Token): String =
+            "https://x-access-token:${token.value}@github.com/$organization/$name.git"
+}
 
 typealias Organization = String
 typealias RepositoryName = String
+
+
+/**
+ * A string value used to authorize remote Git operations.
+ *
+ * @param value the value of the token
+ */
+data class Token(val value: String)

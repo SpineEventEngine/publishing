@@ -62,7 +62,7 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.library.repository.remote)
+        assertThat((commands[3] as PushToRemote).gitRepo.remote)
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 

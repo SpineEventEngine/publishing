@@ -8,6 +8,8 @@ import io.spine.publishing.git.*
 
 /**
  * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
+ *
+ * @param token a token to authorize the update
  */
 class UpdateRemote(private val token: Token) : PipelineOperation() {
 
@@ -34,7 +36,7 @@ class UpdateRemote(private val token: Token) : PipelineOperation() {
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
-                PushToRemote(PushDestination(library, token))
+                PushToRemote(library.repository, token)
         )
     }
 
