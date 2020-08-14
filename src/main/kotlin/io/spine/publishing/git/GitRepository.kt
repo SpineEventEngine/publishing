@@ -3,6 +3,8 @@ package io.spine.publishing.git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.lib.RepositoryBuilder
 import java.nio.file.Path
+import java.time.Instant
+import java.time.Instant.now
 
 /**
  * A Git repository with a remote origin.
@@ -44,17 +46,23 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
      *
      * @param token token to authorize the access to the remote repository
      */
-    fun value(token: Token): String =
+    fun value(token: GitHubToken): String =
             "https://x-access-token:${token.value}@github.com/$organization/$name.git"
 }
 
 typealias Organization = String
 typealias RepositoryName = String
 
-
 /**
- * A string value used to authorize remote Git operations.
+ * A string value used to authorize GitHub operations.
+ *
+ * GitHub tokens can expire, after which they cannot be used.
  *
  * @param value the value of the token
+ * @param expiresAt the moment after which the token is no longer usable
  */
-data class Token(val value: String)
+data class GitHubToken(val value: String, val expiresAt: Instant) {
+
+
+    val isExpired get() = now().isAfter(expiresAt)
+}

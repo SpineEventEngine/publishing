@@ -1,6 +1,6 @@
 package io.spine.publishing
 
-import io.spine.publishing.git.Token
+import io.spine.publishing.git.GitHubToken
 import io.spine.publishing.operation.*
 
 /**
@@ -29,7 +29,7 @@ class PublishingPipeline(val libraries: Set<Library>,
      * @param libraries libraries to update and publish
      * @param token token to authorize the push to remote
      */
-    constructor(libraries: Set<Library>, token: Token) :
+    constructor(libraries: Set<Library>, token: GitHubToken) :
             this(libraries, listOf(
                     SetToCurrentRemote(),
                     UpdateVersions(),

@@ -22,13 +22,14 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.git.Token
+import io.spine.publishing.git.GitHubToken
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockInstallationId
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.successfulApplicationTokenResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportThatRespondsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 @DisplayName("`FetchAppInstallationToken` should")
 class FetchAppInstallationTokenTest {
@@ -43,6 +44,6 @@ class FetchAppInstallationTokenTest {
 
         val parsedToken = FetchAppInstallationToken(mockJwt, mockInstallationId, transport)
                 .perform()
-        assertThat(parsedToken).isEqualTo(Token("mock_token_value"))
+        assertThat(parsedToken).isEqualTo(GitHubToken("mock_token_value", Instant.now()))
     }
 }

@@ -51,8 +51,8 @@ abstract class GitHubApiRequest<T>(private val jwt: GitHubJwt,
                 .execute()
         val responseText = response.content.bufferedReader().use { it.readText() }
         if (!response.isSuccessStatusCode) {
-            throw IllegalStateException("GitHub responded with `${response.statusCode}`. " +
-                    "Response text: `${responseText}`.")
+            throw IllegalStateException("Request to URL `$url` resulted in a response with " +
+                    "`${response.statusCode}`. Response text: `${responseText}`.")
         }
 
         return parseResponse(responseText)

@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
 
 @DisplayName("`VersionUpdate` should")
 class VersionUpdateTest {
@@ -66,5 +68,5 @@ class VersionUpdateTest {
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 
-    private val mockToken = Token("mock_token")
+    private val mockToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS))
 }

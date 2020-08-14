@@ -143,12 +143,16 @@ class Commit(val message: CommitMessage) : GitCommand(message) {
  * @param gitRepo the repository that the push is performed on
  * @param token the token to authorize the push
  */
-class PushToRemote(val gitRepo: GitRepository, val token: Token) :
-        GitCommand(object: GitCommandOptions {
+class PushToRemote(val gitRepo: GitRepository, val token: GitHubToken) :
+        GitCommand(object : GitCommandOptions {
             override fun repository() = gitRepo.localGitRepository()
         }) {
 
     override fun execute() {
+        if (token.isExpired) {
+            throw IllegalStateException("Cannot push to ${gitRepo.remote}. The token has expired.")
+        }
+
         git().push()
                 .setRemote(gitRepo.remote.value(token))
                 .call()

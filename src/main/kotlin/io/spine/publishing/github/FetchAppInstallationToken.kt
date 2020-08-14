@@ -3,9 +3,9 @@ package io.spine.publishing.github
 import com.beust.klaxon.Klaxon
 import com.google.api.client.http.HttpMethods.POST
 import com.google.api.client.http.HttpTransport
-import com.google.api.client.http.javanet.NetHttpTransport
-import io.spine.publishing.git.Token
+import io.spine.publishing.git.GitHubToken
 import java.io.StringReader
+import java.time.Instant
 
 /**
  * A request to fetch the installation access token for a GitHub App installation.
@@ -15,7 +15,7 @@ import java.io.StringReader
  *
  * Tokens fetched by this request expire in an hour after being fetched.
  */
-class FetchAppInstallationToken: GitHubApiRequest<Token> {
+class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
 
     /**
      * Creates a new request to fetch the GitHub App installation token.
@@ -27,26 +27,28 @@ class FetchAppInstallationToken: GitHubApiRequest<Token> {
      * @param httpTransport the HTTP transport to use
      */
     constructor(jwt: GitHubJwt, installationId: AppInstallationId, httpTransport: HttpTransport) :
-            super(jwt, url(installationId), httpTransport = httpTransport)
+            super(jwt, url(installationId), POST, httpTransport)
 
     /**
      * Creates a new request to fetch the GitHub App installation token.
      *
-     * The fetched token can be used to authorize operations with GitHub, see [Token].
+     * The fetched token can be used to authorize operations with GitHub, see [GitHubToken].
      *
      * @param jwt JWT to authorize the token fetch
      * @param installationId the installation ID of the GitHub App to fetch a token for
      */
-    constructor(jwt: GitHubJwt, installationId: AppInstallationId):
-            super(jwt, url(installationId))
+    constructor(jwt: GitHubJwt, installationId: AppInstallationId) :
+            super(jwt, url(installationId), method = POST)
 
     companion object {
         private fun url(installationId: AppInstallationId): String =
                 "https://api.github.com/app/installations/${installationId.value}/access_tokens"
     }
 
-    override fun parseResponse(responseText: String): Token {
-        val result = Klaxon().parseJsonObject(StringReader(responseText))["token"] as String
-        return Token(result)
+    override fun parseResponse(responseText: String): GitHubToken {
+        val payload = Klaxon().parseJsonObject(StringReader(responseText))
+        val tokenValue = payload["token"] as String
+        val expiresAt = Instant.parse(payload["expires_at"] as String)
+        return GitHubToken(tokenValue, expiresAt)
     }
 }

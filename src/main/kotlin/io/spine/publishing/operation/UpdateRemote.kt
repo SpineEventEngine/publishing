@@ -11,7 +11,7 @@ import io.spine.publishing.git.*
  *
  * @param token a token to authorize the update
  */
-class UpdateRemote(private val token: Token) : PipelineOperation() {
+class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
 
     companion object {
 
@@ -32,7 +32,7 @@ class UpdateRemote(private val token: Token) : PipelineOperation() {
          * @param library the library that has its version updated
          */
         fun updateVersion(library: Library,
-                          token: Token): List<GitCommand> = listOf(
+                          token: GitHubToken): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
