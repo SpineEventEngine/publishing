@@ -26,9 +26,24 @@ import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 @DisplayName("`RetryPolicy` should")
 class RetryPolicyTest {
+
+    @ParameterizedTest
+    @DisplayName("throw when specifying a non-positive amount of retries")
+    @ValueSource(ints = [0, -4])
+    fun nonPositiveRetries(retries: Int) {
+        assertThrows<IllegalArgumentException> {
+            object : RetryPolicy<Unit>(retries) {
+                override fun action() = Unit
+                override fun resultOk(result: Unit) = false
+                override fun onRetriesExhausted(): Nothing = throw IllegalStateException()
+            }
+        }
+    }
 
     @Test
     @DisplayName("not retry if the first action result is satisfactory")

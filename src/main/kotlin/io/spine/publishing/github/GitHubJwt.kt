@@ -17,17 +17,6 @@ import java.time.temporal.ChronoUnit.MINUTES
 import java.util.*
 
 /**
- * A factory of JWTs that can authorize GitHub API requests.
- */
-interface JwtFactory {
-
-    /**
-     * Generates a new GitHub JWT.
-     */
-    fun newJwt(): GitHubJwt
-}
-
-/**
  * A JWT that can be used to authorize [GitHubApiRequest]s.
  *
  * GitHub JWTs have an expiration time, see [SignedJwts]. After the JWT has expired,
@@ -48,10 +37,24 @@ data class GitHubJwt(private var stringValue: String,
      * Refreshes the JWT.
      *
      * If the JWT has expired, refreshing it makes the JWT usable again.
+     *
+     * Mutates this instance of the JWT. Refreshing a non-expired JWT mutates the JWT but keeps it
+     * usable.
      */
     fun refresh() {
         this.stringValue = refreshTokenFn()
     }
+}
+
+/**
+ * A factory of JWTs that can authorize GitHub API requests.
+ */
+interface JwtFactory {
+
+    /**
+     * Generates a new GitHub JWT.
+     */
+    fun newJwt(): GitHubJwt
 }
 
 

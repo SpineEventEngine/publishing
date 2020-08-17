@@ -20,13 +20,22 @@
 
 package io.spine.publishing.github
 
+import com.google.api.client.util.Preconditions.checkArgument
+
 /**
  * A rule that specifies how an [action] may be retried.
  *
- * @param retriesLeft how many times the action should be retried
+ * @param retriesLeft how many times the action should be retried; must be a positive number
  * @param R the result of the action that is being retried
  */
 abstract class RetryPolicy<R>(private var retriesLeft: Int) {
+
+    init {
+        checkArgument(retriesLeft > 0, "Cannot create a retry policy" +
+                "with a negative amount of retries.")
+        checkArgument(retriesLeft != 0, "Tried to create a retry " +
+                "policy with 0 retries. Retry policies must retry at least once.")
+    }
 
     /**
      * Retries the [action] until it returns a satisfactory result or until the retries are

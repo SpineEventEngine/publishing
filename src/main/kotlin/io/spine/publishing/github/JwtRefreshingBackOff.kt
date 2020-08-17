@@ -24,6 +24,7 @@ import com.google.api.client.http.HttpRequest
 import com.google.api.client.http.HttpResponse
 import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler
+import com.google.api.client.util.Preconditions.checkArgument
 import com.google.common.net.HttpHeaders.AUTHORIZATION
 
 /**
@@ -34,12 +35,17 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  *
  * Retries are performed only if the response is [STATUS_CODE_UNAUTHORIZED].
  *
- * @param retries the amount of times the request should be retried
+ * @param retries the amount of times the request should be retried; must be a positive number
  * @param jwt a JWT that authorizes GitHub REST calls
  */
 class JwtRefreshingBackOff(private var retries: Int,
                            private val jwt: GitHubJwt) :
         HttpUnsuccessfulResponseHandler {
+
+    init {
+        checkArgument(retries > 0, "`JwtRefreshingBackOff` must" +
+                "perform at least once. Retries specified: `$retries`.")
+    }
 
     override fun handleResponse(request: HttpRequest?,
                                 response: HttpResponse?,
