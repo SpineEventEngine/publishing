@@ -21,11 +21,11 @@
 package io.spine.publishing.github
 
 import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.google.api.client.http.GenericUrl
 import com.google.api.client.http.HttpResponseException
-import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
+import com.google.api.client.http.HttpStatusCodes.*
 import com.google.api.client.testing.http.MockLowLevelHttpResponse
-import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtValue
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPresetResponses
 import org.junit.jupiter.api.DisplayName
@@ -40,16 +40,24 @@ class JwtRefreshingBackOffTest {
     @Test
     @DisplayName("not retry if the response code is not `UNAUTHORIZED`")
     fun notRetryNonUnauthorized() {
+        var timesRefreshed = 0
+
+        val jwt = GitHubJwt(mockJwtValue) {
+            timesRefreshed++
+            mockJwtValue
+        }
+
         val transport = transportWithPresetResponses(listOf(
-                MockLowLevelHttpResponse()
-                        .setStatusCode(505)
+                mockResponse(STATUS_CODE_FORBIDDEN)
         ))
         val factory = transport.createRequestFactory()
         assertThrows<HttpResponseException> {
             factory.buildGetRequest(GenericUrl(mockUrl))
-                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, mockJwt))
+                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt))
                     .execute()
         }
+
+        assertThat(timesRefreshed).isEqualTo(0)
     }
 
     @Test
@@ -63,10 +71,8 @@ class JwtRefreshingBackOffTest {
         }
 
         val transport = transportWithPresetResponses(listOf(
-                MockLowLevelHttpResponse()
-                        .setStatusCode(STATUS_CODE_UNAUTHORIZED),
-                MockLowLevelHttpResponse()
-                        .setStatusCode(200)
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_OK)
         ))
 
         val createRequestFactory = transport.createRequestFactory()
@@ -87,14 +93,10 @@ class JwtRefreshingBackOffTest {
         }
 
         val transport = transportWithPresetResponses(listOf(
-                MockLowLevelHttpResponse()
-                        .setStatusCode(STATUS_CODE_UNAUTHORIZED),
-                MockLowLevelHttpResponse()
-                        .setStatusCode(STATUS_CODE_UNAUTHORIZED),
-                MockLowLevelHttpResponse()
-                        .setStatusCode(STATUS_CODE_UNAUTHORIZED),
-                MockLowLevelHttpResponse()
-                        .setStatusCode(200)
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_OK)
         ))
 
         val createRequestFactory = transport.createRequestFactory()
@@ -105,4 +107,7 @@ class JwtRefreshingBackOffTest {
         }
         assertThat(timesRefreshed == 3)
     }
+
+    private fun mockResponse(code: Int) = MockLowLevelHttpResponse()
+            .setStatusCode(code)
 }

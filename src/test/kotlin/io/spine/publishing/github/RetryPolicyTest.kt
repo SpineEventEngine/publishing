@@ -32,7 +32,6 @@ class RetryPolicyTest {
 
     @Test
     @DisplayName("throw when specifying a non-positive amount of retries")
-
     fun nonPositiveRetries() {
         assertThrows<IllegalArgumentException> {
             object : RetryPolicy<Unit>(-4) {
@@ -83,6 +82,7 @@ class RetryPolicyTest {
     }
 
     @Test
+    @DisplayName("throw after retrying the specified amount of times")
     fun throwAnException() {
         var sideEffectCounter = 0
 
