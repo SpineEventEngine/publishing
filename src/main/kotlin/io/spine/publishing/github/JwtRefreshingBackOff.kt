@@ -39,7 +39,7 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  * @param jwt a JWT that authorizes GitHub REST calls
  */
 class JwtRefreshingBackOff(private var retries: Int,
-                           private val jwt: GitHubJwt) :
+                           private var jwt: GitHubJwt) :
         HttpUnsuccessfulResponseHandler {
 
     init {
@@ -66,7 +66,7 @@ class JwtRefreshingBackOff(private var retries: Int,
             response.statusCode == STATUS_CODE_UNAUTHORIZED
 
     private fun refreshJwt(request: HttpRequest) {
-        jwt.refresh()
+        jwt = jwt.refresh()
         request.headers[AUTHORIZATION] = "Bearer ${jwt.value}"
     }
 }

@@ -68,7 +68,7 @@ object GitHubRequestsTestEnv {
 
     const val mockJwtValue = "abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD"
 
-    val mockJwt = GitHubJwt(mockJwtValue) { mockJwtValue }
+    fun mockJwt(): GitHubJwt = GitHubJwt(mockJwtValue) { mockJwt() }
 
     val mockInstallationId = AppInstallation("30235051")
 

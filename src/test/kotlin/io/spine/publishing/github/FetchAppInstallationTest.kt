@@ -36,11 +36,11 @@ class FetchAppInstallationTest {
     @Test
     @DisplayName("parse an installation ID if the App was installed exactly once")
     fun parseInstallationId() {
-        val transport = transportThatRespondsWith {response ->
+        val transport = transportThatRespondsWith { response ->
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport)
+        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport)
                 .perform()
         assertThat(appId).isEqualTo(AppInstallation("42"))
     }
@@ -54,7 +54,7 @@ class FetchAppInstallationTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport).perform()
         }
     }
 
@@ -67,7 +67,7 @@ class FetchAppInstallationTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport).perform()
         }
     }
 }

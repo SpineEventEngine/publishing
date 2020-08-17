@@ -71,7 +71,7 @@ class VersionUpdateTest {
 
     private val mockTokenFactory = object : TokenFactory {
         override fun newToken(): GitHubToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS)) {
-            "mock_token"
+            newToken()
         }
     }
 }

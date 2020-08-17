@@ -54,7 +54,7 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
 /**
  * A string value used to authorize GitHub operations.
  *
- * GitHub tokens can expire, after which they must be [refreshed][refresh]
+ * GitHub tokens can expire, after which they can be [refreshed][refresh].
  *
  * @param stringValue the value of the token
  * @param expiresAt the moment after which the token is no longer usable
@@ -63,7 +63,7 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
  */
 class GitHubToken(private var stringValue: String,
                   val expiresAt: Instant,
-                  private val refreshFn: () -> String) {
+                  private val refreshFn: () -> GitHubToken) {
 
 
     /** Returns the string value of the token. */
@@ -82,8 +82,8 @@ class GitHubToken(private var stringValue: String,
      *
      * Mutates this `GitHubToken` instance.
      */
-    fun refresh() {
-        stringValue = refreshFn()
+    fun refresh(): GitHubToken {
+        return refreshFn()
     }
 
     override fun equals(other: Any?): Boolean {

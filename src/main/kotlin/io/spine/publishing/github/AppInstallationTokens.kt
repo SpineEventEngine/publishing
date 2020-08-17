@@ -85,6 +85,7 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
         val payload = Klaxon().parseJsonObject(StringReader(responseText))
         val tokenValue = payload["token"] as String
         val expiresAt = Instant.parse(payload["expires_at"] as String)
-        return GitHubToken(tokenValue, expiresAt) {this.perform().value}
+
+        return GitHubToken(tokenValue, expiresAt) { this.perform() }
     }
 }

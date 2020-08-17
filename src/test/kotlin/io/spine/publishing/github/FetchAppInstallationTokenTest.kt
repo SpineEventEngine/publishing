@@ -42,8 +42,8 @@ class FetchAppInstallationTokenTest {
         }
 
         val expectedExpirationTime = Instant.parse("2020-08-13T15:01:37Z")
-        val parsedToken = FetchAppInstallationToken(mockInstallationId, mockJwt, transport)
-                .perform()
+        val parsedToken =
+                FetchAppInstallationToken(mockInstallationId, mockJwt(), transport).perform()
         assertThat(parsedToken.value).isEqualTo("mock_token_value")
         assertThat(parsedToken.expiresAt).isEqualTo(expectedExpirationTime)
     }

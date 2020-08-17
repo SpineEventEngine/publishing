@@ -14,7 +14,7 @@ import java.security.Security
 import java.security.interfaces.RSAPrivateKey
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit.MINUTES
-import java.util.Date
+import java.util.*
 
 /**
  * A JWT that can be used to authorize [GitHubApiRequest]s.
@@ -28,22 +28,17 @@ import java.util.Date
  * @param refreshTokenFn a function that refreshes the value of the JWT
  */
 data class GitHubJwt(private var stringValue: String,
-                     private val refreshTokenFn: () -> String) {
+                     private val refreshTokenFn: () -> GitHubJwt) {
 
     /** Returns the string value of this JWT. */
     val value get() = stringValue
 
     /**
-     * Refreshes the JWT.
+     * Returns a new GitHub JWT.
      *
-     * If the JWT has expired, refreshing it makes the JWT usable again.
-     *
-     * Mutates this instance of the JWT. Refreshing a non-expired JWT mutates the JWT but keeps it
-     * usable.
+     * Use when this JWT reaches its expiration time.
      */
-    fun refresh() {
-        this.stringValue = refreshTokenFn()
-    }
+    fun refresh(): GitHubJwt = refreshTokenFn()
 }
 
 /**
@@ -77,7 +72,7 @@ class SignedJwts(private val privateKeyPath: Path) : JwtFactory {
         val path = privateKeyPath
         val appId = app.id
         val jwt = generateJwt(path, appId)
-        return GitHubJwt(jwt) { generateJwt(path, appId) }
+        return GitHubJwt(jwt) { jwtFor(app) }
     }
 
     private fun generateJwt(privateKeyPath: Path,

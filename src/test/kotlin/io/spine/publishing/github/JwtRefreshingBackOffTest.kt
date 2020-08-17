@@ -42,9 +42,9 @@ class JwtRefreshingBackOffTest {
     fun notRetryNonUnauthorized() {
         var timesRefreshed = 0
 
-        val jwt = GitHubJwt(mockJwtValue) {
+        fun jwt(): GitHubJwt = GitHubJwt(mockJwtValue) {
             timesRefreshed++
-            mockJwtValue
+            jwt()
         }
 
         val transport = transportWithPresetResponses(listOf(
@@ -53,7 +53,7 @@ class JwtRefreshingBackOffTest {
         val factory = transport.createRequestFactory()
         assertThrows<HttpResponseException> {
             factory.buildGetRequest(GenericUrl(mockUrl))
-                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt))
+                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt()))
                     .execute()
         }
 
@@ -65,9 +65,9 @@ class JwtRefreshingBackOffTest {
     fun retryIfUnauthorized() {
         var timesRefreshed = 0
 
-        val jwt = GitHubJwt(mockJwtValue) {
+        fun jwt(): GitHubJwt = GitHubJwt(mockJwtValue) {
             timesRefreshed++
-            mockJwtValue
+            jwt()
         }
 
         val transport = transportWithPresetResponses(listOf(
@@ -77,7 +77,7 @@ class JwtRefreshingBackOffTest {
 
         val createRequestFactory = transport.createRequestFactory()
         createRequestFactory.buildGetRequest(GenericUrl(mockUrl))
-                .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt))
+                .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt()))
                 .execute()
         assertThat(timesRefreshed == 1)
     }
@@ -87,10 +87,11 @@ class JwtRefreshingBackOffTest {
     fun stopTrying() {
         var timesRefreshed = 0
 
-        val jwt = GitHubJwt(mockJwtValue) {
+        fun jwt(): GitHubJwt = GitHubJwt(mockJwtValue) {
             timesRefreshed++
-            mockJwtValue
+            jwt()
         }
+
 
         val transport = transportWithPresetResponses(listOf(
                 mockResponse(STATUS_CODE_UNAUTHORIZED),
@@ -102,7 +103,7 @@ class JwtRefreshingBackOffTest {
         val createRequestFactory = transport.createRequestFactory()
         assertThrows<HttpResponseException> {
             createRequestFactory.buildGetRequest(GenericUrl(mockUrl))
-                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(2, jwt))
+                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(2, jwt()))
                     .execute()
         }
         assertThat(timesRefreshed == 3)
