@@ -40,7 +40,7 @@ class FetchAppInstallationTest {
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport)
+        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockApp, transport)
                 .perform()
         assertThat(appId).isEqualTo(AppInstallation("42"))
     }
@@ -54,7 +54,7 @@ class FetchAppInstallationTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockApp, transport).perform()
         }
     }
 
@@ -67,7 +67,11 @@ class FetchAppInstallationTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallations.forAppWithSingleInstallation(mockJwt(), transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockApp, transport).perform()
         }
     }
+
+    private val mockApp = GitHubApp("mock_app", object : JwtFactory {
+        override fun jwtFor(app: GitHubApp): GitHubJwt = mockJwt()
+    })
 }

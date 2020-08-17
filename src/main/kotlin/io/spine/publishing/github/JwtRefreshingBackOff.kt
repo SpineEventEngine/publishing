@@ -25,7 +25,6 @@ import com.google.api.client.http.HttpResponse
 import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler
 import com.google.api.client.util.Preconditions.checkArgument
-import com.google.common.net.HttpHeaders.AUTHORIZATION
 
 /**
  * A back-off policy that specifies how the requests to the GitHub API can be retried.
@@ -67,6 +66,6 @@ class JwtRefreshingBackOff(private var retries: Int,
 
     private fun refreshJwt(request: HttpRequest) {
         jwt = jwt.refresh()
-        request.headers[AUTHORIZATION] = "Bearer ${jwt.value}"
+        GitHubApiRequest.authorizationHeader(request.headers, jwt)
     }
 }

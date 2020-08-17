@@ -49,9 +49,8 @@ class GitHubApp(val id: AppId, private val jwtFactory: JwtFactory) {
      * is used for authorization.
      */
     fun fetchSingleInstallation(): AppInstallation {
-        val jwt = newJwt()
         return FetchAppInstallations
-                .forAppWithSingleInstallation(jwt)
+                .forAppWithSingleInstallation(this)
                 .perform()
     }
 
@@ -61,7 +60,7 @@ class GitHubApp(val id: AppId, private val jwtFactory: JwtFactory) {
     /**
      * Returns a new JWT that can authorize GitHub API requests using the permissions of this App.
      */
-    fun newJwt() = jwtFactory.jwtFor(this)
+    internal fun newJwt() = jwtFactory.jwtFor(this)
 }
 
 /**
@@ -86,16 +85,16 @@ private typealias PickInstallation = (JsonArray<JsonObject>) -> AppInstallation
  * The App may have many installations. [pickInstallationFn] is used to pick the installation
  * to return from [perform].
  *
+ * @param app an app for which to fetch the installations
  * @param pickInstallationFn a function to select the necessary installation
- * @param jwt a JWT that authorizes GitHub REST API operations
  * @param httpTransport an HTTP transport to use
  */
-class FetchAppInstallations private constructor(private val pickInstallationFn: PickInstallation,
-                                                jwt: GitHubJwt,
+class FetchAppInstallations private constructor(app: GitHubApp,
+                                                private val pickInstallationFn: PickInstallation,
                                                 httpTransport: HttpTransport)
     : GitHubApiRequest<AppInstallation>(
         url = URL,
-        jwt = jwt,
+        jwt = app.newJwt(),
         httpTransport = httpTransport
 ) {
 
@@ -124,13 +123,13 @@ class FetchAppInstallations private constructor(private val pickInstallationFn: 
          * If the GitHub App is known to be installed zero or multiple times, use another
          * [PickInstallation] function.
          *
-         * @param jwt a JWT that authorizes GitHub API requests
+         * @param app a GitHub App for which the installation is fetched
          * @param httpTransport an HTTP transport to use; may be overridden for tests
          */
-        fun forAppWithSingleInstallation(jwt: GitHubJwt,
+        fun forAppWithSingleInstallation(app: GitHubApp,
                                          httpTransport: HttpTransport = NetHttpTransport())
                 : FetchAppInstallations =
-                FetchAppInstallations(singleInstallation, jwt, httpTransport)
+                FetchAppInstallations(app, singleInstallation, httpTransport)
     }
 
     override fun parseResponse(responseText: String): AppInstallation {

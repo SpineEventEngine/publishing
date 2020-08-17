@@ -32,7 +32,7 @@ abstract class RetryPolicy<R>(private var retriesLeft: Int) {
 
     init {
         checkArgument(retriesLeft >= 0, "Cannot create a retry policy" +
-                "with a negative amount of retries.")
+                "with a negative amount of retries. Retries specified: `${retriesLeft}`")
     }
 
     /**

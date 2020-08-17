@@ -31,6 +31,12 @@ abstract class GitHubApiRequest<T>(private val url: String,
     private val requestFactory = httpTransport.createRequestFactory()
     private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwt)
 
+    companion object {
+        internal fun authorizationHeader(headers: HttpHeaders, jwt: GitHubJwt) {
+            headers[AUTHORIZATION] = "Bearer ${jwt.value}"
+        }
+    }
+
     /**
      * Performs the HTTP request to the [URL][url] using the specified [method] and
      * setting and authorization header to use the [jwt].
@@ -42,7 +48,7 @@ abstract class GitHubApiRequest<T>(private val url: String,
      */
     fun perform(): T {
         val httpHeaders = HttpHeaders()
-        httpHeaders[AUTHORIZATION] = "Bearer ${jwt.value}"
+        authorizationHeader(httpHeaders, jwt)
         httpHeaders[ACCEPT] = "application/vnd.github.machine-man-preview+json"
 
         val response = requestFactory
@@ -66,7 +72,7 @@ abstract class GitHubApiRequest<T>(private val url: String,
      * The [responses][responseText] are guaranteed to have a non-error status code. Therefore,
      * the extenders should expect only successful API responses.
      *
-     * Throws an exception if `T` could not be parsed.
+     * Descendants should throw an exception if the result could not be parsed.
      *
      * @param responseText text of a successful GitHub REST API response
      */

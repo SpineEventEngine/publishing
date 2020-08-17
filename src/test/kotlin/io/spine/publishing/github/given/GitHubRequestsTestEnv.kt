@@ -72,6 +72,10 @@ object GitHubRequestsTestEnv {
 
     val mockInstallationId = AppInstallation("30235051")
 
+    const val tokenValue = "mock_token_value"
+
+    const val expirationTime = "2020-08-13T15:01:37Z"
+
     /**
      * A response from the GitHub `installations/<id>/access_tokens/` endpoint.
      *
@@ -79,8 +83,8 @@ object GitHubRequestsTestEnv {
      * which expires at `Instant.parse("2020-08-13T15:01:37Z")`.
      */
     const val successfulApplicationTokenResponse = """{
-  "token": "mock_token_value",
-  "expires_at": "2020-08-13T15:01:37Z",
+  "token": "$tokenValue",
+  "expires_at": "$expirationTime",
   "permissions": {
     "contents": "write",
     "metadata": "read",
