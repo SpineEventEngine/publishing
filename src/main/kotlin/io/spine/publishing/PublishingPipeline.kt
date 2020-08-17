@@ -1,7 +1,11 @@
 package io.spine.publishing
 
 import io.spine.publishing.git.GitHubToken
-import io.spine.publishing.operation.*
+import io.spine.publishing.operation.SetToCurrentRemote
+import io.spine.publishing.operation.UpdateVersions
+import io.spine.publishing.operation.EnsureBuilds
+import io.spine.publishing.operation.Publish
+import io.spine.publishing.operation.UpdateRemote
 
 /**
  * A series of operations to perform over a set of libraries in order to update them and

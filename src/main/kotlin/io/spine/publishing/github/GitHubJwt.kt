@@ -14,7 +14,7 @@ import java.security.Security
 import java.security.interfaces.RSAPrivateKey
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit.MINUTES
-import java.util.*
+import java.util.Date
 
 /**
  * A JWT that can be used to authorize [GitHubApiRequest]s.

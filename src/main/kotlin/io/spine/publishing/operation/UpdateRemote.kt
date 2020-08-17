@@ -4,10 +4,19 @@ import io.spine.publishing.Library
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
-import io.spine.publishing.git.*
+import io.spine.publishing.git.GitHubToken
+import io.spine.publishing.git.Master
+import io.spine.publishing.git.StageFiles
+import io.spine.publishing.git.VersionFile
+import io.spine.publishing.git.GitCommand
+import io.spine.publishing.git.Commit
+import io.spine.publishing.git.VersionBumpMessage
+import io.spine.publishing.git.PushToRemote
+import io.spine.publishing.git.Checkout
 
 /**
- * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
+ * Propagates local [Library] changes to the
+ * [remote upstream][io.spine.publishing.git.GitRepository.remote].
  *
  * @param token a token to authorize the remote operation
  */
