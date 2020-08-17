@@ -25,7 +25,7 @@ import com.google.api.client.http.LowLevelHttpResponse
 import com.google.api.client.testing.http.MockHttpTransport
 import com.google.api.client.testing.http.MockLowLevelHttpRequest
 import com.google.api.client.testing.http.MockLowLevelHttpResponse
-import io.spine.publishing.github.AppInstallationId
+import io.spine.publishing.github.AppInstallation
 import io.spine.publishing.github.GitHubJwt
 
 typealias SetupMockHttpResponse = (MockLowLevelHttpResponse) -> MockLowLevelHttpResponse
@@ -70,7 +70,7 @@ object GitHubRequestsTestEnv {
 
     val mockJwt = GitHubJwt(mockJwtValue) { mockJwtValue }
 
-    val mockInstallationId = AppInstallationId("30235051")
+    val mockInstallationId = AppInstallation("30235051")
 
     /**
      * A response from the GitHub `installations/<id>/access_tokens/` endpoint.

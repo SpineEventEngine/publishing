@@ -20,13 +20,9 @@ interface TokenFactory {
  *
  * The tokens are fetched using the GitHub REST API.
  *
- * To fetch a GitHub App, a JWT is needed.
- *
- * If the [jwt] expires, it is [refreshed][GitHubJwt.refresh].
- *
- * @param jwt a JWT that authorizes the fetching of the token
+ * @param app a GitHub App to fetch the tokens for
  */
-class AppInstallationTokens(private val jwt: GitHubJwt) : TokenFactory {
+class AppInstallationTokens(private val app: GitHubApp) : TokenFactory {
 
     /**
      * Creates a new GitHub App token.
@@ -34,22 +30,8 @@ class AppInstallationTokens(private val jwt: GitHubJwt) : TokenFactory {
      * Tokens have a lifetime of 1 hour. After 1 hour, a new token has to be created.
      */
     override fun newToken(): GitHubToken {
-        val installationId = installationId(jwt)
-        return FetchAppInstallationToken(jwt, installationId).perform()
+        val jwt = app.newJwt()
+        val installation = app.fetchSingleInstallation()
+        return FetchAppInstallationToken(jwt, installation).perform()
     }
-
-    /**
-     * Obtains an installation ID of this App.
-     *
-     * The installation ID is required to create an App installation token which
-     * is used for authorization.
-     *
-     * Note: the installation ID is immutable and can be cached.
-     * Currently, `TokenFactory` fetches it every time, but it doesn't necessarily have to.
-     *
-     * @param jwt a JWT that authorizes the fetching of the installation ID
-     */
-    private fun installationId(jwt: GitHubJwt) = FetchAppInstallationId
-            .forAppWithSingleInstallation(jwt)
-            .perform()
 }

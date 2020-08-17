@@ -21,7 +21,7 @@
 package io.spine.publishing
 
 import io.spine.publishing.github.AppId
-import io.spine.publishing.github.AppInstallationTokens
+import io.spine.publishing.github.GitHubApp
 import io.spine.publishing.github.SignedJwts
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -39,8 +39,9 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val jwtFactory = SignedJwts(privateKeyPath, appId)
-        val tokenFactory = AppInstallationTokens(jwtFactory.newJwt())
+        val jwtFactory = SignedJwts(privateKeyPath)
+        val gitHubApp = GitHubApp(appId, jwtFactory)
+        val tokenFactory = gitHubApp.tokenFactory()
         PublishingPipeline(remoteLibs, tokenFactory).eval()
     }
 }

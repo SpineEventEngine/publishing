@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 @DisplayName("`FetchAppInstallationId` should")
-class FetchAppInstallationIdTest {
+class FetchAppInstallationTest {
 
     @Test
     @DisplayName("parse an installation ID if the App was installed exactly once")
@@ -40,9 +40,9 @@ class FetchAppInstallationIdTest {
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallationId.forAppWithSingleInstallation(mockJwt, transport)
+        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport)
                 .perform()
-        assertThat(appId).isEqualTo(AppInstallationId("42"))
+        assertThat(appId).isEqualTo(AppInstallation("42"))
     }
 
     @Test
@@ -54,7 +54,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.forAppWithSingleInstallation(mockJwt, transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport).perform()
         }
     }
 
@@ -67,7 +67,7 @@ class FetchAppInstallationIdTest {
         }
 
         assertThrows<IllegalStateException> {
-            FetchAppInstallationId.forAppWithSingleInstallation(mockJwt, transport).perform()
+            FetchAppInstallations.forAppWithSingleInstallation(mockJwt, transport).perform()
         }
     }
 }

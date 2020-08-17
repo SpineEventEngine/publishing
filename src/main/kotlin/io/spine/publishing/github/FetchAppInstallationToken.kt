@@ -23,11 +23,11 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
      * This constructor should be used for tests to mock the HTTP transport.
      *
      * @param jwt a JWT that authorizes the request
-     * @param installationId the installation ID of the GitHub App to fetch a token for
+     * @param installation the installation ID of the GitHub App to fetch a token for
      * @param httpTransport the HTTP transport to use
      */
-    constructor(jwt: GitHubJwt, installationId: AppInstallationId, httpTransport: HttpTransport) :
-            super(url(installationId), POST, jwt, httpTransport)
+    constructor(jwt: GitHubJwt, installation: AppInstallation, httpTransport: HttpTransport) :
+            super(url(installation), POST, jwt, httpTransport)
 
     /**
      * Creates a new request to fetch the GitHub App installation token.
@@ -35,14 +35,14 @@ class FetchAppInstallationToken : GitHubApiRequest<GitHubToken> {
      * The fetched token can be used to authorize operations with GitHub, see [GitHubToken].
      *
      * @param jwt a JWT that authorizes the request
-     * @param installationId the installation ID of the GitHub App to fetch a token for
+     * @param installation the installation ID of the GitHub App to fetch a token for
      */
-    constructor(jwt: GitHubJwt, installationId: AppInstallationId) :
-            super(url(installationId), jwt = jwt, method = POST)
+    constructor(jwt: GitHubJwt, installation: AppInstallation) :
+            super(url(installation), jwt = jwt, method = POST)
 
     companion object {
-        private fun url(installationId: AppInstallationId): String =
-                "https://api.github.com/app/installations/${installationId.value}/access_tokens"
+        private fun url(installation: AppInstallation): String =
+                "https://api.github.com/app/installations/${installation.id}/access_tokens"
     }
 
     override fun parseResponse(responseText: String): GitHubToken {
