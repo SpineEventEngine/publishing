@@ -10,18 +10,20 @@ import java.time.Instant
 /**
  * A factory of GitHub tokens.
  *
- * GitHub tokens authorize Git operations.
+ * GitHub tokens authorize Git operations with remote repositories hosted on GitHub.
  */
 interface TokenFactory {
 
     /**
-     * Creates a new GitHub App token.
+     * Creates a new GitHub token.
      */
     fun newToken(): GitHubToken
 }
 
 /**
- * A factory for tokens that can be used to authorize GitHub API requests on behalf of a GitHub App.
+ * A factory for tokens that are tied to an installation of a [GitHub App][app].
+ *
+ * Tokens produced by this factory make operations on behalf of the specified GitHub App.
  *
  * The tokens are fetched using the GitHub REST API.
  *

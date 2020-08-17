@@ -55,7 +55,7 @@ class GitHubApp(val id: AppId, private val jwtFactory: JwtFactory) {
                 .perform()
     }
 
-    /** Returns a factory of tokens that can authorize Git operations. */
+    /** Returns a factory of tokens that can authorize Git operations on behalf of this App. */
     fun tokenFactory() = AppInstallationTokens(this)
 
     /**
