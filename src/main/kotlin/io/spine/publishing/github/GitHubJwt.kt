@@ -2,6 +2,9 @@ package io.spine.publishing.github
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.google.api.client.http.HttpRequest
+import com.google.common.net.HttpHeaders
+import com.google.common.net.HttpHeaders.AUTHORIZATION
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.PEMKeyPair
 import org.bouncycastle.openssl.PEMParser
@@ -22,23 +25,24 @@ import java.util.*
  * GitHub JWTs have an expiration time, see [SignedJwts]. After the JWT has expired,
  * it may be [refreshed][refresh].
  *
- * A JWT must be placed in the "Authorization" header.
- *
  * @param stringValue the string value of the JWT
  * @param refreshTokenFn a function that refreshes the value of the JWT
  */
-data class GitHubJwt(private var stringValue: String,
+data class GitHubJwt(private val stringValue: String,
                      private val refreshTokenFn: () -> GitHubJwt) {
-
-    /** Returns the string value of this JWT. */
-    val value get() = stringValue
-
     /**
      * Returns a new GitHub JWT.
      *
      * Use when this JWT reaches its expiration time.
      */
     fun refresh(): GitHubJwt = refreshTokenFn()
+
+    /**
+     * Authorizes the specified request by setting it's `AUTHORIZATION` header to this JWT.
+     */
+    fun authorizeRequest(request: HttpRequest) {
+        request.headers[AUTHORIZATION] = "Bearer $stringValue"
+    }
 }
 
 /**

@@ -6,7 +6,6 @@ import com.google.api.client.http.HttpMethods
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.common.net.HttpHeaders.ACCEPT
-import com.google.common.net.HttpHeaders.AUTHORIZATION
 
 /**
  * An HTTP request to the GitHub REST API.
@@ -31,12 +30,6 @@ abstract class GitHubApiRequest<T>(private val url: String,
     private val requestFactory = httpTransport.createRequestFactory()
     private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwt)
 
-    companion object {
-        internal fun authorizationHeader(headers: HttpHeaders, jwt: GitHubJwt) {
-            headers[AUTHORIZATION] = "Bearer ${jwt.value}"
-        }
-    }
-
     /**
      * Performs the HTTP request to the [URL][url] using the specified [method] and
      * setting and authorization header to use the [jwt].
@@ -48,11 +41,13 @@ abstract class GitHubApiRequest<T>(private val url: String,
      */
     fun perform(): T {
         val httpHeaders = HttpHeaders()
-        authorizationHeader(httpHeaders, jwt)
         httpHeaders[ACCEPT] = "application/vnd.github.machine-man-preview+json"
 
-        val response = requestFactory
+        val request = requestFactory
                 .buildRequest(method, GenericUrl(url), null)
+        jwt.authorizeRequest(request)
+
+        val response = request
                 .setHeaders(httpHeaders)
                 .setThrowExceptionOnExecuteError(false)
                 .setUnsuccessfulResponseHandler(backOff)
