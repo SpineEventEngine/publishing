@@ -78,13 +78,12 @@ class GitHubToken(private var stringValue: String,
     val isExpired get() = now().isAfter(expiresAt)
 
     /**
-     * Refreshes the token value.
+     * Returns a new token.
      *
-     * Mutates this `GitHubToken` instance.
+     * Use when this one has [expired][isExpired].
      */
-    fun refresh(): GitHubToken {
-        return refreshFn()
-    }
+    fun refresh(): GitHubToken = refreshFn()
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
