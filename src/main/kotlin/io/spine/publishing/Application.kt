@@ -40,7 +40,7 @@ object Application {
     @JvmStatic
     fun main(args: Array<String>) {
         val jwtFactory = SignedJwts(privateKeyPath, appId)
-        val tokenFactory = AppInstallationTokens(jwtFactory)
+        val tokenFactory = AppInstallationTokens(jwtFactory.newJwt())
         PublishingPipeline(remoteLibs, tokenFactory).eval()
     }
 }

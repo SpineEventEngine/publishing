@@ -27,7 +27,6 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest
 import com.google.api.client.testing.http.MockLowLevelHttpResponse
 import io.spine.publishing.github.AppInstallationId
 import io.spine.publishing.github.GitHubJwt
-import io.spine.publishing.github.JwtFactory
 
 typealias SetupMockHttpResponse = (MockLowLevelHttpResponse) -> MockLowLevelHttpResponse
 
@@ -67,10 +66,9 @@ object GitHubRequestsTestEnv {
                 }
             }
 
-    val mockJwtFactory = object : JwtFactory {
-        override fun newJwt() =
-                GitHubJwt("abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD")
-    }
+    const val mockJwtValue = "abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD"
+
+    val mockJwt = GitHubJwt(mockJwtValue) { mockJwtValue }
 
     val mockInstallationId = AppInstallationId("30235051")
 

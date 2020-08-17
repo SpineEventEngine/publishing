@@ -30,15 +30,15 @@ import com.google.common.net.HttpHeaders.AUTHORIZATION
  * A back-off policy that specifies how the requests to the GitHub API can be retried.
  *
  * Tries to perform the request until the [retries] are exhausted or the request is successful.
- * On each retry, generated a new [GitHubJwt] using the [jwtFactory].
+ * On each retry, a JWT is [refreshed][GitHubJwt.refresh].
  *
  * Retries are performed only if the response is [STATUS_CODE_UNAUTHORIZED].
  *
  * @param retries the amount of times the request should be retried
- * @param jwtFactory a factory of JWTs that authorize GitHub API operations
+ * @param jwt a JWT that authorizes GitHub REST calls
  */
 class JwtRefreshingBackOff(private var retries: Int,
-                           private val jwtFactory: JwtFactory) :
+                           private val jwt: GitHubJwt) :
         HttpUnsuccessfulResponseHandler {
 
     override fun handleResponse(request: HttpRequest?,
@@ -60,7 +60,7 @@ class JwtRefreshingBackOff(private var retries: Int,
             response.statusCode == STATUS_CODE_UNAUTHORIZED
 
     private fun refreshJwt(request: HttpRequest) {
-        val newJwt = jwtFactory.newJwt()
-        request.headers[AUTHORIZATION] = "Bearer ${newJwt.value}"
+        jwt.refresh()
+        request.headers[AUTHORIZATION] = "Bearer ${jwt.value}"
     }
 }

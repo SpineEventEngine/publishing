@@ -24,7 +24,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.spine.publishing.git.GitHubToken
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockInstallationId
-import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtFactory
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.successfulApplicationTokenResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportThatRespondsWith
 import org.junit.jupiter.api.DisplayName
@@ -43,7 +43,7 @@ class FetchAppInstallationTokenTest {
         }
 
         val expectedExpirationTime = Instant.parse("2020-08-13T15:01:37Z")
-        val parsedToken = FetchAppInstallationToken(mockJwtFactory, mockInstallationId, transport)
+        val parsedToken = FetchAppInstallationToken(mockJwt, mockInstallationId, transport)
                 .perform()
         assertThat(parsedToken).isEqualTo(GitHubToken("mock_token_value", expectedExpirationTime))
     }

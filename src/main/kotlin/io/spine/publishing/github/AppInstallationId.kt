@@ -29,16 +29,16 @@ private typealias PickInstallation = (JsonArray<JsonObject>) -> JsonObject
  * The App may have many installations. [pickInstallationFn] is used to pick the installation
  * to return from [perform].
  *
- * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
  * @param pickInstallationFn a function to select the necessary installation
+ * @param jwt a JWT that authorizes GitHub REST API operations
  * @param httpTransport an HTTP transport to use
  */
 class FetchAppInstallationId private constructor(private val pickInstallationFn: PickInstallation,
-                                                 jwtFactory: JwtFactory,
+                                                 jwt: GitHubJwt,
                                                  httpTransport: HttpTransport)
     : GitHubApiRequest<AppInstallationId>(
         url = URL,
-        jwtFactory = jwtFactory,
+        jwt = jwt,
         httpTransport = httpTransport
 ) {
 
@@ -62,13 +62,13 @@ class FetchAppInstallationId private constructor(private val pickInstallationFn:
          * If the GitHub App is known to be installed zero or multiple times, use another
          * [PickInstallation] function.
          *
-         * @param jwtFactory a factory of JWTs that authorize the GitHub API requests
+         * @param jwt a JWT that authorizes GitHub API requests
          * @param httpTransport an HTTP transport to use; may be overridden for tests
          */
-        fun forAppWithSingleInstallation(jwtFactory: JwtFactory,
+        fun forAppWithSingleInstallation(jwt: GitHubJwt,
                                          httpTransport: HttpTransport = NetHttpTransport())
                 : FetchAppInstallationId =
-                FetchAppInstallationId(singleInstallation, jwtFactory, httpTransport)
+                FetchAppInstallationId(singleInstallation, jwt, httpTransport)
     }
 
     override fun parseResponse(responseText: String): AppInstallationId {

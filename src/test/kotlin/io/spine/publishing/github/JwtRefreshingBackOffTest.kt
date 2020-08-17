@@ -25,12 +25,12 @@ import com.google.api.client.http.GenericUrl
 import com.google.api.client.http.HttpResponseException
 import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
 import com.google.api.client.testing.http.MockLowLevelHttpResponse
-import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtFactory
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtValue
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPresetResponses
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.*
 
 @DisplayName("`JwtRefreshingBackOff` should")
 class JwtRefreshingBackOffTest {
@@ -47,7 +47,7 @@ class JwtRefreshingBackOffTest {
         val factory = transport.createRequestFactory()
         assertThrows<HttpResponseException> {
             factory.buildGetRequest(GenericUrl(mockUrl))
-                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, mockJwtFactory))
+                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, mockJwt))
                     .execute()
         }
     }
@@ -55,13 +55,11 @@ class JwtRefreshingBackOffTest {
     @Test
     @DisplayName("retry if the response code is `UNAUTHORIZED`")
     fun retryIfUnauthorized() {
-        val jwtFactory = object : JwtFactory {
-            var jwtsCreated = 0
+        var timesRefreshed = 0
 
-            override fun newJwt(): GitHubJwt {
-                jwtsCreated++
-                return mockJwtFactory.newJwt()
-            }
+        val jwt = GitHubJwt(mockJwtValue) {
+            timesRefreshed++
+            mockJwtValue
         }
 
         val transport = transportWithPresetResponses(listOf(
@@ -73,22 +71,19 @@ class JwtRefreshingBackOffTest {
 
         val createRequestFactory = transport.createRequestFactory()
         createRequestFactory.buildGetRequest(GenericUrl(mockUrl))
-                .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwtFactory))
+                .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(3, jwt))
                 .execute()
-        assertThat(jwtFactory.jwtsCreated == 1)
+        assertThat(timesRefreshed == 1)
     }
 
     @Test
     @DisplayName("stop trying after exhausting the amount of retries")
     fun stopTrying() {
-        val jwtFactory = object : JwtFactory {
-            var jwtsCreated = 0
+        var timesRefreshed = 0
 
-            override fun newJwt(): GitHubJwt {
-                jwtsCreated++
-                val value = UUID.randomUUID().toString()
-                return GitHubJwt(value)
-            }
+        val jwt = GitHubJwt(mockJwtValue) {
+            timesRefreshed++
+            mockJwtValue
         }
 
         val transport = transportWithPresetResponses(listOf(
@@ -105,9 +100,9 @@ class JwtRefreshingBackOffTest {
         val createRequestFactory = transport.createRequestFactory()
         assertThrows<HttpResponseException> {
             createRequestFactory.buildGetRequest(GenericUrl(mockUrl))
-                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(2, jwtFactory))
+                    .setUnsuccessfulResponseHandler(JwtRefreshingBackOff(2, jwt))
                     .execute()
         }
-        assertThat(jwtFactory.jwtsCreated == 3)
+        assertThat(timesRefreshed == 3)
     }
 }

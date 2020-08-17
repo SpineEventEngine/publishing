@@ -22,7 +22,7 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtFactory
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportThatRespondsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -44,7 +44,7 @@ class GitHubApiRequestTest {
         val transport = transportThatRespondsWith { response -> response.setStatusCode(code) }
         val mockRequest = object : GitHubApiRequest<Unit>(
                 "https://github.com/mock_endpoint",
-                jwtFactory = mockJwtFactory,
+                jwt = mockJwt,
                 httpTransport = transport
         ) {
             override fun parseResponse(responseText: String) = Unit
@@ -70,7 +70,7 @@ class GitHubApiRequestTest {
         }
         val mockRequest =
                 object : GitHubApiRequest<Unit>(badUrl,
-                        jwtFactory = mockJwtFactory,
+                        jwt = mockJwt,
                         httpTransport = transport) {
                     override fun parseResponse(responseText: String) = Unit
 
@@ -91,7 +91,7 @@ class GitHubApiRequestTest {
 
         val mockRequest = object : GitHubApiRequest<String>(
                 "https://api.github.com/valid_url",
-                jwtFactory = mockJwtFactory,
+                jwt = mockJwt,
                 httpTransport = transport
         ) {
             override fun parseResponse(responseText: String): String = responseText

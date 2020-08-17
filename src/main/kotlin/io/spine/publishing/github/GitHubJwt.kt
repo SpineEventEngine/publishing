@@ -30,11 +30,29 @@ interface JwtFactory {
 /**
  * A JWT that can be used to authorize [GitHubApiRequest]s.
  *
+ * GitHub JWTs have an expiration time, see [SignedJwts]. After the JWT has expired,
+ * it may be [refreshed][refresh].
+ *
  * A JWT must be placed in the "Authorization" header.
-
- * @param value the string value of the JWT
+ *
+ * @param stringValue the string value of the JWT
+ * @param refreshTokenFn a function that refreshes the value of the JWT
  */
-data class GitHubJwt(val value: String)
+data class GitHubJwt(private var stringValue: String,
+                     private val refreshTokenFn: () -> String) {
+
+    /** Returns the string value of this JWT. */
+    val value get() = stringValue
+
+    /**
+     * Refreshes the JWT.
+     *
+     * If the JWT has expired, refreshing it makes the JWT usable again.
+     */
+    fun refresh() {
+        this.stringValue = refreshTokenFn()
+    }
+}
 
 
 /** The ID of the GitHub App. */
@@ -57,6 +75,15 @@ class SignedJwts(private val privateKeyPath: Path, private val gitHubAppId: AppI
      * can authorize [GitHubApiRequest]s.
      */
     override fun newJwt(): GitHubJwt {
+        val path = privateKeyPath
+        val appId = gitHubAppId
+        val jwt = generateJwt(path, appId)
+        return GitHubJwt(jwt) { generateJwt(path, appId) }
+    }
+
+    private fun generateJwt(privateKeyPath: Path,
+                            gitHubAppId: AppId): String {
+
         Security.addProvider(BouncyCastleProvider())
         val pemParser = PEMParser(FileReader(privateKeyPath.toFile()))
         val converter = JcaPEMKeyConverter().setProvider("BC")
@@ -73,6 +100,6 @@ class SignedJwts(private val privateKeyPath: Path, private val gitHubAppId: AppI
                 .withExpiresAt(Date.from(expirationTime))
                 // We only have the private key from the GitHub App.
                 .sign(Algorithm.RSA256(null, privateKey as RSAPrivateKey))
-        return GitHubJwt(jwt)
+        return jwt
     }
 }
