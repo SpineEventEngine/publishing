@@ -66,6 +66,6 @@ class JwtRefreshingBackOff(private var retries: Int,
 
     private fun refreshJwt(request: HttpRequest) {
         jwt = jwt.refresh()
-        jwt.authorizeRequest(request)
+        jwt.authorize(request)
     }
 }

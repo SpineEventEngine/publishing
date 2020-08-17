@@ -45,7 +45,7 @@ abstract class GitHubApiRequest<T>(private val url: String,
 
         val request = requestFactory
                 .buildRequest(method, GenericUrl(url), null)
-        jwt.authorizeRequest(request)
+        jwt.authorize(request)
 
         val response = request
                 .setHeaders(httpHeaders)

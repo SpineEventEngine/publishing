@@ -38,13 +38,13 @@ data class GitHubJwt(private val stringValue: String,
     fun refresh(): GitHubJwt = refreshTokenFn()
 
     /**
-     * Authorizes the specified request by setting it's `AUTHORIZATION` header to this JWT.
+     * Authorizes the specified request by setting its `AUTHORIZATION` header to this JWT.
      *
      * Most of the GitHub REST API requests must be authorized. Check with the GitHub
      * [documentation](https://docs.github.com/en/rest) for whether a particular request must be
      * authorized with a JWT.
      */
-    fun authorizeRequest(request: HttpRequest) {
+    fun authorize(request: HttpRequest) {
         request.headers[AUTHORIZATION] = "Bearer $stringValue"
     }
 }
