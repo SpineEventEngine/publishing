@@ -1,11 +1,7 @@
 package io.spine.publishing
 
-import io.spine.publishing.github.TokenFactory
-import io.spine.publishing.operation.EnsureBuilds
-import io.spine.publishing.operation.SetToCurrentRemote
-import io.spine.publishing.operation.UpdateVersions
-import io.spine.publishing.operation.Publish
-import io.spine.publishing.operation.UpdateRemote
+import io.spine.publishing.git.GitHubToken
+import io.spine.publishing.operation.*
 
 /**
  * A series of operations to perform over a set of libraries in order to update them and
@@ -31,15 +27,15 @@ class PublishingPipeline(val libraries: Set<Library>,
      * See class level documentation for the exact steps.
      *
      * @param libraries libraries to update and publish
-     * @param tokenFactory a factory of tokens that can authorize GitHub operations
+     * @param token a token that authorizes GitHub operations
      */
-    constructor(libraries: Set<Library>, tokenFactory: TokenFactory) :
+    constructor(libraries: Set<Library>, token: GitHubToken) :
             this(libraries, listOf(
                     SetToCurrentRemote(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),
-                    UpdateRemote(tokenFactory)
+                    UpdateRemote(token)
             ))
 
     /**

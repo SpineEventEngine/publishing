@@ -22,7 +22,6 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import io.spine.publishing.git.GitHubToken
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockInstallationId
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.successfulApplicationTokenResponse
@@ -45,6 +44,7 @@ class FetchAppInstallationTokenTest {
         val expectedExpirationTime = Instant.parse("2020-08-13T15:01:37Z")
         val parsedToken = FetchAppInstallationToken(mockInstallationId, mockJwt, transport)
                 .perform()
-        assertThat(parsedToken).isEqualTo(GitHubToken("mock_token_value", expectedExpirationTime))
+        assertThat(parsedToken.value).isEqualTo("mock_token_value")
+        assertThat(parsedToken.expiresAt).isEqualTo(expectedExpirationTime)
     }
 }

@@ -52,7 +52,7 @@ class VersionUpdateTest {
         val remote = GitHubRepoUrl(orgName, repo)
         val gitRepo = GitRepository(baseDirectory, remote)
         val library = Library("base", listOf(), gitRepo)
-        val commands = updateVersion(library, mockTokenFactory)
+        val commands = updateVersion(library, mockTokenFactory.newToken())
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -70,6 +70,8 @@ class VersionUpdateTest {
     }
 
     private val mockTokenFactory = object : TokenFactory {
-        override fun newToken(): GitHubToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS))
+        override fun newToken(): GitHubToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS)) {
+            "mock_token"
+        }
     }
 }

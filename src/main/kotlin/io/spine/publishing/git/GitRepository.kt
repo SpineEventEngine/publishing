@@ -54,12 +54,20 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
 /**
  * A string value used to authorize GitHub operations.
  *
- * GitHub tokens can expire, after which they cannot be used.
+ * GitHub tokens can expire, after which they must be [refreshed][refresh]
  *
- * @param value the value of the token
+ * @param stringValue the value of the token
  * @param expiresAt the moment after which the token is no longer usable
+ * @param refreshFn a function to obtain a new value of the token; used for
+ * [refreshing][refresh] the token
  */
-data class GitHubToken(val value: String, val expiresAt: Instant) {
+class GitHubToken(private var stringValue: String,
+                  val expiresAt: Instant,
+                  private val refreshFn: () -> String) {
+
+
+    /** Returns the string value of the token. */
+    val value get() = stringValue
 
     /**
      * Returns whether the GitHub token is expired.
@@ -68,4 +76,27 @@ data class GitHubToken(val value: String, val expiresAt: Instant) {
      * a new one has to be generated.
      */
     val isExpired get() = now().isAfter(expiresAt)
+
+    /**
+     * Refreshes the token value.
+     *
+     * Mutates this `GitHubToken` instance.
+     */
+    fun refresh() {
+        stringValue = refreshFn()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GitHubToken
+
+        val that = Token(other.stringValue, other.expiresAt)
+        return Token(this.stringValue, this.expiresAt) == that
+    }
+
+    override fun hashCode(): Int = Token(stringValue, expiresAt).hashCode()
+
+    private data class Token(private val stringValue: String, val expirationTime: Instant)
 }

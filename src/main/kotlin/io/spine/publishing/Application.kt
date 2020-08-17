@@ -41,8 +41,8 @@ object Application {
     fun main(args: Array<String>) {
         val jwtFactory = SignedJwts(privateKeyPath)
         val gitHubApp = GitHubApp(appId, jwtFactory)
-        val tokenFactory = gitHubApp.tokenFactory()
-        PublishingPipeline(remoteLibs, tokenFactory).eval()
+        val installationToken = gitHubApp.tokenFactory().newToken()
+        PublishingPipeline(remoteLibs, installationToken).eval()
     }
 }
 

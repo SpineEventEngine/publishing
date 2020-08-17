@@ -5,14 +5,13 @@ import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
 import io.spine.publishing.git.*
-import io.spine.publishing.github.TokenFactory
 
 /**
  * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
  *
- * @param tokenFactory a factory of tokens that authorize remote GitHub operations
+ * @param token a token to authorize the remote operation
  */
-class UpdateRemote(private val tokenFactory: TokenFactory) : PipelineOperation() {
+class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
 
     companion object {
 
@@ -31,19 +30,20 @@ class UpdateRemote(private val tokenFactory: TokenFactory) : PipelineOperation()
          * Visible for testing.
          *
          * @param library the library that has its version updated
+         * @param token a token to authorize the version update
          */
         fun updateVersion(library: Library,
-                          tokenFactory: TokenFactory): List<GitCommand> = listOf(
+                          token: GitHubToken): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
-                PushToRemote(library.repository, tokenFactory)
+                PushToRemote(library.repository, token)
         )
     }
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val commands = updateVersion(library, tokenFactory)
+            val commands = updateVersion(library, token)
             commands.forEach { it.execute() }
         }
         return Ok
