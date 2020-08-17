@@ -93,12 +93,11 @@ class SignedJwts(private val privateKeyPath: Path) : JwtFactory {
 
         val now = now()
         val expirationTime = now.plus(10, MINUTES)
-        val jwt = JWT.create()
+        return JWT.create()
                 .withIssuer(gitHubAppId)
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(expirationTime))
                 // We only have the private key from the GitHub App.
                 .sign(Algorithm.RSA256(null, privateKey as RSAPrivateKey))
-        return jwt
     }
 }

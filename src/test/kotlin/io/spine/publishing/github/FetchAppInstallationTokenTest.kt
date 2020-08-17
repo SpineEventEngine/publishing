@@ -43,7 +43,7 @@ class FetchAppInstallationTokenTest {
         }
 
         val expectedExpirationTime = Instant.parse("2020-08-13T15:01:37Z")
-        val parsedToken = FetchAppInstallationToken(mockJwt, mockInstallationId, transport)
+        val parsedToken = FetchAppInstallationToken(mockInstallationId, mockJwt, transport)
                 .perform()
         assertThat(parsedToken).isEqualTo(GitHubToken("mock_token_value", expectedExpirationTime))
     }

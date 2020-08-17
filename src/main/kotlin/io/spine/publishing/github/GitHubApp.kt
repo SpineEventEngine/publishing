@@ -33,6 +33,10 @@ typealias AppId = String
 /**
  * A GitHub App.
  *
+ * GitHub Apps can perform Git operations with remote repositories hosted on GitHub.
+ *
+ * [See here](https://developer.github.com/apps/) for GitHub Apps documentation.
+ *
  * @param id the ID of the GitHub App
  * @param jwtFactory a factory of JWTs that authorize GitHub API requests
  */

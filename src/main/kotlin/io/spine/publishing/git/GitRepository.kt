@@ -45,8 +45,6 @@ data class GitHubRepoUrl(val organization: Organization, val name: RepositoryNam
     /**
      * A URL that can be used to access a remote GitHub repository.
      *
-     * See [here](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#http-based-git-access-by-an-installation).
-     *
      * @param token token to authorize the access to the remote repository
      */
     fun value(token: GitHubToken): String =
