@@ -40,8 +40,8 @@ class FetchAppInstallationTest {
             response.setStatusCode(200)
                     .setContent(successfulAppInstallationResponse)
         }
-        val appId = FetchAppInstallations.forAppWithSingleInstallation(mockApp, transport)
-                .perform()
+        val appId =
+                FetchAppInstallations.forAppWithSingleInstallation(mockApp, transport).perform()
         assertThat(appId).isEqualTo(AppInstallation("42"))
     }
 

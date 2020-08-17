@@ -41,7 +41,7 @@ class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
          * @param library the library that has its version updated
          * @param token a token to authorize the version update
          */
-        fun updateVersion(library: Library,
+        internal fun updateVersion(library: Library,
                           token: GitHubToken): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),

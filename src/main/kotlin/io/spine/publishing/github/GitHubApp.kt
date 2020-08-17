@@ -80,7 +80,7 @@ data class AppInstallation(val id: String)
 private typealias PickInstallation = (JsonArray<JsonObject>) -> AppInstallation
 
 /**
- * Fetches the installation ID for the GitHub App defined by the JWT.
+ * Fetches the installation ID for a GitHub App.
  *
  * The App may have many installations. [pickInstallationFn] is used to pick the installation
  * to return from [perform].
