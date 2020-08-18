@@ -5,6 +5,11 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.spine.gradle.internal.Deps
+
+buildscript {
+    apply(from = "$rootDir/config/gradle/dependencies.gradle")
+}
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -30,6 +35,15 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.eclipse.jgit:org.eclipse.jgit:2.2.0.201212191850-r")
+
+    // A JSON library.
+    implementation("com.beust:klaxon:5.4")
+    implementation("com.auth0:java-jwt:3.10.3")
+
+    // A crypto library to help sign JWTs.
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.66")
+
+    implementation(Deps.build.googleHttpClient)
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

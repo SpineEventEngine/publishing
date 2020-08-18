@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Path
 
-@DisplayName("`GitCommands` should")
+@DisplayName("Git commands should")
 class GitCommandsTest {
 
     private val sampleFileContents = """This is a sample file for Git related tests."""

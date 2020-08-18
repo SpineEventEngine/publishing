@@ -24,6 +24,8 @@ import io.spine.publishing.git.GitRepository
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.Version
 
+typealias LibraryName = String
+
 /**
  * A collection of files from a remote repository.
  *
@@ -83,5 +85,3 @@ data class Library(val name: LibraryName,
         GradleVersionFile(name, repository.localRootPath)
     }
 }
-
-typealias LibraryName = String

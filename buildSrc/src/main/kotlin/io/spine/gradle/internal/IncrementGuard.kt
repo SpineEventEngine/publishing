@@ -18,25 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
+package io.spine.gradle.internal
 
-import org.eclipse.jgit.transport.CredentialsProvider
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
 /**
- * Credentials to authorize an operation with a remote repository.
+ * Gradle plugin which adds a [CheckVersionIncrement] task.
+ *
+ * The task is called `checkVersionIncrement` inserted before the `check` task.
  */
-sealed class Credentials {
+class IncrementGuard : Plugin<Project> {
 
-    /**
-     * Returns a JGit credentials object that is used to authorize operations like
-     * [org.eclipse.jgit.api.PushCommand].
-     */
-    abstract fun provider(): CredentialsProvider
-}
+    companion object {
+        const val taskName = "checkVersionIncrement"
+    }
 
-// TODO: 2020-07-23:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/5
-class Token(private val token: String) : Credentials() {
+    override fun apply(target: Project) {
+        val tasks = target.tasks
+        tasks.register(taskName, CheckVersionIncrement::class.java) {
+            repository = PublishingRepos.cloudRepo
+            tasks.getByName("check").dependsOn(this)
 
-    override fun provider() = UsernamePasswordCredentialsProvider(token, "")
+            shouldRunAfter("test")
+        }
+    }
 }

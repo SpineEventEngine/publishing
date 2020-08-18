@@ -1,7 +1,11 @@
 package io.spine.publishing
 
-import io.spine.publishing.git.Token
-import io.spine.publishing.operation.*
+import io.spine.publishing.git.GitHubToken
+import io.spine.publishing.operation.SetToCurrentRemote
+import io.spine.publishing.operation.UpdateVersions
+import io.spine.publishing.operation.EnsureBuilds
+import io.spine.publishing.operation.Publish
+import io.spine.publishing.operation.UpdateRemote
 
 /**
  * A series of operations to perform over a set of libraries in order to update them and
@@ -9,11 +13,11 @@ import io.spine.publishing.operation.*
  *
  * To publish libraries, a set of predefined operations is performed.
  *
- * 1) [Libraries are ensured to match their remote versions][SetToCurrentRemote].
- * 2) [The versions are changed locally][UpdateVersions].
- * 3) [The libraries are built to verify that the version updated went correctly][EnsureBuilds].
- * 4) [The updated libraries are published to the remote artifact library][Publish].
- * 5) [The version changes are propagated to the libraries' remote repositories][UpdateRemote].
+ * 1) Libraries are ensured to match their [remote versions][SetToCurrentRemote].
+ * 2) The versions are [changed locally][UpdateVersions].
+ * 3) The libraries are built to [verify][EnsureBuilds] that the version updated went correctly.
+ * 4) The updated libraries are [published][Publish] to the remote artifact library.
+ * 5) The version changes are [propagated][UpdateRemote] to the libraries' remote repositories.
  *
  * @param libraries libraries to update and publish
  * @param operations operations to perform over the libraries in order to update and publish them
@@ -27,14 +31,15 @@ class PublishingPipeline(val libraries: Set<Library>,
      * See class level documentation for the exact steps.
      *
      * @param libraries libraries to update and publish
+     * @param token a token that authorizes GitHub operations
      */
-    constructor(libraries: Set<Library>) :
+    constructor(libraries: Set<Library>, token: GitHubToken) :
             this(libraries, listOf(
                     SetToCurrentRemote(),
                     UpdateVersions(),
                     EnsureBuilds(),
                     Publish(),
-                    UpdateRemote(Token(""))
+                    UpdateRemote(token)
             ))
 
     /**

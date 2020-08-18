@@ -18,19 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.publishing.git
+plugins {
+    `kotlin-dsl`
+}
 
-import io.spine.publishing.Library
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.transport.CredentialsProvider
+repositories {
+    mavenLocal()
+    jcenter()
+}
 
-/**
- * Specifies the remote repository to push as well as the credentials to use while pushing.
- *
- * @param credentials credentials to authorize a push
- */
-class PushDestination(val library: Library,
-                      val credentials: CredentialsProvider) : GitCommandOptions {
+val jacksonVersion = "2.11.0"
 
-    override fun repository(): Repository = library.repository.localGitRepository()
+dependencies {
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
 }

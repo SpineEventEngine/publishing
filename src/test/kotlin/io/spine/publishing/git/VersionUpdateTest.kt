@@ -23,18 +23,18 @@ package io.spine.publishing.git
 import assertk.assertThat
 import assertk.assertions.*
 import io.spine.publishing.Library
-import io.spine.publishing.git.*
+import io.spine.publishing.github.TokenFactory
 import io.spine.publishing.gradle.GradleVersionFile
 import io.spine.publishing.gradle.given.TestEnv
 import io.spine.publishing.operation.UpdateRemote.Companion.updateVersion
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.CredentialsProvider
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
 
 @DisplayName("`VersionUpdate` should")
 class VersionUpdateTest {
@@ -52,7 +52,7 @@ class VersionUpdateTest {
         val remote = GitHubRepoUrl(orgName, repo)
         val gitRepo = GitRepository(baseDirectory, remote)
         val library = Library("base", listOf(), gitRepo)
-        val commands = updateVersion(library, mockCredentials)
+        val commands = updateVersion(library, mockTokenFactory.newToken())
 
         assertThat(commands).hasSize(4)
         assertThat(commands[0]).isInstanceOf(Checkout::class)
@@ -65,10 +65,13 @@ class VersionUpdateTest {
                 .containsOnly(Paths.get(GradleVersionFile.NAME))
         val commitMessage = (commands[2] as Commit).message
         assertThat(commitMessage.message()).startsWith("Bump version")
-        assertThat((commands[3] as PushToRemote).destination.library.repository.remote)
+        assertThat((commands[3] as PushToRemote).gitRepo.remote)
                 .isEqualTo(GitHubRepoUrl(orgName, repo))
     }
 
-    private val mockCredentials: CredentialsProvider =
-            UsernamePasswordCredentialsProvider("username", "password")
+    private val mockTokenFactory = object : TokenFactory {
+        override fun newToken(): GitHubToken = GitHubToken("mock_token", Instant.now().plus(1, DAYS)) {
+            newToken()
+        }
+    }
 }

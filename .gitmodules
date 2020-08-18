@@ -7,3 +7,6 @@
 [submodule "time"]
 	path = time
 	url = https://github.com/SpineEventEngine/time
+[submodule "config"]
+	path = config
+	url = https://github.com/SpineEventEngine/config

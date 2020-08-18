@@ -4,15 +4,23 @@ import io.spine.publishing.Library
 import io.spine.publishing.Ok
 import io.spine.publishing.OperationResult
 import io.spine.publishing.PipelineOperation
-import io.spine.publishing.git.*
-import org.eclipse.jgit.transport.CredentialsProvider
+import io.spine.publishing.git.GitHubToken
+import io.spine.publishing.git.Master
+import io.spine.publishing.git.StageFiles
+import io.spine.publishing.git.VersionFile
+import io.spine.publishing.git.GitCommand
+import io.spine.publishing.git.Commit
+import io.spine.publishing.git.VersionBumpMessage
+import io.spine.publishing.git.PushToRemote
+import io.spine.publishing.git.Checkout
 
 /**
- * Propagates local [Library] changes to the [remote upstream][GitRepository.remote].
+ * Propagates local [Library] changes to the
+ * [remote upstream][io.spine.publishing.git.GitRepository.remote].
  *
- * @param credentials the credentials to authorize the remote repository update
+ * @param token a token to authorize the remote operation
  */
-class UpdateRemote(private val credentials: Credentials) : PipelineOperation() {
+class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
 
     companion object {
 
@@ -31,20 +39,20 @@ class UpdateRemote(private val credentials: Credentials) : PipelineOperation() {
          * Visible for testing.
          *
          * @param library the library that has its version updated
-         * @param provider the provider of the credentials to use to authorize the version update
+         * @param token a token to authorize the version update
          */
-        fun updateVersion(library: Library,
-                          provider: CredentialsProvider): List<GitCommand> = listOf(
+        internal fun updateVersion(library: Library,
+                          token: GitHubToken): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
-                PushToRemote(PushDestination(library, provider))
+                PushToRemote(library.repository, token)
         )
     }
 
     override fun perform(libraries: Set<Library>): OperationResult {
         for (library in libraries) {
-            val commands = updateVersion(library, credentials.provider())
+            val commands = updateVersion(library, token)
             commands.forEach { it.execute() }
         }
         return Ok
