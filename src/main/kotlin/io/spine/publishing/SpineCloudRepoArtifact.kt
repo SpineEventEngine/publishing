@@ -30,6 +30,9 @@ import io.spine.publishing.gradle.Version
 /**
  * An artifact in [Spine CloudRepo](https://spine.mycloudrepo.io/public/repositories/)
  * artifact repository.
+ *
+ * @param artifact artifact in mycloudrepo
+ * @param transport the transport to use when querying mycloudrepo; overridable for tests
  */
 class SpineCloudRepoArtifact(private val artifact: Artifact,
                              transport: HttpTransport = NetHttpTransport()) {
@@ -39,7 +42,11 @@ class SpineCloudRepoArtifact(private val artifact: Artifact,
     /**
      * Returns whether an artifact of the specified version is present in the artifact repository.
      *
+     * Queries the remote artifact repository. If it responds with a successful status code, returns
+     * `true`. If the remote repository returns a "Not Found" status, returns `false`. Otherwise,
+     * throws an `IllegalStateException`.
      *
+     * @param version the version of the artifact to check
      */
     fun isPublished(version: Version): Boolean {
         val url = url(version)
@@ -62,6 +69,8 @@ class SpineCloudRepoArtifact(private val artifact: Artifact,
      * Construct a URL to this artifact of the specified version.
      *
      * Visible for testing.
+     *
+     * @param version the version of the artifact to check
      */
     internal fun url(version: Version): String {
         val resultBuilder = StringBuilder()

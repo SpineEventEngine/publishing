@@ -26,10 +26,13 @@ import com.google.api.client.util.Preconditions.checkState
  * A part of a Maven group ID.
  *
  * For example: a group ID "org.apache.maven.plugins", consists of the following parts:
- * 1) "org";
- * 2) "apache";
- * 3) "maven";
- * 4) "plugins".
+ *
+ * <ol>
+ *     <li> "org";
+ *     <li> "apache";
+ *     <li> "maven";
+ *     <li> "plugins".
+ * </ol>
  */
 typealias GroupIdPart = String
 
@@ -60,6 +63,6 @@ data class Artifact(val groupId: GroupId,
 
     init {
         checkState(artifactName.isNotBlank(), "Cannot create artifact" +
-                "with a blank name.")
+                " with a blank name.")
     }
 }
