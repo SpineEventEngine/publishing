@@ -40,7 +40,8 @@ data class GradleProject(private val rootDir: Path) {
      *
      * Returns `false` if the task has failed.
      */
-    fun build(): Boolean = runCommand("build")
+    fun buildNoVersionIncrementCheck(): Boolean =
+            runCommand("build", "-x", "checkVersionIncrement")
 
     /**
      * Runs the `build` task on this project.

@@ -35,6 +35,10 @@ class EnsureBuilds : PipelineOperation() {
      * Returns [Ok] if all of the libraries are built successfully. Returns [Error] if a library
      * could not be built or published to the local Maven repo.
      *
+     * All of the libraries are built without checking the version increment. The builds are
+     * performed to check whether the library is valid, thus, the version increment check is
+     * redundant.
+     *
      * @param libraries a collection of interdependent libraries to check
      *
      * @see Ordering for a dependency-safe way to order libraries
@@ -43,7 +47,7 @@ class EnsureBuilds : PipelineOperation() {
         val ordered = Ordering(libraries).byDependencies
         for (library in ordered) {
             val gradleProject = GradleProject(library.repository.localRootPath)
-            val builds = gradleProject.build()
+            val builds = gradleProject.buildNoVersionIncrementCheck()
             if (!builds) {
                 return Error(cannotBuild(library, libraries))
             }
