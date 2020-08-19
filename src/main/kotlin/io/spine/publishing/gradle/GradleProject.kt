@@ -44,7 +44,7 @@ data class GradleProject(private val rootDir: Path) {
             runCommand("build", "-x", "checkVersionIncrement")
 
     /**
-     * Runs the `build` task on this project.
+     * Runs the `publish` task on this project.
      *
      * Returns `false` if the task has failed.
      */
