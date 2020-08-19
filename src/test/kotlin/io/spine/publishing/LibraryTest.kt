@@ -41,15 +41,20 @@ class LibraryTest {
         private const val DEPENDANT = "dependant"
         private val REMOTE_DEPENDENCY = GitHubRepoUrl("mockOrg", DEPENDENCY)
         private val REMOTE_DEPENDANT = GitHubRepoUrl("mockOrg", DEPENDANT)
+        private val mockGroupId = GroupId("org", "mock")
 
         private fun dependencyLibrary(directory: Path): Library =
-                Library(DEPENDENCY, arrayListOf(), GitRepository(directory, REMOTE_DEPENDENCY))
+                Library(DEPENDENCY,
+                        arrayListOf(),
+                        GitRepository(directory, REMOTE_DEPENDENCY),
+                        Artifact(mockGroupId, "dependency"))
 
         private fun dependantLibrary(directory: Path,
                                      dependency: Library): Library {
             return Library(DEPENDANT,
                     arrayListOf(dependency),
-                    GitRepository(directory, REMOTE_DEPENDANT))
+                    GitRepository(directory, REMOTE_DEPENDANT),
+                    Artifact(mockGroupId, "dependant"))
         }
     }
 
@@ -108,7 +113,8 @@ class LibraryTest {
         {
             Library("no_git_repo_library",
                     listOf(),
-                    GitRepository(tempDir, REMOTE_DEPENDENCY)).repository.localGitRepository()
+                    GitRepository(tempDir, REMOTE_DEPENDENCY),
+                    Artifact(mockGroupId, "library")).repository.localGitRepository()
         }
     }
 }

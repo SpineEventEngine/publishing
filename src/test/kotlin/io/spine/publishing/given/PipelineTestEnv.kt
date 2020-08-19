@@ -16,7 +16,8 @@ object PipelineTestEnv {
     val sampleLibrary =
             Library("sample_library",
                     listOf(),
-                    GitRepository(Paths.get(""), sampleRemote))
+                    GitRepository(Paths.get(""), sampleRemote),
+                    Artifact(GroupId("hk", "sample"), "library"))
 
     /**
      * An operation that always throws an exception.
