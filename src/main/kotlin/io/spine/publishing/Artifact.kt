@@ -59,7 +59,7 @@ data class Artifact(val groupId: GroupId,
                     val artifactName: String) {
 
     init {
-        checkState(!artifactName.isNotBlank(), "Cannot create artifact" +
+        checkState(artifactName.isNotBlank(), "Cannot create artifact" +
                 "with a blank name.")
     }
 }

@@ -20,11 +20,11 @@
 
 package io.spine.publishing
 
-import com.google.api.client.http.GenericUrl
-import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_MULTIPLE_CHOICES
-import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_OK
-import com.google.api.client.http.HttpTransport
+import com.google.api.client.http.*
+import com.google.api.client.http.HttpStatusCodes.*
 import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.util.BackOff
+import com.google.api.client.util.ExponentialBackOff
 import io.spine.publishing.gradle.Version
 
 /**
@@ -38,10 +38,13 @@ class SpineCloudRepoArtifact(private val artifact: Artifact,
 
     /**
      * Returns whether an artifact of the specified version is present in the artifact repository.
+     *
+     *
      */
     fun isPublished(version: Version): Boolean {
         val url = url(version)
         val response = requestFactory.buildGetRequest(GenericUrl(url))
+                .setUnsuccessfulResponseHandler(BackOffIgnoringNotFound())
                 .setThrowExceptionOnExecuteError(false)
                 .execute()
         return when (response.statusCode) {
@@ -75,5 +78,19 @@ class SpineCloudRepoArtifact(private val artifact: Artifact,
         val url = urlParts.joinToString(separator = "/", postfix = "/")
         resultBuilder.append(url)
         return resultBuilder.toString()
+    }
+
+    /**
+     * A back-off policy that acts as an [HttpBackOffUnsuccessfulResponseHandler], except
+     * it lets the 404s through.
+     */
+    private class BackOffIgnoringNotFound
+        : HttpBackOffUnsuccessfulResponseHandler(ExponentialBackOff()) {
+
+        override fun handleResponse(request: HttpRequest?,
+                                    response: HttpResponse?,
+                                    supportsRetry: Boolean): Boolean {
+            return response?.statusCode != STATUS_CODE_NOT_FOUND
+        }
     }
 }

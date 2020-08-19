@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource
 @DisplayName("`SpineCloudRepoArtifact` should")
 class SpineCloudRepoArtifactTest {
 
+    @Suppress("unused" /* The static methods are used via reflection. */)
     companion object {
 
         private val artifact = Artifact(GroupId("com", "acme"), "tnt")
