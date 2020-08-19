@@ -42,7 +42,7 @@ object Application {
         val jwtFactory = SignedJwts(privateKeyPath)
         val gitHubApp = GitHubApp(appId, jwtFactory)
         val installationToken = gitHubApp.tokenFactory().newToken()
-        PublishingPipeline(remoteLibs, installationToken).eval()
+        PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
     }
 }
 

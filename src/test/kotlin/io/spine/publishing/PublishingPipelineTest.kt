@@ -45,5 +45,5 @@ class PublishingPipelineTest {
     }
 
     private fun pipeline(vararg operations: PipelineOperation) =
-            PublishingPipeline(setOf(sampleLibrary), operations.toList())
+            PublishingPipeline(LibrariesToPublish.from(setOf(sampleLibrary)), operations.toList())
 }

@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.spine.publishing.Artifact
 import io.spine.publishing.GroupId
+import io.spine.publishing.LibrariesToPublish
 import io.spine.publishing.Library
 import io.spine.publishing.git.GitRepository
 import io.spine.publishing.given.PipelineTestEnv.sampleRemote
@@ -59,7 +60,7 @@ class UpdateVersionsTest {
                 GitRepository(movedCoreJava, sampleRemote),
                 Artifact(GroupId("io", "spine"), "spine-core"))
 
-        UpdateVersions().perform(setOf(base, time, coreJava))
+        UpdateVersions().perform(LibrariesToPublish.from(setOf(base, time, coreJava)))
 
         val expectedVersion = Version(1, 9, 9)
         assertThat(base.version()).isEqualTo(expectedVersion)
@@ -90,7 +91,7 @@ class UpdateVersionsTest {
                 GitRepository(libraryDir, sampleRemote),
                 Artifact(GroupId("level", "first"), "library"))
 
-        UpdateVersions().perform(setOf(library, subLibrary))
+        UpdateVersions().perform(LibrariesToPublish.from(setOf(library, subLibrary)))
 
         val versions = listOf(library.version(),
                 library.version(subLibrary.name),

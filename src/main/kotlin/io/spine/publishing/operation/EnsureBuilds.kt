@@ -43,20 +43,28 @@ class EnsureBuilds : PipelineOperation() {
      *
      * @see Ordering for a dependency-safe way to order libraries
      */
-    override fun perform(libraries: Set<Library>): OperationResult {
-        val ordered = Ordering(libraries).byDependencies
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
+        val ordered = Ordering(libraries.toSet()).byDependencies
         for (library in ordered) {
-            val gradleProject = GradleProject(library.repository.localRootPath)
-            val builds = gradleProject.buildNoVersionIncrementCheck()
+            val builds = build(library, libraries)
             if (!builds) {
-                return Error(cannotBuild(library, libraries))
+                return Error(cannotBuild(library, libraries.toSet()))
             }
-            val published = gradleProject.publishToMavenLocal()
+            val published = GradleProject(library.repository.localRootPath).publishToMavenLocal()
             if (!published) {
                 return Error(cannotPublish(library))
             }
         }
         return Ok
+    }
+
+    private fun build(library: Library, libraries: LibrariesToPublish): Boolean {
+        val project = GradleProject(library.repository.localRootPath)
+        return if (library == libraries.updatedLibrary) {
+            project.buildNoVersionIncrementCheck()
+        } else {
+            project.build()
+        }
     }
 
     private fun cannotBuild(library: Library, allLibraries: Set<Library>): String {

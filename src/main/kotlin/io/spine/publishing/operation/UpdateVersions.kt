@@ -1,9 +1,6 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.Library
-import io.spine.publishing.Ok
-import io.spine.publishing.OperationResult
-import io.spine.publishing.PipelineOperation
+import io.spine.publishing.*
 import io.spine.publishing.gradle.Version
 
 /**
@@ -13,11 +10,13 @@ import io.spine.publishing.gradle.Version
  */
 class UpdateVersions : PipelineOperation() {
 
-    override fun perform(libraries: Set<Library>): OperationResult {
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
         // The collection is non-empty as per the pipeline contract - non-null assertion is safe.
-        val maxVersion = libraries.maxBy { it.version() }!!
+        val maxVersion = libraries
+                .toSet()
+                .maxBy { it.version() }!!
                 .version()
-        libraries
+        libraries.toSet()
                 .filter { needsUpdate(it, maxVersion) }
                 .forEach { library -> library.update(maxVersion) }
 

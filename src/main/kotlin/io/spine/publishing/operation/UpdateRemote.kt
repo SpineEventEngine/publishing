@@ -1,18 +1,7 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.Library
-import io.spine.publishing.Ok
-import io.spine.publishing.OperationResult
-import io.spine.publishing.PipelineOperation
-import io.spine.publishing.git.GitHubToken
-import io.spine.publishing.git.Master
-import io.spine.publishing.git.StageFiles
-import io.spine.publishing.git.VersionFile
-import io.spine.publishing.git.GitCommand
-import io.spine.publishing.git.Commit
-import io.spine.publishing.git.VersionBumpMessage
-import io.spine.publishing.git.PushToRemote
-import io.spine.publishing.git.Checkout
+import io.spine.publishing.*
+import io.spine.publishing.git.*
 
 /**
  * Propagates local [Library] changes to the
@@ -42,7 +31,7 @@ class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
          * @param token a token to authorize the version update
          */
         internal fun updateVersion(library: Library,
-                          token: GitHubToken): List<GitCommand> = listOf(
+                                   token: GitHubToken): List<GitCommand> = listOf(
                 Checkout(Master(library)),
                 StageFiles(VersionFile(library)),
                 Commit(VersionBumpMessage(library)),
@@ -50,8 +39,8 @@ class UpdateRemote(private val token: GitHubToken) : PipelineOperation() {
         )
     }
 
-    override fun perform(libraries: Set<Library>): OperationResult {
-        for (library in libraries) {
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
+        for (library in libraries.toSet()) {
             val commands = updateVersion(library, token)
             commands.forEach { it.execute() }
         }

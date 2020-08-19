@@ -10,8 +10,9 @@ import io.spine.publishing.gradle.GradleProject
  */
 class Publish : PipelineOperation() {
 
-    override fun perform(libraries: Set<Library>): OperationResult {
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
         libraries
+                .toSet()
                 .filter { !SpineCloudRepoArtifact(it.artifact).isPublished(it.version()) }
                 .map { GradleProject(it.repository.localRootPath) }
                 .forEach { it.publish() }

@@ -23,7 +23,7 @@ object PipelineTestEnv {
      * An operation that always throws an exception.
      */
     object ThrowingOperation : PipelineOperation() {
-        override fun perform(libraries: Set<Library>): OperationResult =
+        override fun perform(libraries: LibrariesToPublish): OperationResult =
                 throw IllegalStateException()
 
     }
@@ -32,7 +32,7 @@ object PipelineTestEnv {
      * An operation that always returns an [io.spine.publishing.Error]
      */
     object ErroneousOperation : PipelineOperation() {
-        override fun perform(libraries: Set<Library>): OperationResult =
+        override fun perform(libraries: LibrariesToPublish): OperationResult =
                 Error("An erroneous operation always errors.")
     }
 
@@ -40,8 +40,8 @@ object PipelineTestEnv {
 
         private val seenLibraries: MutableList<Library> = mutableListOf()
 
-        override fun perform(libraries: Set<Library>): OperationResult {
-            seenLibraries.addAll(libraries)
+        override fun perform(libraries: LibrariesToPublish): OperationResult {
+            seenLibraries.addAll(libraries.toSet())
             return Ok
         }
 
