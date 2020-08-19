@@ -36,7 +36,7 @@ data class GradleProject(private val rootDir: Path) {
     }
 
     /**
-     * Runs the `build -x checkVersionIncrement` task on this project.
+     * Runs the `build` task on this project, but skips the `checkVersionIncrement` task.
      *
      * Returns `false` if the task has failed.
      */
