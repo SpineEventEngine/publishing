@@ -20,39 +20,48 @@
 
 package io.spine.publishing
 
+import com.google.api.client.http.HttpTransport
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.util.Preconditions.checkArgument
 
 /**
  * Libraries that participate in the [PublishingPipeline].
  *
- * Publishing pipeline starts with an update of a single library: [updatedLibrary]. The [rest] of
- * the libraries need to have their versions updated to the version of the [updatedLibrary].
+ * Publishing pipeline starts with an update of a number of libraries: [updatedLibraries].
+ * The [rest] of the libraries need to have their versions updated to the version of the
+ * [updatedLibraries].
  *
- * @param updatedLibrary the library that got its version updated
- * @param rest the libraries that need their version updated to that of [updatedLibrary]
+ * @param updatedLibraries the library that got their versions updated
+ * @param rest the libraries that need their version updated to that of [updatedLibraries]
  */
-class LibrariesToPublish private constructor(val updatedLibrary: Library, val rest: Set<Library>) {
+class LibrariesToPublish private constructor(val updatedLibraries: Set<Library>,
+                                             val rest: Set<Library>) {
 
     companion object {
 
         /**
          * Constructs [LibrariesToPublish] from the specified set of libraries.
          *
-         * Finds library with the highest version - this library was updated and initiated the
-         * publishing. Sets the [updatedLibrary] to the library with the highest version, and puts
-         * the rest of the libraries into [rest].
+         * Finds the libraries that are already present in the artifact repository: those libraries
+         * already have the necessary versions, and thus, they become the [updatedLibraries].
+         * The rest of the libraries are added to [rest].
          *
          * Throws an `IllegalArgumentsException` if the [set] is empty.
          *
-         * @param set a set of libraries to publish; must be non-empty
+         * @param set a set of libraries to publish; must be on-empty
+         * @param transport transport to use when querying the artifact repository
          */
-        fun from(set: Set<Library>): LibrariesToPublish {
+        fun from(set: Set<Library>, transport: HttpTransport = NetHttpTransport()): LibrariesToPublish {
             checkArgument(set.isNotEmpty(), "Cannot update an empty set of libraries.")
 
-            val updatedLibrary = set.maxBy { it.version() }!!
-            val rest = set.filter { it != updatedLibrary }.toSet()
+            val updatedLibraries = set
+                    .filter {
+                        SpineCloudRepoArtifact(it.artifact, transport).isPublished(it.version())
+                    }
+                    .toSet()
+            val rest = set.filter { !updatedLibraries.contains(it) }.toSet()
 
-            return LibrariesToPublish(updatedLibrary, rest)
+            return LibrariesToPublish(updatedLibraries, rest)
         }
     }
 
@@ -61,7 +70,7 @@ class LibrariesToPublish private constructor(val updatedLibrary: Library, val re
      */
     fun toSet(): Set<Library> {
         val result = rest.toMutableSet()
-        result.add(updatedLibrary)
+        result.addAll(updatedLibraries)
         return result
     }
 }

@@ -60,7 +60,7 @@ class EnsureBuilds : PipelineOperation() {
 
     private fun build(library: Library, libraries: LibrariesToPublish): Boolean {
         val project = GradleProject(library.repository.localRootPath)
-        return if (library == libraries.updatedLibrary) {
+        return if (libraries.updatedLibraries.contains(library)) {
             project.buildNoVersionIncrementCheck()
         } else {
             project.build()

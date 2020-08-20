@@ -1,6 +1,7 @@
 package io.spine.publishing
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.containsOnly
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNull
@@ -40,10 +41,10 @@ class PublishingPipelineTest {
 
         val result = pipeline(firstCollecting, secondCollecting).eval()
         assertThat(result).isInstanceOf(Ok::class)
-        assertThat(firstCollecting.seenLibraries()).containsOnly(sampleLibrary)
-        assertThat(secondCollecting.seenLibraries()).containsOnly(sampleLibrary)
+        assertThat(firstCollecting.seenLibraries()).containsOnly(sampleLibrary())
+        assertThat(secondCollecting.seenLibraries()).containsOnly(sampleLibrary())
     }
 
     private fun pipeline(vararg operations: PipelineOperation) =
-            PublishingPipeline(LibrariesToPublish.from(setOf(sampleLibrary)), operations.toList())
+            PublishingPipeline(LibrariesToPublish.from(setOf(sampleLibrary())), operations.toList())
 }
