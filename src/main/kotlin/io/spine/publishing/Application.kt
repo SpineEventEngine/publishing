@@ -34,15 +34,17 @@ import java.nio.file.Paths
 object Application {
 
     // TODO: 2020-08-12:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/9
-    private val privateKeyPath: Path = Paths.get(System.getProperty("pem_path"))
-    private val appId: AppId = System.getProperty("github_app_id")
+//    private val privateKeyPath: Path = Paths.get(System.getProperty("pem_path"))
+//    private val appId: AppId = System.getProperty("github_app_id")
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val jwtFactory = SignedJwts(privateKeyPath)
-        val gitHubApp = GitHubApp(appId, jwtFactory)
-        val installationToken = gitHubApp.tokenFactory().newToken()
-        PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
+//        val jwtFactory = SignedJwts(privateKeyPath)
+//        val gitHubApp = GitHubApp(appId, jwtFactory)
+//        val installationToken = gitHubApp.tokenFactory().newToken()
+//        PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
+        val resource = Application::javaClass.get().classLoader.getResource("sample-file.txt")
+        println(resource.readText())
     }
 }
 
