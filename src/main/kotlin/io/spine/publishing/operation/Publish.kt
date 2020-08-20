@@ -12,8 +12,7 @@ class Publish : PipelineOperation() {
 
     override fun perform(libraries: LibrariesToPublish): OperationResult {
         libraries
-                .toSet()
-                .filter { !SpineCloudRepoArtifact(it.artifact).isPublished(it.version()) }
+                .rest
                 .map { GradleProject(it.repository.localRootPath) }
                 .forEach { it.publish() }
         return Ok
