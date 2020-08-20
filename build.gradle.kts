@@ -56,7 +56,7 @@ dependencies {
 
 application {
     // Define the main class for the application
-    mainClassName = "publishing.AppKt"
+    mainClassName = "io.spine.publishing.Application"
 }
 
 tasks.test {

@@ -25,6 +25,7 @@ import com.google.api.client.util.Preconditions.checkState
 /**
  * A part of a Maven group ID.
  *
+ *
  * For example: a group ID "org.apache.maven.plugins", consists of the following parts:
  *
  * 1) "org";
