@@ -57,6 +57,7 @@ credentials.properties
 cloudrepo.properties
 deploy_key_rsa
 gcs-auth-key.json
+private_key.pem
 
 #
 # The gradle.properties file should contain settings specific to a developer's workstation.
