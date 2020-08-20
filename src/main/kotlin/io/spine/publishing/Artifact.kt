@@ -27,12 +27,10 @@ import com.google.api.client.util.Preconditions.checkState
  *
  * For example: a group ID "org.apache.maven.plugins", consists of the following parts:
  *
- * <ol>
- *     <li> "org";
- *     <li> "apache";
- *     <li> "maven";
- *     <li> "plugins".
- * </ol>
+ * 1) "org";
+ * 2) "apache";
+ * 3) "maven";
+ * 4) "plugins".
  */
 typealias GroupIdPart = String
 
