@@ -6,12 +6,11 @@ before_install:
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 after_success:
   - |
-     if [[ $TRAVIS_EVENT_TYPE == api ]]; then
+    if [[ $TRAVIS_EVENT_TYPE == api ]]; then
        "./gradlew run"
     fi
   - bash <(curl -s https://codecov.io/bash)
-script:
-  "./gradlew check --stacktrace"
+script: "./gradlew check --stacktrace"
 before_script:
   - openssl aes-256-cbc -K $encrypted_98f956a202b9_key -iv $encrypted_98f956a202b9_iv
     -in ./src/main/resources/sample-file.txt.enc -out ./src/main/resources/sample-file.txt
