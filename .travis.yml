@@ -6,7 +6,7 @@ before_install:
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 after_success:
   - |
-     if [[ TRAVIS_EVENT_TYPE == api ]]; then
+     if [[ $TRAVIS_EVENT_TYPE == api ]]; then
        "./gradlew run"
     fi
   - bash <(curl -s https://codecov.io/bash)
