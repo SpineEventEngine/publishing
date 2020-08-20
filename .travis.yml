@@ -11,4 +11,4 @@ script: "./gradlew check --stacktrace"
 before_script:
 - openssl aes-256-cbc -K $encrypted_98f956a202b9_key -iv $encrypted_98f956a202b9_iv
   -in ./src/main/resources/sample-file.txt.enc -out ./src/main/resources/sample-file.txt
-  -d -v
+  -d
