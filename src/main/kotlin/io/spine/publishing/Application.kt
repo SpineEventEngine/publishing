@@ -20,11 +20,11 @@
 
 package io.spine.publishing
 
+import com.google.common.io.Files
 import io.spine.publishing.github.AppId
 import io.spine.publishing.github.GitHubApp
 import io.spine.publishing.github.SignedJwts
 import java.nio.file.Path
-import java.nio.file.Paths
 
 /**
  * The publishing application.
@@ -33,8 +33,7 @@ import java.nio.file.Paths
  */
 object Application {
 
-    // TODO: 2020-08-12:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/9
-    private val privateKeyPath: Path = Paths.get(System.getProperty("pem_path"))
+    private val privateKeyPath: Path = copyPrivateKey()
     private val appId: AppId = System.getProperty("github_app_id")
 
     @JvmStatic
@@ -45,6 +44,31 @@ object Application {
         PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
     }
 }
+
+private fun copyPrivateKey(): Path {
+    val tempDir = Files.createTempDir()
+
+    val privateKey = tempDir.resolve(PRIVATE_KEY_FILE_NAME)
+    try {
+        @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS" /*
+                                                                             * A potential NPE
+                                                                             * is handled.
+                                                                             */)
+
+        val privateKeyBytes = Application::javaClass
+                .get()
+                .classLoader
+                .getResource(PRIVATE_KEY_FILE_NAME)
+                .readBytes()
+        privateKey.writeBytes(privateKeyBytes)
+        return privateKey.toPath()
+    } catch (e: Exception) {
+        val message = "Could not copy the decrypted key file: `$PRIVATE_KEY_FILE_NAME`."
+        throw IllegalStateException(message, e)
+    }
+}
+
+private const val PRIVATE_KEY_FILE_NAME = "private_key.pem"
 
 /**
  * Local Spine libraries associated with their remote repositories.
