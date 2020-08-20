@@ -42,7 +42,8 @@ typealias LibraryName = String
  */
 data class Library(val name: LibraryName,
                    val dependencies: List<Library>,
-                   val repository: GitRepository) {
+                   val repository: GitRepository,
+                   val artifact: Artifact) {
 
     /**
      * Updates the version of this library to the specified one.

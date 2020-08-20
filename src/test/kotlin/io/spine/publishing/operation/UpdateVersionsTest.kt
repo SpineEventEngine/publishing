@@ -22,6 +22,9 @@ package io.spine.publishing.operation
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import io.spine.publishing.Artifact
+import io.spine.publishing.GroupId
+import io.spine.publishing.LibrariesToPublish
 import io.spine.publishing.Library
 import io.spine.publishing.git.GitRepository
 import io.spine.publishing.given.PipelineTestEnv.sampleRemote
@@ -46,15 +49,18 @@ class UpdateVersionsTest {
 
         val base = Library("base",
                 listOf(),
-                GitRepository(movedBase, sampleRemote))
+                GitRepository(movedBase, sampleRemote),
+                Artifact(GroupId("io", "spine"), "spine-base"))
         val time = Library("time",
                 listOf(base),
-                GitRepository(movedTime, sampleRemote))
+                GitRepository(movedTime, sampleRemote),
+                Artifact(GroupId("io", "spine"), "spine-time"))
         val coreJava = Library("coreJava",
                 listOf(time, base),
-                GitRepository(movedCoreJava, sampleRemote))
+                GitRepository(movedCoreJava, sampleRemote),
+                Artifact(GroupId("io", "spine"), "spine-core"))
 
-        UpdateVersions().perform(setOf(base, time, coreJava))
+        UpdateVersions().perform(LibrariesToPublish.from(setOf(base, time, coreJava)))
 
         val expectedVersion = Version(1, 9, 9)
         assertThat(base.version()).isEqualTo(expectedVersion)
@@ -77,12 +83,15 @@ class UpdateVersionsTest {
 
         val subLibrary = Library("subLibrary",
                 listOf(),
-                GitRepository(subLibraryDir, sampleRemote))
+                GitRepository(subLibraryDir, sampleRemote),
+                Artifact(GroupId("rary", "lib"), "sub")
+        )
         val library = Library("library",
                 listOf(subLibrary),
-                GitRepository(libraryDir, sampleRemote))
+                GitRepository(libraryDir, sampleRemote),
+                Artifact(GroupId("level", "first"), "library"))
 
-        UpdateVersions().perform(setOf(library, subLibrary))
+        UpdateVersions().perform(LibrariesToPublish.from(setOf(library, subLibrary)))
 
         val versions = listOf(library.version(),
                 library.version(subLibrary.name),

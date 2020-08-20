@@ -22,6 +22,8 @@ package io.spine.publishing.git
 
 import assertk.assertThat
 import assertk.assertions.*
+import io.spine.publishing.Artifact
+import io.spine.publishing.GroupId
 import io.spine.publishing.Library
 import io.spine.publishing.github.TokenFactory
 import io.spine.publishing.gradle.GradleVersionFile
@@ -51,7 +53,8 @@ class VersionUpdateTest {
 
         val remote = GitHubRepoUrl(orgName, repo)
         val gitRepo = GitRepository(baseDirectory, remote)
-        val library = Library("base", listOf(), gitRepo)
+        val artifact = Artifact(GroupId("io", "spine"), "spine-base")
+        val library = Library("base", listOf(), gitRepo, artifact)
         val commands = updateVersion(library, mockTokenFactory.newToken())
 
         assertThat(commands).hasSize(4)

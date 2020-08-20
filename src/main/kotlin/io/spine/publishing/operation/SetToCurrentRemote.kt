@@ -1,9 +1,6 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.Library
-import io.spine.publishing.Ok
-import io.spine.publishing.OperationResult
-import io.spine.publishing.PipelineOperation
+import io.spine.publishing.*
 import io.spine.publishing.git.Fetch
 import io.spine.publishing.git.GitCommand
 import io.spine.publishing.git.Reset
@@ -14,8 +11,9 @@ import io.spine.publishing.git.ToOriginMaster
  */
 class SetToCurrentRemote : PipelineOperation() {
 
-    override fun perform(libraries: Set<Library>): OperationResult {
-        libraries.flatMap { fetchFresh(it) }
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
+        libraries.toSet()
+                .flatMap { fetchFresh(it) }
                 .forEach { it.execute() }
         return Ok
     }

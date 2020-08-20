@@ -27,6 +27,7 @@ import com.google.api.client.http.HttpResponseException
 import com.google.api.client.http.HttpStatusCodes.*
 import com.google.api.client.testing.http.MockLowLevelHttpResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtValue
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPresetResponses
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -108,7 +109,4 @@ class JwtRefreshingBackOffTest {
         }
         assertThat(timesRefreshed == 3)
     }
-
-    private fun mockResponse(code: Int) = MockLowLevelHttpResponse()
-            .setStatusCode(code)
 }

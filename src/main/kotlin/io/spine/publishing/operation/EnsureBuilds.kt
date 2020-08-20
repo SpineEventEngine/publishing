@@ -1,10 +1,6 @@
 package io.spine.publishing.operation
 
-import io.spine.publishing.Library
-import io.spine.publishing.Ok
-import io.spine.publishing.Error
-import io.spine.publishing.OperationResult
-import io.spine.publishing.PipelineOperation
+import io.spine.publishing.*
 import io.spine.publishing.gradle.GradleProject
 import io.spine.publishing.gradle.Ordering
 
@@ -39,24 +35,36 @@ class EnsureBuilds : PipelineOperation() {
      * Returns [Ok] if all of the libraries are built successfully. Returns [Error] if a library
      * could not be built or published to the local Maven repo.
      *
+     * All of the libraries are built without checking the version increment. The builds are
+     * performed to check whether the library is valid, thus, the version increment check is
+     * redundant.
+     *
      * @param libraries a collection of interdependent libraries to check
      *
      * @see Ordering for a dependency-safe way to order libraries
      */
-    override fun perform(libraries: Set<Library>): OperationResult {
-        val ordered = Ordering(libraries).byDependencies
+    override fun perform(libraries: LibrariesToPublish): OperationResult {
+        val ordered = Ordering(libraries.toSet()).byDependencies
         for (library in ordered) {
-            val gradleProject = GradleProject(library.repository.localRootPath)
-            val builds = gradleProject.build()
+            val builds = build(library, libraries)
             if (!builds) {
-                return Error(cannotBuild(library, libraries))
+                return Error(cannotBuild(library, libraries.toSet()))
             }
-            val published = gradleProject.publishToMavenLocal()
+            val published = GradleProject(library.repository.localRootPath).publishToMavenLocal()
             if (!published) {
                 return Error(cannotPublish(library))
             }
         }
         return Ok
+    }
+
+    private fun build(library: Library, libraries: LibrariesToPublish): Boolean {
+        val project = GradleProject(library.repository.localRootPath)
+        return if (libraries.updatedLibraries.contains(library)) {
+            project.buildNoVersionIncrementCheck()
+        } else {
+            project.build()
+        }
     }
 
     private fun cannotBuild(library: Library, allLibraries: Set<Library>): String {

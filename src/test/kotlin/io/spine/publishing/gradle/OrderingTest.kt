@@ -24,6 +24,8 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
+import io.spine.publishing.Artifact
+import io.spine.publishing.GroupId
 import io.spine.publishing.Library
 import io.spine.publishing.git.GitHubRepoUrl
 import io.spine.publishing.git.GitRepository
@@ -88,13 +90,16 @@ class OrderingTest {
 
         val base = Library("base",
                 listOf(),
-                GitRepository(movedBase, mockRemote("base")))
+                GitRepository(movedBase, mockRemote("base")),
+                Artifact(GroupId("io", "spine"), "spine-base"))
         val time = Library("time",
                 listOf(base),
-                GitRepository(movedTime, mockRemote("time")))
+                GitRepository(movedTime, mockRemote("time")),
+                Artifact(GroupId("io", "spine"), "spine-time"))
         val coreJava = Library("coreJava",
                 listOf(time, base),
-                GitRepository(movedCoreJava, mockRemote("core-java")))
+                GitRepository(movedCoreJava, mockRemote("core-java")),
+                Artifact(GroupId("io", "spine"), "spine-core"))
 
         val mostRecentVersion = Ordering(setOf(base, time, coreJava)).mostRecentVersion()
         assertThat(mostRecentVersion).isEqualTo(Version(1, 9, 9))
@@ -103,7 +108,8 @@ class OrderingTest {
     private fun mockLibrary(name: String, vararg dependencies: Library): Library {
         val path = Paths.get("") // A mock path doesn't matter as files aren't accessed.
         val deps: List<Library> = dependencies.toList()
-        return Library(name, deps, GitRepository(path, mockRemote(name)))
+        val artifact = Artifact(GroupId("io", "mock"), "library")
+        return Library(name, deps, GitRepository(path, mockRemote(name)), artifact)
     }
 
     private fun mockRemote(name: RepositoryName) = GitHubRepoUrl("test-org", name)

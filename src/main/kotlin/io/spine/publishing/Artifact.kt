@@ -20,35 +20,47 @@
 
 package io.spine.publishing
 
-import io.spine.publishing.github.AppId
-import io.spine.publishing.github.GitHubApp
-import io.spine.publishing.github.SignedJwts
-import java.nio.file.Path
-import java.nio.file.Paths
+import com.google.api.client.util.Preconditions.checkState
 
 /**
- * The publishing application.
+ * A part of a Maven group ID.
  *
- * See [PublishingPipeline] for the description of the publishing process.
+ * For example: a group ID "org.apache.maven.plugins", consists of the following parts:
+ *
+ * 1) "org";
+ * 2) "apache";
+ * 3) "maven";
+ * 4) "plugins".
  */
-object Application {
+typealias GroupIdPart = String
 
-    // TODO: 2020-08-12:serhii.lekariev: https://github.com/SpineEventEngine/publishing/issues/9
-    private val privateKeyPath: Path = Paths.get(System.getProperty("pem_path"))
-    private val appId: AppId = System.getProperty("github_app_id")
+/**
+ * A Maven group ID.
+ *
+ * @param parts parts of the group ID; refer to [GroupId] docs
+ */
+data class GroupId(val parts: List<GroupIdPart>) {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val jwtFactory = SignedJwts(privateKeyPath)
-        val gitHubApp = GitHubApp(appId, jwtFactory)
-        val installationToken = gitHubApp.tokenFactory().newToken()
-        PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
+    constructor(vararg parts: GroupIdPart) : this(parts.toList())
+
+    init {
+        checkState(parts.isNotEmpty(), "Cannot create an empty Group ID.")
     }
+
+    override fun toString(): String = parts.joinToString(separator = ".")
 }
 
 /**
- * Local Spine libraries associated with their remote repositories.
+ * An artifact published to a Maven repository.
+ *
+ * @param groupId group ID of the artifact
+ * @param artifactName the name of the artifact
  */
-private val remoteLibs: Set<Library> = SpineLibrary.values()
-        .map { it.library }
-        .toSet()
+data class Artifact(val groupId: GroupId,
+                    val artifactName: String) {
+
+    init {
+        checkState(artifactName.isNotBlank(), "Cannot create artifact" +
+                " with a blank name.")
+    }
+}

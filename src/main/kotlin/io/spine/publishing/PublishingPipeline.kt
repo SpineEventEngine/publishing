@@ -1,11 +1,7 @@
 package io.spine.publishing
 
 import io.spine.publishing.git.GitHubToken
-import io.spine.publishing.operation.SetToCurrentRemote
-import io.spine.publishing.operation.UpdateVersions
-import io.spine.publishing.operation.EnsureBuilds
-import io.spine.publishing.operation.Publish
-import io.spine.publishing.operation.UpdateRemote
+import io.spine.publishing.operation.*
 
 /**
  * A series of operations to perform over a set of libraries in order to update them and
@@ -22,7 +18,7 @@ import io.spine.publishing.operation.UpdateRemote
  * @param libraries libraries to update and publish
  * @param operations operations to perform over the libraries in order to update and publish them
  */
-class PublishingPipeline(val libraries: Set<Library>,
+class PublishingPipeline(val libraries: LibrariesToPublish,
                          private val operations: List<PipelineOperation>) {
 
     /**
@@ -33,7 +29,7 @@ class PublishingPipeline(val libraries: Set<Library>,
      * @param libraries libraries to update and publish
      * @param token a token that authorizes GitHub operations
      */
-    constructor(libraries: Set<Library>, token: GitHubToken) :
+    constructor(libraries: LibrariesToPublish, token: GitHubToken) :
             this(libraries, listOf(
                     SetToCurrentRemote(),
                     UpdateVersions(),
@@ -80,16 +76,20 @@ abstract class PipelineOperation {
      * Perform this operation over the specified set of libraries.
      *
      * Returns [Ok] if the operation has finished successfully, and [Error] otherwise.
+     *
+     * @param libraries the libraries participating in the publishing pipeline
      */
-    abstract fun perform(libraries: Set<Library>): OperationResult
+    abstract fun perform(libraries: LibrariesToPublish): OperationResult
 
     /**
      * Tries to perform this operation over a set of libraries.
      *
      * If it finishes normally, returns the result of [perform]. If an exception is thrown,
      * returns an [Error].
+     *
+     * @param libraries the libraries participating in the publishing pipeline
      */
-    fun doPerform(libraries: Set<Library>): OperationResult {
+    fun doPerform(libraries: LibrariesToPublish): OperationResult {
         return try {
             perform(libraries)
         } catch (e: Exception) {
