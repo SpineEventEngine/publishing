@@ -48,7 +48,7 @@ class LibrariesToPublish private constructor(val updatedLibraries: Set<Library>,
          *
          * Throws an `IllegalArgumentsException` if the [set] is empty.
          *
-         * @param set a set of libraries to publish; must be on-empty
+         * @param set a set of libraries to publish; must be non-empty
          * @param transport transport to use when querying the artifact repository
          */
         fun from(set: Set<Library>, transport: HttpTransport = NetHttpTransport()): LibrariesToPublish {
