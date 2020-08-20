@@ -50,9 +50,9 @@ private fun copyPrivateKey(): Path {
 
     val privateKey = tempDir.resolve(PRIVATE_KEY_FILE_NAME)
     try {
+ 
         /** A potential NPE is handled. */
         @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-
         val privateKeyBytes = Application::javaClass
                 .get()
                 .classLoader
