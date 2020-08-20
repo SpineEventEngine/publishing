@@ -5,8 +5,7 @@ before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 before_script:
-  - openssl aes-256-cbc -K $encrypted_98f956a202b9_key -iv $encrypted_98f956a202b9_iv \
-in ./src/main/resources/sample-file.txt.enc -out ./src/main/resources/sample-file.txt -d
+  - openssl aes-256-cbc -K $encrypted_98f956a202b9_key -iv $encrypted_98f956a202b9_iv in ./src/main/resources/sample-file.txt.enc -out ./src/main/resources/sample-file.txt -d
 
 after_success:
   - ./gradlew run
