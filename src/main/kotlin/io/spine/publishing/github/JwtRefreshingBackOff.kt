@@ -25,6 +25,7 @@ import com.google.api.client.http.HttpResponse
 import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler
 import com.google.api.client.util.Preconditions.checkArgument
+import io.spine.publishing.debug
 
 /**
  * A back-off policy that specifies how the requests to the GitHub API can be retried.
@@ -41,6 +42,8 @@ class JwtRefreshingBackOff(private var retries: Int,
                            private var jwt: GitHubJwt) :
         HttpUnsuccessfulResponseHandler {
 
+    private val retriesPassed = retries
+
     init {
         checkArgument(retries > 0, "`JwtRefreshingBackOff` must" +
                 "perform at least once. Retries specified: `$retries`.")
@@ -51,6 +54,7 @@ class JwtRefreshingBackOff(private var retries: Int,
                                 supportsRetry: Boolean): Boolean {
         while (retries > 0) {
             return if (request != null && response != null && unauthorized(response)) {
+                debug().log("Got an UNAUTHORIZED response, refreshing the JWT to try again.")
                 retries--
                 refreshJwt(request)
                 true
@@ -63,6 +67,13 @@ class JwtRefreshingBackOff(private var retries: Int,
 
     private fun unauthorized(response: HttpResponse) =
             response.statusCode == STATUS_CODE_UNAUTHORIZED
+
+    /**
+     * Resets the retries counter to the one specified initially on the constructor.
+     */
+    fun reset() {
+        retries = retriesPassed
+    }
 
     private fun refreshJwt(request: HttpRequest) {
         jwt = jwt.refresh()

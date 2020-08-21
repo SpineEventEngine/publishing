@@ -47,6 +47,8 @@ class PublishingPipeline(val libraries: LibrariesToPublish,
      * If every operation finishes successfully, [Ok] is returned.
      */
     fun eval(): OperationResult {
+        info().log("Starting the pipeline over the libraries: " +
+                "`${libraries.toSet().map { it.name }}`.")
         var pipelineResult: OperationResult = Ok
         for (operation in operations) {
             pipelineResult = operation.doPerform(libraries)

@@ -25,7 +25,6 @@ import assertk.assertions.isEqualTo
 import com.google.api.client.http.GenericUrl
 import com.google.api.client.http.HttpResponseException
 import com.google.api.client.http.HttpStatusCodes.*
-import com.google.api.client.testing.http.MockLowLevelHttpResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtValue
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPresetResponses

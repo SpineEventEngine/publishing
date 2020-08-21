@@ -43,6 +43,9 @@ dependencies {
     // A crypto library to help sign JWTs.
     implementation("org.bouncycastle:bcpkix-jdk15on:1.66")
 
+    implementation(Deps.build.flogger)
+    implementation(Deps.runtime.flogger.systemBackend)
+
     implementation(Deps.build.googleHttpClient)
 
     // Use the Kotlin JUnit integration.

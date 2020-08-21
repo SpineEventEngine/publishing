@@ -21,6 +21,8 @@
 package io.spine.publishing.gradle
 
 import io.spine.publishing.LibraryName
+import io.spine.publishing.debug
+import io.spine.publishing.info
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -59,6 +61,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * [projectName] is used
      */
     fun version(library: LibraryName = projectName): Version? {
+        debug().log("Looking for the version of `${library}` in file: `${file.absolutePath}`.")
         return contents
                 .lines()
                 .map { AssignVersion.parse(it) }
@@ -70,6 +73,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Returns the libraries that the project declaring this versions file depends on.
      */
     fun declaredDependencies(): Map<LibraryName, Version> {
+        debug().log("Parsing versions in file: `${file.absolutePath}`.")
         return contents
                 .lines()
                 .mapNotNull { AssignVersion.parse(it) }
@@ -98,6 +102,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * assigned, the values are the versions to assign to libraries
      */
     internal fun updateVersions(versions: Map<LibraryName, Version>) {
+        info().log("Updating the `$rootDir/$NAME`.")
         checkContainsAll(versions.keys)
         var atLeastOneOverridden = false
         val lines = file
@@ -109,9 +114,12 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                         val version: Version = versions.getValue(expr.libraryName)
                         val expression =
                                 AssignVersion(expr.libraryName, version)
-                        expression.toString()
+                        info().log("Going to write a new version `$version` " +
+                                "for the library `${expr.libraryName}`. " +
+                                "Previous version: `${expr.version}`.")
+                        return@map expression.toString()
                     } else {
-                        it
+                        return@map it
                     }
                 }
 
@@ -122,6 +130,8 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             }
             contents.invalidate()
         }
+        info().log("File `$rootDir/$NAME` doesn't need updates: passed versions " +
+                "`$versions` are already present in the version file.")
     }
 
     private fun checkContainsAll(keys: Set<LibraryName>) {

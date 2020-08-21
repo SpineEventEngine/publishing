@@ -22,8 +22,13 @@ package io.spine.publishing.github
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_OK
+import com.google.api.client.http.HttpStatusCodes.STATUS_CODE_UNAUTHORIZED
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwt
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockJwtValue
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.mockResponse
 import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportThatRespondsWith
+import io.spine.publishing.github.given.GitHubRequestsTestEnv.transportWithPresetResponses
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -98,6 +103,47 @@ class GitHubApiRequestTest {
         }
 
         assertThat(mockRequest.perform()).isEqualTo(hardcodedResponse)
+    }
+
+
+    @Test
+    @DisplayName("reset the retries counter after a successful response")
+    fun resetCounter() {
+        val retryAmount = 2
+        var timesRefreshed = 0
+
+        fun jwt(): GitHubJwt = GitHubJwt(mockJwtValue) {
+            timesRefreshed++
+            jwt()
+        }
+
+        val transport = transportWithPresetResponses(listOf(
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_OK),
+
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_UNAUTHORIZED),
+                mockResponse(STATUS_CODE_OK)
+        ))
+
+        val jwtBackOff = JwtRefreshingBackOff(retryAmount, jwt())
+
+        val mockRequest = object : GitHubApiRequest<Unit>(
+                "https://api.github.com/valid_url",
+                jwt = mockJwt(),
+                httpTransport = transport,
+                backOff = jwtBackOff
+        ) {
+            override fun parseResponse(responseText: String) = Unit
+        }
+
+        repeat(2) { mockRequest.perform() }
+
+        // Despite the amount of unsuccessful responses exceeding the `retryAmount`, the
+        // JWT is refreshed 4 times, as the actual retry counter is reset
+        // after a successful response.
+        assertThat(timesRefreshed).isEqualTo(4)
     }
 
 

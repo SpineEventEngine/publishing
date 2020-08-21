@@ -66,7 +66,7 @@ object GitHubRequestsTestEnv {
                 }
             }
 
-    fun mockResponse(code: Int) = MockLowLevelHttpResponse().setStatusCode(code)
+    fun mockResponse(code: Int) = MockLowLevelHttpResponse().setStatusCode(code).setContent("OK")
 
     const val mockJwtValue = "abcdefgciOiWAUrIsNiJ9.eyJpY3023123O1czMjcxLsVdIaV2vQA2ZD"
 
