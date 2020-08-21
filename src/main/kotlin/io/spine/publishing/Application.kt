@@ -22,6 +22,7 @@ package io.spine.publishing
 
 import com.google.common.flogger.FluentLogger
 import com.google.common.io.Files
+import io.spine.publishing.Application.GITHUB_APP_ID_KEY
 import io.spine.publishing.github.AppId
 import io.spine.publishing.github.GitHubApp
 import io.spine.publishing.github.SignedJwts
@@ -34,8 +35,21 @@ import java.nio.file.Path
  */
 object Application {
 
+    /**
+     * The name of the property containing the GitHub ID of this application as an app installed to
+     * some organization.
+     *
+     * The value of the property is required for running the application.
+     *
+     * May be set both as a JVM property (i.e. `-Dprop=value`) or as an environment variable.
+     * JVM property has a higher priority. The environment variable is used if the JVM property
+     * isn't set.
+     */
+    const val GITHUB_APP_ID_KEY = "github_app_id"
+
     private val privateKeyPath: Path = copyPrivateKey()
-    private val appId: AppId = System.getProperty("github_app_id")
+
+    private val appId: AppId = appId()
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -66,6 +80,13 @@ fun error(): FluentLogger.Api = logger().atSevere()
  * Returns a logger that logs at the `INFO` level.
  */
 fun info(): FluentLogger.Api = logger().atInfo()
+
+/**
+ * Reads the application ID.
+ */
+fun appId(): AppId {
+    return System.getProperty(GITHUB_APP_ID_KEY) ?: System.getenv(GITHUB_APP_ID_KEY)
+}
 
 private fun copyPrivateKey(): Path {
     val tempDir = Files.createTempDir()
