@@ -21,6 +21,7 @@
 package io.spine.publishing.gradle
 
 import io.spine.publishing.LibraryName
+import io.spine.publishing.debug
 
 /**
  * A Kotlin expression that defines a version of a library.
@@ -67,6 +68,9 @@ data class AssignVersion(val libraryName: LibraryName, val version: Version) {
 
             val rawVersion = groups[2]
             val version = rawVersion.let { Version.parseFrom(it) }
+
+            debug().log("Parsed a version assigning expression in `$rawExpression`." +
+                    " Library: `$name`, version: `$version`")
 
             return AssignVersion(name, version)
         }

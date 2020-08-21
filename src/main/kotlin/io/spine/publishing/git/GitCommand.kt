@@ -21,6 +21,7 @@
 package io.spine.publishing.git
 
 import io.spine.publishing.Library
+import io.spine.publishing.debug
 import io.spine.publishing.github.RetryPolicy
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType.HARD

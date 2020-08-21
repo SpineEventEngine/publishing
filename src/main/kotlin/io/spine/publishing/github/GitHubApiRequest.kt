@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpMethods
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.common.net.HttpHeaders.ACCEPT
+import io.spine.publishing.debug
 
 /**
  * An HTTP request to the GitHub REST API.
@@ -46,13 +47,15 @@ abstract class GitHubApiRequest<T>(private val url: String,
         val request = requestFactory
                 .buildRequest(method, GenericUrl(url), null)
         jwt.authorize(request)
-
+        debug().log("Sending a `$method` to `$url`. Headers: `$httpHeaders`.")
         val response = request
                 .setHeaders(httpHeaders)
                 .setThrowExceptionOnExecuteError(false)
                 .setUnsuccessfulResponseHandler(backOff)
                 .execute()
         val responseText = response.content.bufferedReader().use { it.readText() }
+        debug().log("Got the response with code `${response.statusCode}`. " +
+                "Text: `$responseText`.")
         if (!response.isSuccessStatusCode) {
             throw IllegalStateException("Request to URL `$url` resulted in a response with " +
                     "`${response.statusCode}`. Response text: `${responseText}`.")

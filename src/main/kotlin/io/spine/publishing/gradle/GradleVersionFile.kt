@@ -21,6 +21,7 @@
 package io.spine.publishing.gradle
 
 import io.spine.publishing.LibraryName
+import io.spine.publishing.debug
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -98,6 +99,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * assigned, the values are the versions to assign to libraries
      */
     internal fun updateVersions(versions: Map<LibraryName, Version>) {
+        debug().log("Updating the `$rootDir/$NAME`.")
         checkContainsAll(versions.keys)
         var atLeastOneOverridden = false
         val lines = file
@@ -109,9 +111,12 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                         val version: Version = versions.getValue(expr.libraryName)
                         val expression =
                                 AssignVersion(expr.libraryName, version)
-                        expression.toString()
+                        debug().log("Going to write a new version `$version` " +
+                                "for the library `${expr.libraryName}`. " +
+                                "Previous version: `${expr.version}`.")
+                        return@map expression.toString()
                     } else {
-                        it
+                        return@map it
                     }
                 }
 
@@ -122,6 +127,8 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             }
             contents.invalidate()
         }
+        debug().log("Did not update `$rootDir/$NAME`: passed versions `$versions` are" +
+                "already present in the version file.")
     }
 
     private fun checkContainsAll(keys: Set<LibraryName>) {

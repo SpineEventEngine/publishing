@@ -20,6 +20,7 @@
 
 package io.spine.publishing
 
+import com.google.common.flogger.FluentLogger
 import com.google.common.io.Files
 import io.spine.publishing.github.AppId
 import io.spine.publishing.github.GitHubApp
@@ -44,6 +45,21 @@ object Application {
         PublishingPipeline(LibrariesToPublish.from(remoteLibs), installationToken).eval()
     }
 }
+
+/**
+ * Returns the publishing application logger.
+ */
+fun logger(): FluentLogger = FluentLogger.forEnclosingClass()
+
+/**
+ * Returns a logger that logs at the `FINE` level.
+ */
+fun debug(): FluentLogger.Api = logger().atFine()
+
+/**
+ * Returns a logger that logs at the `INFO` level.
+ */
+fun info(): FluentLogger.Api = logger().atInfo()
 
 private fun copyPrivateKey(): Path {
     val tempDir = Files.createTempDir()

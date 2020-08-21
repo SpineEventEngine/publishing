@@ -3,8 +3,9 @@ package io.spine.publishing.github
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.google.api.client.http.HttpRequest
-import com.google.common.net.HttpHeaders
+import com.google.common.flogger.FluentLogger
 import com.google.common.net.HttpHeaders.AUTHORIZATION
+import io.spine.publishing.debug
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.PEMKeyPair
 import org.bouncycastle.openssl.PEMParser
@@ -77,9 +78,11 @@ class SignedJwts(private val privateKeyPath: Path) : JwtFactory {
      * can authorize [GitHubApiRequest]s.
      */
     override fun jwtFor(app: GitHubApp): GitHubJwt {
+        debug().log("Generating a new JWT.")
         val path = privateKeyPath
         val appId = app.id
         val jwt = generateJwt(path, appId)
+        debug().log("JWT generated successfully.")
         return GitHubJwt(jwt) { jwtFor(app) }
     }
 

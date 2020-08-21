@@ -20,6 +20,7 @@
 
 package io.spine.publishing.gradle
 
+import io.spine.publishing.debug
 import java.nio.file.Path
 
 /**
@@ -63,9 +64,10 @@ data class GradleProject(private val rootDir: Path) {
     fun publishToMavenLocal(): Boolean = runCommand("publishToMavenLocal")
 
     private fun runCommand(vararg commands: String): Boolean {
+        val actualCommands = commands.toMutableList()
+        actualCommands.add(0, GRADLEW)
         return try {
-            val actualCommands = commands.toMutableList()
-            actualCommands.add(0, GRADLEW)
+            debug().log("Running `$actualCommands` for the Gradle project in `$rootDir`.")
             val process = ProcessBuilder()
                     .command(actualCommands)
                     .directory(rootDir.toFile())
@@ -74,6 +76,7 @@ data class GradleProject(private val rootDir: Path) {
 
             process.waitFor() == 0
         } catch (e: Exception) {
+            debug().withCause(e).log("Failed to run Gradle commands `$actualCommands`.")
             false
         }
     }
