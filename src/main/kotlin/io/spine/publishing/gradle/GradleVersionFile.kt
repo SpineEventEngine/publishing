@@ -22,6 +22,7 @@ package io.spine.publishing.gradle
 
 import io.spine.publishing.LibraryName
 import io.spine.publishing.debug
+import io.spine.publishing.info
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -101,7 +102,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * assigned, the values are the versions to assign to libraries
      */
     internal fun updateVersions(versions: Map<LibraryName, Version>) {
-        debug().log("Updating the `$rootDir/$NAME`.")
+        info().log("Updating the `$rootDir/$NAME`.")
         checkContainsAll(versions.keys)
         var atLeastOneOverridden = false
         val lines = file
@@ -127,10 +128,11 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
             }
+            info().log("The updates were successfully written to file `$rootDir/$NAME`.")
             contents.invalidate()
         }
-        debug().log("Did not update `$rootDir/$NAME`: passed versions `$versions` are" +
-                " already present in the version file.")
+        debug().log("File `$rootDir/$NAME` doesn't need updates: passed versions " +
+                "`$versions` are already present in the version file.")
     }
 
     private fun checkContainsAll(keys: Set<LibraryName>) {
