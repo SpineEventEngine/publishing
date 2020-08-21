@@ -5,7 +5,15 @@
 The scripts and tools in this repository automate the publishing of artifacts for 
 the Spine Event Engine libraries.
 
-## Version file format
+The libraries that are being published are Git submodules to the Publishing Git repository.
+
+## Requirements
+
+### Kotlin DSL
+
+Only Gradle projects using the Kotlin DSL are supported.
+
+### Version file format
 
 This application expects the libraries to define their `version.gradle.kts` in a consistent fashion.
 Version files must declare the version of the library itself and the version of its dependencies
@@ -28,3 +36,7 @@ This application also expects consistent naming:
 
 To extend this, go to `io.spine.publishing.SpineLibrary` and add values to the `SpineLibrary` enum.
 
+### Gradle tasks
+
+Each library needs to define a `publish` Gradle task. This task is used for publishing the artifacts
+to the remote artifact repository.
