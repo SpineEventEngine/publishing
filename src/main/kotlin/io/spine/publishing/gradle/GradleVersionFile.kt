@@ -114,7 +114,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                         val version: Version = versions.getValue(expr.libraryName)
                         val expression =
                                 AssignVersion(expr.libraryName, version)
-                        debug().log("Going to write a new version `$version` " +
+                        info().log("Going to write a new version `$version` " +
                                 "for the library `${expr.libraryName}`. " +
                                 "Previous version: `${expr.version}`.")
                         return@map expression.toString()
@@ -128,10 +128,9 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
                 lines.forEach { line -> writer.println(line) }
                 writer.println()
             }
-            info().log("The updates were successfully written to file `$rootDir/$NAME`.")
             contents.invalidate()
         }
-        debug().log("File `$rootDir/$NAME` doesn't need updates: passed versions " +
+        info().log("File `$rootDir/$NAME` doesn't need updates: passed versions " +
                 "`$versions` are already present in the version file.")
     }
 
