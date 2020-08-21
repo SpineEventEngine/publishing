@@ -22,14 +22,16 @@ import io.spine.publishing.debug
  * use [com.google.api.client.http.HttpMethods] when passing a method
  * @param jwt a JWT that authorizes GitHub API requests
  * @param httpTransport a transport to use when making the request; can be overridden for tests
+ * @param backOff the back-off policy to use; defaults to a back-off that retries thrice
  */
-abstract class GitHubApiRequest<T>(private val url: String,
-                                   private val method: String = HttpMethods.GET,
-                                   private val jwt: GitHubJwt,
-                                   httpTransport: HttpTransport = NetHttpTransport()) {
+abstract class GitHubApiRequest<T>(
+        private val url: String,
+        private val method: String = HttpMethods.GET,
+        private val jwt: GitHubJwt,
+        httpTransport: HttpTransport = NetHttpTransport(),
+        private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwt)) {
 
     private val requestFactory = httpTransport.createRequestFactory()
-    private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwt)
 
     /**
      * Performs the HTTP request to the [URL][url] using the specified [method] and
@@ -54,13 +56,12 @@ abstract class GitHubApiRequest<T>(private val url: String,
                 .setUnsuccessfulResponseHandler(backOff)
                 .execute()
         val responseText = response.content.bufferedReader().use { it.readText() }
-        debug().log("Got the response with code `${response.statusCode}`. " +
-                "Text: `$responseText`.")
+        debug().log("Got the response with code `${response.statusCode}`.")
         if (!response.isSuccessStatusCode) {
             throw IllegalStateException("Request to URL `$url` resulted in a response with " +
                     "`${response.statusCode}`. Response text: `${responseText}`.")
         }
-
+        backOff.reset()
         return parseResponse(responseText)
     }
 

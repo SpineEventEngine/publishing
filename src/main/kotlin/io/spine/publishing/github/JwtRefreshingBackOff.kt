@@ -42,6 +42,8 @@ class JwtRefreshingBackOff(private var retries: Int,
                            private var jwt: GitHubJwt) :
         HttpUnsuccessfulResponseHandler {
 
+    private val retriesPassed = retries
+
     init {
         checkArgument(retries > 0, "`JwtRefreshingBackOff` must" +
                 "perform at least once. Retries specified: `$retries`.")
@@ -65,6 +67,13 @@ class JwtRefreshingBackOff(private var retries: Int,
 
     private fun unauthorized(response: HttpResponse) =
             response.statusCode == STATUS_CODE_UNAUTHORIZED
+
+    /**
+     * Resets the retries counter to the one specified initially on the constructor.
+     */
+    fun reset() {
+        retries = retriesPassed
+    }
 
     private fun refreshJwt(request: HttpRequest) {
         jwt = jwt.refresh()
