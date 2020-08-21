@@ -41,12 +41,12 @@ To extend this, go to `io.spine.publishing.SpineLibrary` and add values to the `
 Each library needs to define a `publish` Gradle task. This task is used for publishing the artifacts
 to the remote artifact repository.
 
-
 ### Travis token
 
 As `publishing` is triggered via Travis REST API, libraries that wish to trigger publishing must
-be able to trigger builds. They can use a script from config: `config/scripts/trigger-publishing`. 
-This script relies on the `TRAVIS_TOKEN` env variable. To get the token:
+be able to trigger builds. They can use a script 
+from config: `config/scripts/trigger-publishing.sh`. This script relies on the 
+`TRAVIS_TOKEN` env variable. To get the token:
 
 1) run `travis login --com` and complete the login process; 
 2) run `travis token`;
