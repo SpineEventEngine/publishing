@@ -125,7 +125,6 @@ class GitHubApiRequestTest {
                 mockResponse(STATUS_CODE_UNAUTHORIZED),
                 mockResponse(STATUS_CODE_UNAUTHORIZED),
                 mockResponse(STATUS_CODE_OK)
-
         ))
 
         val jwtBackOff = JwtRefreshingBackOff(retryAmount, jwt())
