@@ -39,6 +39,7 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        info().log("Starting the publishing application. App ID: `$appId`.")
         val jwtFactory = SignedJwts(privateKeyPath)
         val gitHubApp = GitHubApp(appId, jwtFactory)
         val installationToken = gitHubApp.tokenFactory().newToken()
