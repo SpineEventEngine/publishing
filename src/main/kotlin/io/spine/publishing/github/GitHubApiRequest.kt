@@ -28,7 +28,7 @@ abstract class GitHubApiRequest<T>(
         private val url: String,
         private val method: String = HttpMethods.GET,
         private val jwt: GitHubJwt,
-        httpTransport: HttpTransport = NetHttpTransport(),
+        private val httpTransport: HttpTransport = NetHttpTransport(),
         private val backOff: JwtRefreshingBackOff = JwtRefreshingBackOff(3, jwt)) {
 
     private val requestFactory = httpTransport.createRequestFactory()
