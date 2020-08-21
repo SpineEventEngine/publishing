@@ -69,7 +69,7 @@ data class AssignVersion(val libraryName: LibraryName, val version: Version) {
             val rawVersion = groups[2]
             val version = rawVersion.let { Version.parseFrom(it) }
 
-            debug().log("Parsed a version assigning expression in `$rawExpression`." +
+            debug().log("Parsed a version-assigning expression from `$rawExpression`." +
                     " Library: `$name`, version: `$version`")
 
             return AssignVersion(name, version)

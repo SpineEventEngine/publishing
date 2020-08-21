@@ -60,6 +60,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * [projectName] is used
      */
     fun version(library: LibraryName = projectName): Version? {
+        debug().log("Looking for the version of `${library}` in file: `${file.absolutePath}`.")
         return contents
                 .lines()
                 .map { AssignVersion.parse(it) }
@@ -71,6 +72,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
      * Returns the libraries that the project declaring this versions file depends on.
      */
     fun declaredDependencies(): Map<LibraryName, Version> {
+        debug().log("Parsing versions in file: `${file.absolutePath}`.")
         return contents
                 .lines()
                 .mapNotNull { AssignVersion.parse(it) }
@@ -128,7 +130,7 @@ class GradleVersionFile(private val projectName: LibraryName, private val rootDi
             contents.invalidate()
         }
         debug().log("Did not update `$rootDir/$NAME`: passed versions `$versions` are" +
-                "already present in the version file.")
+                " already present in the version file.")
     }
 
     private fun checkContainsAll(keys: Set<LibraryName>) {

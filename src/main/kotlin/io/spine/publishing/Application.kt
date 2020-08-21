@@ -55,7 +55,12 @@ fun logger(): FluentLogger = FluentLogger.forEnclosingClass()
 /**
  * Returns a logger that logs at the `FINE` level.
  */
-fun debug(): FluentLogger.Api = logger().atFine()
+fun debug(): FluentLogger.Api = logger().atInfo()
+
+/**
+ * Returns a logger that logs a the `SEVERE` level.
+ */
+fun error(): FluentLogger.Api = logger().atSevere()
 
 /**
  * Returns a logger that logs at the `INFO` level.

@@ -20,7 +20,8 @@
 
 package io.spine.publishing.gradle
 
-import io.spine.publishing.debug
+import io.spine.publishing.error
+import io.spine.publishing.info
 import java.nio.file.Path
 
 /**
@@ -67,7 +68,7 @@ data class GradleProject(private val rootDir: Path) {
         val actualCommands = commands.toMutableList()
         actualCommands.add(0, GRADLEW)
         return try {
-            debug().log("Running `$actualCommands` for the Gradle project in `$rootDir`.")
+            info().log("Running `$actualCommands` for the Gradle project in `$rootDir`.")
             val process = ProcessBuilder()
                     .command(actualCommands)
                     .directory(rootDir.toFile())
@@ -76,7 +77,7 @@ data class GradleProject(private val rootDir: Path) {
 
             process.waitFor() == 0
         } catch (e: Exception) {
-            debug().withCause(e).log("Failed to run Gradle commands `$actualCommands`.")
+            error().withCause(e).log("Failed to run Gradle commands `$actualCommands`.")
             false
         }
     }
