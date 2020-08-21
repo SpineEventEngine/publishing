@@ -46,4 +46,18 @@ to the remote artifact repository.
 
 As `publishing` is triggered via Travis REST API, libraries that wish to trigger publishing must
 be able to trigger builds. They can use a script from config: `config/scripts/trigger-publishing`. 
-This script relies on the `TRAVIS_TOKEN` env variable. 
+This script relies on the `TRAVIS_TOKEN` env variable. To get the token:
+
+1) run `travis login --com` and complete the login process; 
+2) run `travis token`;
+3) set the value of the token to the `TRAVIS_TOKEN` env variable in the settings of your Travis 
+repository.
+
+#### Known issues
+
+Sometimes, especially if you have used `travis login` before, Travis CLI tool uses an old
+`https://api.travis-ci.org` API URL. `https://api.travis-ci.com` must be used instead. If you
+run into problems, check your `~/.travis/config.yml` file for mentions 
+of `https://api.travis-ci.org` and change them to `https://api.travis-ci.com`.
+
+See step one [here](https://docs.travis-ci.com/user/triggering-builds/) for more.
